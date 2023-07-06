@@ -28,6 +28,14 @@ export async function requestAuthorization(): Promise<void> {
   return await ReactNativeDeviceActivityModule.requestAuthorization();
 }
 
+export async function startMonitoring(): Promise<void> {
+  return await ReactNativeDeviceActivityModule.startMonitoring();
+}
+
+export async function stopMonitoring(): Promise<void> {
+  return await ReactNativeDeviceActivityModule.stopMonitoring();
+}
+
 const emitter = new EventEmitter(
   ReactNativeDeviceActivityModule ??
     NativeModulesProxy.ReactNativeDeviceActivity

@@ -1,13 +1,14 @@
 import ExpoModulesCore
 import DeviceActivity
 import FamilyControls
+import os
 
-
+let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Robert testar")
 
 @available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
   
-  let activity = DeviceActivityName("MyApp.ScreenTime")
+  let activity = DeviceActivityName("Lifeline.AppLoggedTimeDaily")
   
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -20,7 +21,6 @@ public class ReactNativeDeviceActivityModule: Module {
     
     let center = DeviceActivityCenter()
     
-
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants([
       "PI": Double.pi
@@ -34,36 +34,50 @@ public class ReactNativeDeviceActivityModule: Module {
       return "Hello world! 👋"
     }
     
-    
-    
     AsyncFunction("startMonitoring") {
+      let timeLimitMinutes = 5
+      
       let schedule = DeviceActivitySchedule(
           intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
           intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
-          repeats: true
+          repeats: true,
+          warningTime: DateComponents(minute: timeLimitMinutes - 1, second: 30)
       )
       
-      let timeLimitMinutes = 30
       
-      var model = DeviceActivityModel.current.model
+      let activitySelection = DeviceActivityModel.current.model.activitySelection
+      let totalEvents = 24 * 60 / timeLimitMinutes // 24 hours * 60 minutes / timeLimitMinutes
 
-      let event = DeviceActivityEvent(
-        applications: model.activitySelection.applicationTokens,
-          categories: model.activitySelection.categoryTokens,
-          webDomains: model.activitySelection.webDomainTokens,
-          threshold: DateComponents(minute: timeLimitMinutes)
-      )
-      
-      
-      let eventName = DeviceActivityEvent.Name("MyApp.SomeEventName")
+      var events: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
 
-      try center.startMonitoring(
-          activity,
-          during: schedule,
-          events: [
-              eventName: event
-          ]
-      )
+      for i in 0..<totalEvents {
+        let name = "\((i + 1) * timeLimitMinutes)_minutes_today"
+        logger.log("Creating event with name \(name)")
+          let eventName = DeviceActivityEvent.Name(name)
+          
+          let event = DeviceActivityEvent(
+              applications: activitySelection.applicationTokens,
+              categories: activitySelection.categoryTokens,
+              webDomains: activitySelection.webDomainTokens,
+              threshold: DateComponents(minute: (i + 1) * timeLimitMinutes)
+          )
+          
+          events[eventName] = event
+      }
+
+
+     
+      do {
+        
+        try center.startMonitoring(
+            activity,
+            during: schedule,
+            events: events
+        )
+          logger.log("😭😭😭 Success with Starting Monitor Activity")
+        } catch {
+          logger.log("😭😭😭 Error with Starting Monitor Activity: \(error.localizedDescription)")
+        }
     }
     
     Function("stopMonitoring") {

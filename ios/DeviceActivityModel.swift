@@ -3,6 +3,7 @@ import ExpoModulesCore
 import FamilyControls
 import UIKit
 import Combine
+import ManagedSettings
 
 private let userDefaultsKey = "ScreenTimeSelection"
 

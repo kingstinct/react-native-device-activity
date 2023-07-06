@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 export default function App() {
@@ -16,6 +16,15 @@ export default function App() {
   }, []);
   return (
     <View style={styles.container}>
+      <Button
+        title="Start monitoring"
+        onPress={() => ReactNativeDeviceActivity.startMonitoring()}
+      />
+
+      <Button
+        title="Stop monitoring"
+        onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
+      />
       <ReactNativeDeviceActivity.ReactNativeDeviceActivityView
         name="hello"
         style={{ width: 200, height: 200, backgroundColor: "red" }}
