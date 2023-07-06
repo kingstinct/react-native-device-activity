@@ -1,3 +1,5 @@
+import { NativeSyntheticEvent, StyleProp, ViewStyle } from "react-native";
+
 export type ChangeEventPayload = {
   selection: Selection;
 };
@@ -25,5 +27,9 @@ type Selection = {
 };
 
 export type ReactNativeDeviceActivityViewProps = {
-  onChange?: (selection: Selection) => void;
+  style: StyleProp<ViewStyle>;
+  onSelectionChange?: (
+    selection: NativeSyntheticEvent<{ familyActivitySelection: string }>
+  ) => void;
+  familyActivitySelection?: string | null;
 };

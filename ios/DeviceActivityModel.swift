@@ -11,21 +11,19 @@ private let userDefaultsKey = "ScreenTimeSelection"
 // to apply the proper styling (e.g. border radius and shadows).
 @available(iOS 15.0, *)
 class DeviceActivityModel {
-  
-  
   init(){
-    self.model.activitySelection = self.savedSelection() ?? FamilyActivitySelection()
+    self.model.activitySelection = FamilyActivitySelection(includeEntireCategory: true)
   }
   
   public let model = ScreenTimeSelectAppsModel()
   
   // Used to encode codable to UserDefaults
-  private let encoder = PropertyListEncoder()
+  // private let encoder = PropertyListEncoder()
 
   // Used to decode codable from UserDefaults
-  private let decoder = PropertyListDecoder()
+  // private let decoder = PropertyListDecoder()
   
-  func saveSelection(selection: FamilyActivitySelection) {
+  /*func saveSelection(selection: FamilyActivitySelection) {
     let defaults = UserDefaults.standard
     
     let encoded = try? encoder.encode(selection)
@@ -34,9 +32,9 @@ class DeviceActivityModel {
         encoded,
         forKey: userDefaultsKey
     )
-  }
+  }*/
   
-  func savedSelection() -> FamilyActivitySelection? {
+  /*func savedSelection() -> FamilyActivitySelection? {
       let defaults = UserDefaults.standard
 
       guard let data = defaults.data(forKey: userDefaultsKey) else {
@@ -47,7 +45,5 @@ class DeviceActivityModel {
           FamilyActivitySelection.self,
           from: data
       )
-  }
-  
-  static var current = DeviceActivityModel()
+  }*/
 }

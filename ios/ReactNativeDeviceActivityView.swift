@@ -9,15 +9,14 @@ import Combine
 @available(iOS 15.0, *)
 class ReactNativeDeviceActivityView: ExpoView {
   
-  
-  public let model = DeviceActivityModel.current
+  public let model = ScreenTimeSelectAppsModel()
   
   let contentView: UIHostingController<ScreenTimeSelectAppsContentView>
   
   private var cancellables = Set<AnyCancellable>()
 
   required init(appContext: AppContext? = nil) {
-    contentView = UIHostingController(rootView: ScreenTimeSelectAppsContentView(model: model.model))
+    contentView = UIHostingController(rootView: ScreenTimeSelectAppsContentView(model: model))
     
     super.init(appContext: appContext)
     
@@ -25,8 +24,11 @@ class ReactNativeDeviceActivityView: ExpoView {
     
     self.addSubview(contentView.view)
     
-    model.model.$activitySelection.sink { selection in
-        self.saveSelection(selection: selection)
+    model.$activitySelection.sink { selection in
+      if(selection != self.previousSelection){
+        self.updateSelection(selection: selection)
+        self.previousSelection = selection
+      }
     }
     .store(in: &cancellables)
   }
@@ -35,19 +37,23 @@ class ReactNativeDeviceActivityView: ExpoView {
     contentView.view.frame = bounds
   }
   
-  func saveSelection(selection: FamilyActivitySelection) {
-    self.appContext?.eventEmitter?.sendEvent(withName: "onSelectionChange", body: [
-      "apps": selection.applications.map({ app in
-        return app.bundleIdentifier
-      }),
-      "categories": selection.categories.map({ app in
-        return app.localizedDisplayName
-      }),
-      "sites": selection.webDomains.map({ app in
-        return app.domain
-      })
-    ])
+  let onSelectionChange = EventDispatcher()
+  
+  var previousSelection: FamilyActivitySelection?
+  
+  func updateSelection(selection: FamilyActivitySelection) {
+    let encoder = JSONEncoder()
+    do {
+      let json = try encoder.encode(selection)
+      let jsonString = json.base64EncodedString()
+      
+      onSelectionChange([
+        "familyActivitySelection": jsonString
+      ])
+    } catch {
+      
+    }
 
-    model.saveSelection(selection: selection)
+    // model.saveSelection(selection: selection)
   }
 }
