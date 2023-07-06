@@ -34,6 +34,24 @@ public class ReactNativeDeviceActivityModule: Module {
       return "Hello world! 👋"
     }
     
+    Function("getEvents") { () -> [AnyHashable: Any] in
+      let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+      let dict = userDefaults?.dictionaryRepresentation()
+
+      guard let actualDict = dict else {
+        return [:] // Return an empty dictionary instead of an empty array
+      }
+
+      let filteredDict = actualDict.filter({ (key: String, value: Any) in
+        return key.starts(with: "activity_event_last_called_")
+      }).reduce(into: [:]) { (result, element) in
+        let (key, value) = element
+        result[key] = value as? NSNumber // Add key-value pair to the result dictionary
+      }
+
+      return filteredDict
+    }
+    
     AsyncFunction("startMonitoring") {
       let timeLimitMinutes = 5
       
@@ -49,6 +67,8 @@ public class ReactNativeDeviceActivityModule: Module {
       let totalEvents = 24 * 60 / timeLimitMinutes // 24 hours * 60 minutes / timeLimitMinutes
 
       var events: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+      
+      // let includeEntireCategory = activitySelection.includeEntireCategory
 
       for i in 0..<totalEvents {
         let name = "\((i + 1) * timeLimitMinutes)_minutes_today"

@@ -35,6 +35,10 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
       logger.log("😭😭😭 eventDidReachThreshold: \(event.rawValue, privacy: .public)")
+      
+      let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+      let now = (Date().timeIntervalSince1970 * 1000).rounded()
+      userDefaults?.set(now, forKey: "activity_event_last_called_\(event.rawValue)")
         
         // Handle the event reaching its threshold.
     }
@@ -56,7 +60,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventWillReachThresholdWarning(event, activity: activity)
       logger.log("😭😭😭 eventWillReachThresholdWarning: \(event.rawValue, privacy: .public)")
-        
+      
         // Handle the warning before the event reaches its threshold.
     }
   

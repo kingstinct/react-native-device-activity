@@ -1,8 +1,14 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
+type EventsLookup = Record<string, number>;
+
 export default function App() {
+  const [largestEvent, setLargestEvent] = React.useState<null | {
+    minutesRegistered: number;
+    registered: Date;
+  }>(null);
   useEffect(() => {
     ReactNativeDeviceActivity.requestAuthorization();
     const listener = ReactNativeDeviceActivity.addSelectionChangeListener(
@@ -25,6 +31,44 @@ export default function App() {
         title="Stop monitoring"
         onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
       />
+
+      <Button
+        title="Get events"
+        onPress={() => {
+          const events = ReactNativeDeviceActivity.getEvents();
+          const eventsArrayWithDate = Object.keys(events).map((key) => {
+            const timestamp = events[key];
+            const registered = new Date(Math.round(timestamp));
+            console.log(Math.round(timestamp));
+            const minutesRegistered = parseInt(
+              key.split("activity_event_last_called_")[1],
+              10
+            );
+            return { event: key, registered, minutesRegistered };
+          });
+
+          const eventsOccurredToday = eventsArrayWithDate.filter((event) => {
+            const today = new Date();
+            return (
+              event.registered.getDate() === today.getDate() &&
+              event.registered.getMonth() === today.getMonth() &&
+              event.registered.getFullYear() === today.getFullYear()
+            );
+          });
+
+          const largestMinutesRegistered = eventsOccurredToday.reduce(
+            (acc, event) => {
+              return event.minutesRegistered > acc.minutesRegistered
+                ? event
+                : acc;
+            },
+            { minutesRegistered: 0, event: "none", registered: new Date() }
+          );
+
+          setLargestEvent(largestMinutesRegistered);
+        }}
+      />
+
       <ReactNativeDeviceActivity.ReactNativeDeviceActivityView
         name="hello"
         style={{ width: 200, height: 200, backgroundColor: "red" }}
@@ -36,6 +80,7 @@ export default function App() {
       </ReactNativeDeviceActivity.ReactNativeDeviceActivityView>
 
       <Text>{ReactNativeDeviceActivity.hello()}</Text>
+      <Text>{JSON.stringify(largestEvent, null, 2)}</Text>
     </View>
   );
 }

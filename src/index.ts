@@ -28,6 +28,10 @@ export async function requestAuthorization(): Promise<void> {
   return await ReactNativeDeviceActivityModule.requestAuthorization();
 }
 
+export function getEvents(): unknown[] {
+  return ReactNativeDeviceActivityModule.getEvents();
+}
+
 export async function startMonitoring(): Promise<void> {
   return await ReactNativeDeviceActivityModule.startMonitoring();
 }
