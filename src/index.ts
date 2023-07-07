@@ -68,15 +68,57 @@ export type DeviceActivityEvent = {
   eventName: string;
 };
 
+export type DeviceActivityEventRaw = Omit<
+  DeviceActivityEvent,
+  "familyActivitySelection"
+> & {
+  familyActivitySelectionIndex: number;
+};
+
+function convertDeviceActivityEvents(
+  events: DeviceActivityEvent[]
+): [DeviceActivityEventRaw[], FamilyActivitySelection[]] {
+  const uniqueSelections: FamilyActivitySelection[] = [];
+
+  const convertedEvents = events.map((event) => {
+    const selectionIndex = uniqueSelections.indexOf(
+      event.familyActivitySelection
+    );
+
+    const wasFound = selectionIndex !== -1;
+
+    if (!wasFound) {
+      uniqueSelections.push(event.familyActivitySelection);
+    }
+
+    const familyActivitySelectionIndex = !wasFound
+      ? uniqueSelections.length - 1
+      : selectionIndex;
+
+    const convertedEvent: DeviceActivityEventRaw = {
+      ...event,
+      familyActivitySelectionIndex,
+    };
+
+    return convertedEvent;
+  });
+
+  return [convertedEvents, uniqueSelections];
+}
+
 export async function startMonitoring(
   activityName: string,
   deviceActivitySchedule: DeviceActivitySchedule,
   deviceActivityEvents: DeviceActivityEvent[]
 ): Promise<void> {
+  const [deviceActivityEventsRaw, uniqueSelections] =
+    convertDeviceActivityEvents(deviceActivityEvents);
+
   return await ReactNativeDeviceActivityModule.startMonitoring(
     activityName,
     deviceActivitySchedule,
-    deviceActivityEvents
+    deviceActivityEventsRaw,
+    uniqueSelections
   );
 }
 
@@ -93,6 +135,15 @@ export function addSelectionChangeListener(
   listener: (event: ChangeEventPayload) => void
 ): Subscription {
   return emitter.addListener<ChangeEventPayload>("onSelectionChange", listener);
+}
+
+export function addEventReceivedListener(
+  listener: (event: ChangeEventPayload) => void
+): Subscription {
+  return emitter.addListener<ChangeEventPayload>(
+    "onDeviceActivityMonitorEvent",
+    listener
+  );
 }
 
 export {

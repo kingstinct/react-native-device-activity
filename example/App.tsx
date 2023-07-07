@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Button,
   NativeSyntheticEvent,
@@ -9,9 +9,10 @@ import {
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 const startMonitoring = (activitySelection: string) => {
-  const timeLimitMinutes = 5;
+  const timeLimitMinutes = 1;
+  const skipFirstMinutes = 0;
 
-  const totalEvents = (24 * 60) / timeLimitMinutes;
+  const totalEvents = (24 * 60 - skipFirstMinutes) / timeLimitMinutes;
 
   const events: ReactNativeDeviceActivity.DeviceActivityEvent[] = [];
 
@@ -20,7 +21,7 @@ const startMonitoring = (activitySelection: string) => {
     events.push({
       eventName: name,
       familyActivitySelection: activitySelection,
-      threshold: { minute: (i + 1) * timeLimitMinutes },
+      threshold: { minute: (i + 1) * timeLimitMinutes + skipFirstMinutes },
     });
   }
 
@@ -30,7 +31,6 @@ const startMonitoring = (activitySelection: string) => {
       intervalStart: { hour: 0, minute: 0, second: 0 },
       intervalEnd: { hour: 23, minute: 59, second: 59 },
       repeats: true,
-      warningTime: { minute: timeLimitMinutes - 1, second: 30 },
     },
     events
   );
@@ -46,17 +46,50 @@ export default function App() {
     string | null
   >(null);
 
+  const refreshEvents = useCallback(() => {
+    const events = ReactNativeDeviceActivity.getEvents();
+    const eventsArrayWithDate = Object.keys(events).map((key) => {
+      const timestamp = events[key];
+      const registered = new Date(Math.round(timestamp));
+      console.log(Math.round(timestamp));
+      const minutesRegistered = parseInt(
+        key.split("activity_event_last_called_")[1],
+        10
+      );
+      return { event: key, registered, minutesRegistered };
+    });
+
+    const eventsOccurredToday = eventsArrayWithDate.filter((event) => {
+      const today = new Date();
+      return (
+        event.registered.getDate() === today.getDate() &&
+        event.registered.getMonth() === today.getMonth() &&
+        event.registered.getFullYear() === today.getFullYear()
+      );
+    });
+
+    const largestMinutesRegistered = eventsOccurredToday.reduce(
+      (acc, event) => {
+        return event.minutesRegistered > acc.minutesRegistered ? event : acc;
+      },
+      { minutesRegistered: 0, event: "none", registered: new Date() }
+    );
+
+    setLargestEvent(largestMinutesRegistered);
+  }, []);
+
   useEffect(() => {
     ReactNativeDeviceActivity.requestAuthorization();
-    const listener = ReactNativeDeviceActivity.addSelectionChangeListener(
+    const listener = ReactNativeDeviceActivity.addEventReceivedListener(
       (event) => {
-        console.log(event);
+        console.log("got event, refreshing events!", event);
+        refreshEvents();
       }
     );
     return () => {
       listener.remove();
     };
-  }, []);
+  }, [refreshEvents]);
 
   return useMemo(
     () => (
@@ -71,42 +104,7 @@ export default function App() {
           onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
         />
 
-        <Button
-          title="Get events"
-          onPress={() => {
-            const events = ReactNativeDeviceActivity.getEvents();
-            const eventsArrayWithDate = Object.keys(events).map((key) => {
-              const timestamp = events[key];
-              const registered = new Date(Math.round(timestamp));
-              console.log(Math.round(timestamp));
-              const minutesRegistered = parseInt(
-                key.split("activity_event_last_called_")[1],
-                10
-              );
-              return { event: key, registered, minutesRegistered };
-            });
-
-            const eventsOccurredToday = eventsArrayWithDate.filter((event) => {
-              const today = new Date();
-              return (
-                event.registered.getDate() === today.getDate() &&
-                event.registered.getMonth() === today.getMonth() &&
-                event.registered.getFullYear() === today.getFullYear()
-              );
-            });
-
-            const largestMinutesRegistered = eventsOccurredToday.reduce(
-              (acc, event) => {
-                return event.minutesRegistered > acc.minutesRegistered
-                  ? event
-                  : acc;
-              },
-              { minutesRegistered: 0, event: "none", registered: new Date() }
-            );
-
-            setLargestEvent(largestMinutesRegistered);
-          }}
-        />
+        <Button title="Get events" onPress={refreshEvents} />
 
         <ReactNativeDeviceActivity.ReactNativeDeviceActivityView
           style={{
@@ -127,7 +125,7 @@ export default function App() {
               setFamilyActivitySelection(
                 event.nativeEvent.familyActivitySelection
               );
-              alert(event.nativeEvent.familyActivitySelection);
+              // alert(event.nativeEvent.familyActivitySelection);
             }
             console.log(event.nativeEvent.familyActivitySelection);
           }}
@@ -138,10 +136,6 @@ export default function App() {
             pointerEvents="none"
           />
         </ReactNativeDeviceActivity.ReactNativeDeviceActivityView>
-
-        <Text onLongPress={(e) => e.nativeEvent}>
-          {ReactNativeDeviceActivity.hello()}
-        </Text>
         <Text>{JSON.stringify(largestEvent, null, 2)}</Text>
       </View>
     ),

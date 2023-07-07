@@ -1,7 +1,12 @@
+import { PropsWithChildren } from "react";
 import { NativeSyntheticEvent, StyleProp, ViewStyle } from "react-native";
 
 export type ChangeEventPayload = {
   selection: Selection;
+};
+
+export type DeviceActivityMonitorEventPayload = {
+  eventName: string;
 };
 
 type ActivityCategory = {
@@ -26,10 +31,10 @@ type Selection = {
   webDomains: WebDomain[];
 };
 
-export type ReactNativeDeviceActivityViewProps = {
+export type ReactNativeDeviceActivityViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
   onSelectionChange?: (
     selection: NativeSyntheticEvent<{ familyActivitySelection: string }>
   ) => void;
   familyActivitySelection?: string | null;
-};
+}>;

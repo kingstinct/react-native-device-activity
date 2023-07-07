@@ -3,6 +3,7 @@ import DeviceActivity
 import FamilyControls
 import ManagedSettings
 import os
+import Foundation
 
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Robert testar")
 
@@ -53,7 +54,7 @@ struct ScheduleFromJS: Record {
 
 struct DeviceActivityEventFromJS: Record {
   @Field
-  var familyActivitySelection: String;
+  var familyActivitySelectionIndex: Int;
   @Field
   var threshold: DateComponentsFromJS;
   @Field
@@ -109,24 +110,47 @@ func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJ
   return swiftDateComponents
 }
 
-@available(iOS 15.0, *)
-func base64StringToFamilyActivitySelection(base64String: String) -> FamilyActivitySelection? {
-  // Step 1: Decode the base64 string to a Data object
-  guard let data = Data(base64Encoded: base64String) else {
-    print("Error: Invalid base64 string")
-    return nil
+class Hello {
+  let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
+  let observer: UnsafeRawPointer
+  
+  func registerListener(name: String){
+    let notificationName = name as CFString
+       CFNotificationCenterAddObserver(notificationCenter,
+                                       observer,
+                                       { (
+                                           center: CFNotificationCenter?,
+                                           observer: UnsafeMutableRawPointer?,
+                                           name: CFNotificationName?,
+                                           object: UnsafeRawPointer?,
+                                           userInfo: CFDictionary?
+                                           ) in
+         if let observer = observer, let name = name {
+
+           let mySelf = Unmanaged<BaseModule>.fromOpaque(observer).takeUnretainedValue()
+                                             print("Notification name: \(name)")
+           
+           mySelf.sendEvent("onDeviceActivityMonitorEvent" as String, [
+            "eventName": name
+           ])
+         }
+       },
+       notificationName,
+       nil,
+       CFNotificationSuspensionBehavior.deliverImmediately)
   }
   
-  // Step 2: Use NSKeyedUnarchiver to unarchive the data and create an HKQueryAnchor object
-  do {
-    let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-    unarchiver.requiresSecureCoding = true
-    let anchor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+  init(module: BaseModule){
+    observer = UnsafeRawPointer(Unmanaged.passUnretained(module).toOpaque())
+    registerListener(name: "intervalDidStart")
+    registerListener(name: "intervalDidEnd")
+    registerListener(name: "eventDidReachThreshold")
+    registerListener(name: "intervalWillStartWarning")
+    registerListener(name: "intervalWillEndWarning")
+    registerListener(name: "eventWillReachThresholdWarning")
     
-    return anchor as? FamilyActivitySelection
-  } catch {
-    print("Error: Unable to unarchive HKQueryAnchor object: \(error)")
-    return nil
+    
+    
   }
 }
 
@@ -144,10 +168,13 @@ public class ReactNativeDeviceActivityModule: Module {
     
     let center = DeviceActivityCenter()
     
+    
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     //Constants([
     // "PI": Double.pi
     //])
+    
+    let hey = Hello(module: self)
     
     Function("getEvents") { () -> [AnyHashable: Any] in
       let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
@@ -167,7 +194,7 @@ public class ReactNativeDeviceActivityModule: Module {
       return filteredDict
     }
     
-    AsyncFunction("startMonitoring") { (activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS]) in
+    AsyncFunction("startMonitoring") { (activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS], familyActivitySelections: [String]) in
       
       let schedule = DeviceActivitySchedule(
         intervalStart: convertToSwiftDateComponents(from: schedule.intervalStart),
@@ -178,29 +205,28 @@ public class ReactNativeDeviceActivityModule: Module {
         : nil
       )
       
+      let decodedFamilyActivitySelections = familyActivitySelections.map { familyActivitySelection in
+        let decoder = JSONDecoder()
+        let data = Data(base64Encoded: familyActivitySelection)
+        do {
+          let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+          return activitySelection
+        }
+        catch {
+          return FamilyActivitySelection()
+        }
+      }
+      
       let dictionary = Dictionary(uniqueKeysWithValues: events.map { (event: DeviceActivityEventFromJS) in
         
-        let decoder = JSONDecoder()
-        let data = Data(base64Encoded: event.familyActivitySelection)!
-        var applicationTokens: Set<ApplicationToken> = []
-        var categories: Set<ActivityCategoryToken> = []
-        var webDomainTokens: Set<WebDomainToken> = []
-        do {
-          let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data)
-          applicationTokens = activitySelection.applicationTokens
-          categories = activitySelection.categoryTokens
-          webDomainTokens = activitySelection.webDomainTokens
-        }
-        catch{
-          
-        }
+        let familyActivitySelection = decodedFamilyActivitySelections[event.familyActivitySelectionIndex]
         
         return (
           DeviceActivityEvent.Name(event.eventName),
           DeviceActivityEvent(
-            applications: applicationTokens,
-            categories: categor^\ies,
-            webDomains: webDomainTokens,
+            applications: familyActivitySelection.applicationTokens,
+            categories: familyActivitySelection.categoryTokens,
+            webDomains: familyActivitySelection.webDomainTokens,
             threshold: convertToSwiftDateComponents(from: event.threshold)
           )
         )
@@ -244,7 +270,8 @@ public class ReactNativeDeviceActivityModule: Module {
     }
     
     Events(
-      "onSelectionChange"
+      "onSelectionChange",
+      "onDeviceActivityMonitorEvent"
     )
     
     // Enables the module to be used as a native view. Definition components that are accepted as part of the
