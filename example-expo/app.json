@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kingstinct.react-native-device-activity-example-expo"
     },
     "android": {
       "adaptiveIcon": {
