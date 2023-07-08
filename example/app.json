@@ -16,7 +16,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.deviceactivity.example"
+      "bundleIdentifier": "expo.modules.deviceactivity.example",
+      "entitlements": {
+        "com.apple.developer.family-controls": true,
+        "com.apple.security.application-groups": ["group.ActivityMonitor"],
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +31,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
-  }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.0"
+          },
+        },
+      ]
+    ],
+  },
 }

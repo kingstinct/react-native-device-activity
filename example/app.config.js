@@ -3,6 +3,7 @@ require("ts-node/register");
 module.exports = ({ config }) => ({
   ...config,
   plugins: [
+    ...config.plugins,
     [
       require("expo-apple-targets/target-plugin").withTargetsDir,
       {
