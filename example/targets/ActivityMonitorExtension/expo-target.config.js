@@ -1,6 +1,6 @@
 /** @type {import('expo-apple-targets/target-plugin/config').Config} */
 const config = {
-  type: "widget",
+  type: "device-activity-monitor",
   // accentColor: "steelblue",
   // deploymentTarget: "9.4",
   frameworks: ["DeviceActivity"],
