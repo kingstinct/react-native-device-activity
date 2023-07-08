@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react-native-device-activity-example",
+    "name": "DeviceActivityRN",
     "slug": "react-native-device-activity-example",
     "version": "1.0.0",
     "orientation": "portrait",
