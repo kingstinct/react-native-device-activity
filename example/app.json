@@ -40,6 +40,12 @@
             "deploymentTarget": "15.0"
           },
         },
+      ],
+      [
+        "@kingstinct/expo-apple-targets/app.plugin.js",
+        {
+          "appleTeamId": "34SE8X7Q58"
+        },
       ]
     ],
   },

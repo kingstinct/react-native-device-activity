@@ -8,14 +8,17 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@bacons/xcode": "^1.0.0-alpha.5",
     "expo": "~48.0.18",
+    "expo-splash-screen": "~0.18.2",
+    "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@kingstinct/expo-apple-targets": "^0.0.1",
     "@types/react": "~18.0.14",
-    "expo-apple-targets": "../../expo-apple-targets",
     "expo-build-properties": "^0.8.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
