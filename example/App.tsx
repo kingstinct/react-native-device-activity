@@ -7,39 +7,46 @@ import {
   View,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
+import {
+  CallbackEvent,
+  DeviceActivityEvent,
+} from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
 const startMonitoring = (activitySelection: string) => {
   const timeLimitMinutes = 1;
-  const skipFirstMinutes = 0;
 
-  const totalEvents = (24 * 60 - skipFirstMinutes) / timeLimitMinutes;
+  const totalEvents = (1 * 60) / timeLimitMinutes;
 
-  const events: ReactNativeDeviceActivity.DeviceActivityEvent[] = [];
+  let events: DeviceActivityEvent[] = [];
 
-  for (let i = 0; i < totalEvents; i++) {
-    const name = `${(i + 1) * timeLimitMinutes}_minutes_today`;
-    events.push({
-      eventName: name,
-      familyActivitySelection: activitySelection,
-      threshold: { minute: (i + 1) * timeLimitMinutes + skipFirstMinutes },
-    });
+  // loop over each our of the day
+  for (let hour = 0; hour < 24; hour++) {
+    for (let i = 0; i < totalEvents; i++) {
+      const name = `${(i + 1) * timeLimitMinutes}_minutes_today`;
+      events.push({
+        eventName: name,
+        familyActivitySelection: activitySelection,
+        threshold: { minute: (i + 1) * timeLimitMinutes },
+      });
+    }
+
+    ReactNativeDeviceActivity.startMonitoring(
+      "DeviceActivity.AppLoggedTimeDaily." + hour,
+      {
+        intervalStart: { hour, minute: 0, second: 0 },
+        intervalEnd: { hour, minute: 59, second: 59 },
+        repeats: true,
+      },
+      events
+    );
+    events = [];
   }
-
-  ReactNativeDeviceActivity.startMonitoring(
-    "Lifeline.AppLoggedTimeDaily",
-    {
-      intervalStart: { hour: 0, minute: 0, second: 0 },
-      intervalEnd: { hour: 23, minute: 59, second: 59 },
-      repeats: true,
-    },
-    events
-  );
 };
 
 export default function App() {
   const [largestEvent, setLargestEvent] = React.useState<null | {
     minutesRegistered: number;
-    registered: Date;
+    registeredAt: Date;
   }>(null);
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
@@ -48,31 +55,43 @@ export default function App() {
 
   const refreshEvents = useCallback(() => {
     const events = ReactNativeDeviceActivity.getEvents();
-    const eventsArrayWithDate = Object.keys(events).map((key) => {
-      const timestamp = events[key];
-      const registered = new Date(Math.round(timestamp));
-      console.log(Math.round(timestamp));
+    const today = new Date();
+    const eventsParsed = Object.keys(events).map((key) => {
+      const [, activityName, callbackName, eventName] = key.split("#");
+      return {
+        activityName,
+        callbackName: callbackName as CallbackEvent,
+        eventName,
+        timestamp: new Date(events[key]),
+      };
+    });
+    const todaysThresholdsReached = eventsParsed.filter(
+      ({ callbackName, timestamp }) =>
+        callbackName === "eventDidReachThreshold" &&
+        timestamp.getHours() === today.getHours() &&
+        timestamp.getDate() === today.getDate() &&
+        timestamp.getMonth() === today.getMonth() &&
+        timestamp.getFullYear() === today.getFullYear()
+    );
+
+    const eventsOccurredToday = todaysThresholdsReached.map((event) => {
       const minutesRegistered = parseInt(
-        key.split("activity_event_last_called_")[1],
+        event.eventName.split("_minutes_today")[0],
         10
       );
-      return { event: key, registered, minutesRegistered };
-    });
-
-    const eventsOccurredToday = eventsArrayWithDate.filter((event) => {
-      const today = new Date();
-      return (
-        event.registered.getDate() === today.getDate() &&
-        event.registered.getMonth() === today.getMonth() &&
-        event.registered.getFullYear() === today.getFullYear()
-      );
+      return {
+        activity: event.activityName,
+        event: event.eventName,
+        registeredAt: event.timestamp,
+        minutesRegistered,
+      };
     });
 
     const largestMinutesRegistered = eventsOccurredToday.reduce(
       (acc, event) => {
         return event.minutesRegistered > acc.minutesRegistered ? event : acc;
       },
-      { minutesRegistered: 0, event: "none", registered: new Date() }
+      { minutesRegistered: 0, event: "none", registeredAt: new Date() }
     );
 
     setLargestEvent(largestMinutesRegistered);

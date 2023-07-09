@@ -5,8 +5,7 @@ import ManagedSettings
 import os
 import Foundation
 
-let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Robert testar")
-
+let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
 struct DateComponentsFromJS: Record {
   @Field
@@ -110,7 +109,7 @@ func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJ
   return swiftDateComponents
 }
 
-class Hello {
+class NativeEventObserver {
   let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
   let observer: UnsafeRawPointer
   
@@ -131,7 +130,7 @@ class Hello {
                                              print("Notification name: \(name)")
            
            mySelf.sendEvent("onDeviceActivityMonitorEvent" as String, [
-            "eventName": name
+            "eventName": name.rawValue
            ])
          }
        },
@@ -171,10 +170,12 @@ public class ReactNativeDeviceActivityModule: Module {
     // "PI": Double.pi
     //])
     
-    let hey = Hello(module: self)
+    let observer = NativeEventObserver(module: self)
+
+    let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
     
-    Function("getEvents") { () -> [AnyHashable: Any] in
-      let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+    Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
+      
       let dict = userDefaults?.dictionaryRepresentation()
       
       guard let actualDict = dict else {
@@ -182,7 +183,7 @@ public class ReactNativeDeviceActivityModule: Module {
       }
       
       let filteredDict = actualDict.filter({ (key: String, value: Any) in
-        return key.starts(with: "activity_event_last_called_")
+        return key.starts(with: activityName == nil ? "DeviceActivityMonitorExtension#" : "DeviceActivityMonitorExtension#\(activityName!)#")
       }).reduce(into: [:]) { (result, element) in
         let (key, value) = element
         result[key] = value as? NSNumber // Add key-value pair to the result dictionary
@@ -192,7 +193,6 @@ public class ReactNativeDeviceActivityModule: Module {
     }
     
     AsyncFunction("startMonitoring") { (activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS], familyActivitySelections: [String]) in
-      
       let schedule = DeviceActivitySchedule(
         intervalStart: convertToSwiftDateComponents(from: schedule.intervalStart),
         intervalEnd: convertToSwiftDateComponents(from: schedule.intervalEnd),
@@ -215,7 +215,6 @@ public class ReactNativeDeviceActivityModule: Module {
       }
       
       let dictionary = Dictionary(uniqueKeysWithValues: events.map { (event: DeviceActivityEventFromJS) in
-        
         let familyActivitySelection = decodedFamilyActivitySelections[event.familyActivitySelectionIndex]
         
         return (
@@ -236,14 +235,20 @@ public class ReactNativeDeviceActivityModule: Module {
           during: schedule,
           events: dictionary
         )
-        logger.log("😭😭😭 Success with Starting Monitor Activity")
+        logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
       } catch {
-        logger.log("😭😭😭 Error with Starting Monitor Activity: \(error.localizedDescription)")
+        logger.log("❌ Failed with Starting Monitor Activity: \(error.localizedDescription)")
       }
     }
     
-    Function("stopMonitoring") {
-      center.stopMonitoring()
+    Function("stopMonitoring") { (activityNames: [String]?) in
+      if(activityNames == nil || activityNames?.count == 0){
+        center.stopMonitoring()
+        return
+      }
+      center.stopMonitoring(activityNames!.map({ activityName in
+        return DeviceActivityName(activityName)
+      }))
     }
     
     AsyncFunction("requestAuthorization"){
@@ -252,18 +257,9 @@ public class ReactNativeDeviceActivityModule: Module {
       if #available(iOS 16.0, *) {
         try await ac.requestAuthorization(for: .individual)
       } else {
-        // Fallback on earlier versions
+        logger.log("⚠️ iOS 16.0 or later is required to request authorization.")
       }
       
-    }
-    
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
     }
     
     Events(
@@ -285,10 +281,9 @@ public class ReactNativeDeviceActivityModule: Module {
           let selection = try decoder.decode(FamilyActivitySelection.self, from: data)
           
           view.model.activitySelection = selection
-        } catch{
-          
+        } catch {
+          logger.log("❌ Failed to deserialize familyActivitySelection to FamilyActivitySelection: \(error.localizedDescription)")
         }
-        
       }
     }
   }

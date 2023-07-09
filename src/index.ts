@@ -22,8 +22,12 @@ export async function requestAuthorization(): Promise<void> {
   return await ReactNativeDeviceActivityModule.requestAuthorization();
 }
 
-export function getEvents(): EventsLookup {
-  return ReactNativeDeviceActivityModule.getEvents();
+export function getEvents(
+  onlyEventsForActivityWithName?: string
+): EventsLookup {
+  return ReactNativeDeviceActivityModule.getEvents(
+    onlyEventsForActivityWithName
+  );
 }
 
 function convertDeviceActivityEvents(
@@ -73,8 +77,8 @@ export async function startMonitoring(
   );
 }
 
-export function stopMonitoring(): void {
-  return ReactNativeDeviceActivityModule.stopMonitoring();
+export function stopMonitoring(activityNames?: string[]): void {
+  return ReactNativeDeviceActivityModule.stopMonitoring(activityNames);
 }
 
 const emitter = new EventEmitter(

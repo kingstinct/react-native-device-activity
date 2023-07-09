@@ -1,14 +1,15 @@
 import { PropsWithChildren } from "react";
 import { NativeSyntheticEvent, StyleProp, ViewStyle } from "react-native";
 
+export type CallbackEvent =
+  | "intervalDidStart"
+  | "intervalDidEnd"
+  | "eventDidReachThreshold"
+  | "intervalWillStartWarning"
+  | "intervalWillEndWarning"
+  | "eventWillReachThresholdWarning";
 export type DeviceActivityMonitorEventPayload = {
-  eventName:
-    | "intervalDidStart"
-    | "intervalDidEnd"
-    | "eventDidReachThreshold"
-    | "intervalWillStartWarning"
-    | "intervalWillEndWarning"
-    | "eventWillReachThresholdWarning";
+  eventName: CallbackEvent;
 };
 
 export type EventsLookup = Record<string, number>;
@@ -64,8 +65,8 @@ export type DeviceActivityEventRaw = Omit<
 
 export type ReactNativeDeviceActivityNativeModule = {
   requestAuthorization: () => PromiseLike<void> | void;
-  getEvents: () => EventsLookup;
-  stopMonitoring: () => void;
+  getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
+  stopMonitoring: (activityNames?: string[]) => void;
   startMonitoring: (
     activityName: string,
     deviceActivitySchedule: DeviceActivitySchedule,
