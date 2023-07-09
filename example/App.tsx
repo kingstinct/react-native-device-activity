@@ -106,7 +106,7 @@ export default function App() {
 
         <Button title="Get events" onPress={refreshEvents} />
 
-        <ReactNativeDeviceActivity.ReactNativeDeviceActivityView
+        <ReactNativeDeviceActivity.DeviceActivitySelectionView
           style={{
             width: 200,
             height: 200,
@@ -135,7 +135,7 @@ export default function App() {
             style={{ backgroundColor: "green", height: 100 }}
             pointerEvents="none"
           />
-        </ReactNativeDeviceActivity.ReactNativeDeviceActivityView>
+        </ReactNativeDeviceActivity.DeviceActivitySelectionView>
         <Text>{JSON.stringify(largestEvent, null, 2)}</Text>
       </View>
     ),

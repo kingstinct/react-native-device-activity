@@ -1,5 +1,23 @@
-import { requireNativeModule } from 'expo-modules-core';
+import { ProxyNativeModule } from "expo-modules-core";
 
-// It loads the native module object from the JSI or falls back to
-// the bridge module (from NativeModulesProxy) if the remote debugger is on.
-export default requireNativeModule('ReactNativeDeviceActivity');
+import type { ReactNativeDeviceActivityNativeModule } from "./ReactNativeDeviceActivity.types";
+
+const warnText = "[react-native-device-activity] Only available on iOS";
+
+const warnFn = () => {
+  console.warn(warnText);
+};
+
+const mockModule: ReactNativeDeviceActivityNativeModule & ProxyNativeModule = {
+  requestAuthorization: warnFn,
+  getEvents: () => {
+    console.warn(warnText);
+    return {};
+  },
+  startMonitoring: warnFn,
+  stopMonitoring: warnFn,
+  addListener: warnFn,
+  removeListeners: warnFn,
+};
+
+export default mockModule;

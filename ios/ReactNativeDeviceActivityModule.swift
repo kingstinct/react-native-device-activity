@@ -147,10 +147,7 @@ class Hello {
     registerListener(name: "eventDidReachThreshold")
     registerListener(name: "intervalWillStartWarning")
     registerListener(name: "intervalWillEndWarning")
-    registerListener(name: "eventWillReachThresholdWarning")
-    
-    
-    
+    registerListener(name: "eventWillReachThresholdWarning") 
   }
 }
 
