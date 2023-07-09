@@ -1,6 +1,6 @@
 # react-native-device-activity
 
-Provide access to Apples DeviceActivity API
+Provides access to Apples DeviceActivity API. It does require a Custom Dev Client to work with Expo.
 
 # API documentation
 
@@ -10,6 +10,26 @@ Provide access to Apples DeviceActivity API
 # Installation in managed Expo projects
 
 For [managed](https://docs.expo.dev/archive/managed-vs-bare/) Expo projects, please follow the installation instructions in the [API documentation for the latest stable release](#api-documentation). If you follow the link and there is no documentation available then this library is not yet usable within managed projects &mdash; it is likely to be included in an upcoming Expo SDK release.
+
+The package requires native code, which includes a custom app target. Currently it requires targeting iOS 15 or higher, so populate app.json/app.config.json as follows:
+```
+"plugins": [
+    [
+      "expo-build-properties",
+      {
+        "ios": {
+          "deploymentTarget": "15.0"
+        },
+      },
+    ],
+    [
+      "../app.plugin.js",
+      {
+        "appleTeamId": "34SE8X7Q58"
+      },
+    ]
+  ],
+  ```
 
 # Installation in bare React Native projects
 

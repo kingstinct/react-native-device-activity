@@ -42,7 +42,7 @@
         },
       ],
       [
-        "@kingstinct/expo-apple-targets/app.plugin.js",
+        "../app.plugin.js",
         {
           "appleTeamId": "34SE8X7Q58"
         },
