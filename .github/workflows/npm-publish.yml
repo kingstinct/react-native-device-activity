@@ -51,6 +51,6 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-      - run: git push --atomic
+      - run: git push --follow-tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
