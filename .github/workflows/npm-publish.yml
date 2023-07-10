@@ -34,7 +34,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
 
-  publish-npm:
+  publish-to-npm:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +54,3 @@ jobs:
       - run: git push --tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: ${{ github.event.inputs.description }}
-  
