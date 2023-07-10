@@ -57,6 +57,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ github.event.head_commit.message }}
+          name: ${{ env.versionTag }} ${{ github.event.inputs.description }}
           tag_name: ${{ env.versionTag }}
           generate_release_notes: true
