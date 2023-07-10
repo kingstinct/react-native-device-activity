@@ -30,7 +30,11 @@ jobs:
           node-version-file: .nvmrc
           registry-url: https://registry.npmjs.org/
           scope: '@kingstinct'
+      - run: npm version from-git
       - run: npm ci
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - run: git push
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
