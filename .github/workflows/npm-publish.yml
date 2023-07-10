@@ -4,8 +4,17 @@
 name: Publish Node.js Package
 
 on:
-  release:
-    types: [created,edited]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release Type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - 'patch'
+          - 'minor'
+          - 'major'
 
 jobs:
   test:
@@ -32,7 +41,7 @@ jobs:
           scope: '@kingstinct'
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      - run: npm version from-git
+      - run: npm version ${{ github.event.inputs.release_type }}
       - run: npm ci
       - run: npm publish
         env:
