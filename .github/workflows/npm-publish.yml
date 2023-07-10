@@ -46,7 +46,7 @@ jobs:
           scope: '@kingstinct'
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      - run: npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"
+      - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
       - run: npm ci
       - run: npm publish
         env:
@@ -54,3 +54,9 @@ jobs:
       - run: git push --follow-tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ github.event.head_commit.message }}
+          tag_name: ${{ env.versionTag }}
+          generate_release_notes: true
