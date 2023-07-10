@@ -8,9 +8,10 @@
     "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "expo-module lint",
+    "pre-push": "concurrently \"npm run lint\" \"npm run typecheck\"",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
-    "prepare": "expo-module prepare",
+    "prepare": "expo-module prepare && husky install",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "open -a \"Xcode\" example/ios"
@@ -40,8 +41,10 @@
   "devDependencies": {
     "@types/react": "^18.0.25",
     "@types/react-native": "^0.70.6",
+    "concurrently": "^8.2.0",
     "expo-module-scripts": "^3.0.4",
-    "expo-modules-core": "^1.1.0"
+    "expo-modules-core": "^1.1.0",
+    "husky": "^8.0.3"
   },
   "peerDependencies": {
     "expo": "*",
