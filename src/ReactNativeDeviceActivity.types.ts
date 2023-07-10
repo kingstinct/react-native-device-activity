@@ -17,7 +17,7 @@ export type EventsLookup = Record<string, number>;
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
   onSelectionChange?: (
-    selection: NativeSyntheticEvent<{ familyActivitySelection: string }>
+    selection: NativeSyntheticEvent<{ familyActivitySelection: string }>,
   ) => void;
   familyActivitySelection?: string | null;
 }>;
@@ -71,6 +71,6 @@ export type ReactNativeDeviceActivityNativeModule = {
     activityName: string,
     deviceActivitySchedule: DeviceActivitySchedule,
     deviceActivityEvents: DeviceActivityEventRaw[],
-    uniqueSelections: string[]
+    uniqueSelections: string[],
   ) => void;
 };

@@ -7,7 +7,7 @@ const NativeView: React.ComponentType<DeviceActivitySelectionViewProps> =
   requireNativeViewManager("ReactNativeDeviceActivity");
 
 export default function DeviceActivitySelectionView(
-  props: DeviceActivitySelectionViewProps
+  props: DeviceActivitySelectionViewProps,
 ) {
   return <NativeView {...props} />;
 }

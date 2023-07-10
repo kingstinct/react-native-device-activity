@@ -23,21 +23,21 @@ export async function requestAuthorization(): Promise<void> {
 }
 
 export function getEvents(
-  onlyEventsForActivityWithName?: string
+  onlyEventsForActivityWithName?: string,
 ): EventsLookup {
   return ReactNativeDeviceActivityModule.getEvents(
-    onlyEventsForActivityWithName
+    onlyEventsForActivityWithName,
   );
 }
 
 function convertDeviceActivityEvents(
-  events: DeviceActivityEvent[]
+  events: DeviceActivityEvent[],
 ): [DeviceActivityEventRaw[], FamilyActivitySelection[]] {
   const uniqueSelections: FamilyActivitySelection[] = [];
 
   const convertedEvents = events.map((event) => {
     const selectionIndex = uniqueSelections.indexOf(
-      event.familyActivitySelection
+      event.familyActivitySelection,
     );
 
     const wasFound = selectionIndex !== -1;
@@ -64,16 +64,16 @@ function convertDeviceActivityEvents(
 export async function startMonitoring(
   activityName: string,
   deviceActivitySchedule: DeviceActivitySchedule,
-  deviceActivityEvents: DeviceActivityEvent[]
+  deviceActivityEvents: DeviceActivityEvent[],
 ): Promise<void> {
   const [deviceActivityEventsRaw, uniqueSelections] =
     convertDeviceActivityEvents(deviceActivityEvents);
 
-  return await ReactNativeDeviceActivityModule.startMonitoring(
+  return ReactNativeDeviceActivityModule.startMonitoring(
     activityName,
     deviceActivitySchedule,
     deviceActivityEventsRaw,
-    uniqueSelections
+    uniqueSelections,
   );
 }
 
@@ -83,15 +83,15 @@ export function stopMonitoring(activityNames?: string[]): void {
 
 const emitter = new EventEmitter(
   ReactNativeDeviceActivityModule ??
-    NativeModulesProxy.ReactNativeDeviceActivity
+    NativeModulesProxy.ReactNativeDeviceActivity,
 );
 
 export function addEventReceivedListener(
-  listener: (event: DeviceActivityMonitorEventPayload) => void
+  listener: (event: DeviceActivityMonitorEventPayload) => void,
 ): Subscription {
   return emitter.addListener<DeviceActivityMonitorEventPayload>(
     "onDeviceActivityMonitorEvent",
-    listener
+    listener,
   );
 }
 
