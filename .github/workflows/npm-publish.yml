@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 name: Publish Node.js Package
-run-name: ${{ inputs.release_type }} release by @${{ github.actor }}
+run-name: ${{ inputs.description }} (${{ inputs.release_type }}) release by @${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -51,7 +51,7 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-      - run: git push
+      - run: git push --tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Release
