@@ -7,7 +7,7 @@ const fs = require("fs");
 const pkg = require("./package.json");
 
 /** @type {import('@expo/config-plugins').ConfigPlugin} */
-const withCopyTargetFolder = (config) => {
+export const withCopyTargetFolder = (config) => {
   const projectRoot = config._internal.projectRoot;
   // eslint-disable-next-line no-undef
   const packageTargetFolderPath = __dirname + "/targets";
@@ -32,5 +32,5 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
 module.exports = createRunOncePlugin(
   withActivityMonitorExtensionPlugin,
   pkg.name,
-  pkg.version
+  pkg.version,
 );

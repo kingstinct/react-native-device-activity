@@ -19,7 +19,8 @@
   "files": [
     "build",
     "ios",
-    "app.plugin.js"
+    "app.plugin.js",
+    "targets"
   ],
   "keywords": [
     "react-native",
