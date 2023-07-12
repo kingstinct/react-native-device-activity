@@ -16,12 +16,6 @@
     "expo-module": "expo-module",
     "open:ios": "open -a \"Xcode\" example/ios"
   },
-  "files": [
-    "build",
-    "ios",
-    "app.plugin.js",
-    "targets"
-  ],
   "keywords": [
     "react-native",
     "expo",
