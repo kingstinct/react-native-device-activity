@@ -7,6 +7,8 @@
 
 Provides access to Apples DeviceActivity API. It does require a Custom Dev Client to work with Expo.
 
+Please note that it only supports iOS (and requires iOS 15 or higher). For Android I'd probably look into [UsageStats](https://developer.android.com/reference/android/app/usage/UsageStats), which seems provide more granularity.
+
 # Examples
 
 ```TypeScript
@@ -89,13 +91,15 @@ The package requires native code, which includes a custom app target. Currently 
       },
     ],
     [
-      "../app.plugin.js",
+      "react-native-device-activity",
       {
-        "appleTeamId": "34SE8X7Q58"
-      },
+        "appleTeamId": "<YOUR_TEAM_ID>",
+      }
     ]
   ],
   ```
+
+⚠️ Please note that you need to apply to [apply to use this API](https://developer.apple.com/contact/request/family-controls-distribution) before launching it in AppStore
 
 # Installation in bare React Native projects
 
