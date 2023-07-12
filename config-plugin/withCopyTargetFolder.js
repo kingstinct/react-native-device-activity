@@ -4,7 +4,7 @@ const fs = require("fs");
 const withCopyTargetFolder = (config) => {
   const projectRoot = config._internal.projectRoot;
   // eslint-disable-next-line no-undef
-  const packageTargetFolderPath = __dirname + "/targets";
+  const packageTargetFolderPath = __dirname + "/../targets";
   const projectTargetFolderPath = projectRoot + "/targets";
 
   if (!fs.existsSync(projectTargetFolderPath)) {
