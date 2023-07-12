@@ -8,12 +8,13 @@ import {
 // and on native platforms to ReactNativeDeviceActivity.ts
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
+  CallbackEventName,
   DeviceActivityEvent,
   DeviceActivityEventRaw,
   DeviceActivityMonitorEventPayload,
   DeviceActivitySchedule,
   DeviceActivitySelectionViewProps,
-  EventsLookup,
+  EventParsed,
   FamilyActivitySelection,
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
@@ -24,10 +25,22 @@ export async function requestAuthorization(): Promise<void> {
 
 export function getEvents(
   onlyEventsForActivityWithName?: string,
-): EventsLookup {
-  return ReactNativeDeviceActivityModule.getEvents(
+): EventParsed[] {
+  const events = ReactNativeDeviceActivityModule.getEvents(
     onlyEventsForActivityWithName,
   );
+
+  const eventsParsed = Object.keys(events).map((key) => {
+    const [, activityName, callbackName, eventName] = key.split("#");
+    return {
+      activityName,
+      callbackName: callbackName as CallbackEventName,
+      eventName,
+      lastCalledAt: new Date(events[key]),
+    };
+  });
+
+  return eventsParsed;
 }
 
 function convertDeviceActivityEvents(

@@ -7,10 +7,7 @@ import {
   View,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import {
-  CallbackEvent,
-  DeviceActivityEvent,
-} from "react-native-device-activity/ReactNativeDeviceActivity.types";
+import { DeviceActivityEvent } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
 const startMonitoring = (activitySelection: string) => {
   const timeLimitMinutes = 1;
@@ -37,7 +34,7 @@ const startMonitoring = (activitySelection: string) => {
         intervalEnd: { hour, minute: 59, second: 59 },
         repeats: true,
       },
-      events
+      events,
     );
     events = [];
   }
@@ -54,35 +51,27 @@ export default function App() {
   >(null);
 
   const refreshEvents = useCallback(() => {
-    const events = ReactNativeDeviceActivity.getEvents();
+    const eventsParsed = ReactNativeDeviceActivity.getEvents();
     const today = new Date();
-    const eventsParsed = Object.keys(events).map((key) => {
-      const [, activityName, callbackName, eventName] = key.split("#");
-      return {
-        activityName,
-        callbackName: callbackName as CallbackEvent,
-        eventName,
-        timestamp: new Date(events[key]),
-      };
-    });
+
     const todaysThresholdsReached = eventsParsed.filter(
-      ({ callbackName, timestamp }) =>
+      ({ callbackName, lastCalledAt }) =>
         callbackName === "eventDidReachThreshold" &&
-        timestamp.getHours() === today.getHours() &&
-        timestamp.getDate() === today.getDate() &&
-        timestamp.getMonth() === today.getMonth() &&
-        timestamp.getFullYear() === today.getFullYear()
+        lastCalledAt.getHours() === today.getHours() &&
+        lastCalledAt.getDate() === today.getDate() &&
+        lastCalledAt.getMonth() === today.getMonth() &&
+        lastCalledAt.getFullYear() === today.getFullYear(),
     );
 
     const eventsOccurredToday = todaysThresholdsReached.map((event) => {
       const minutesRegistered = parseInt(
         event.eventName.split("_minutes_today")[0],
-        10
+        10,
       );
       return {
         activity: event.activityName,
         event: event.eventName,
-        registeredAt: event.timestamp,
+        registeredAt: event.lastCalledAt,
         minutesRegistered,
       };
     });
@@ -91,7 +80,7 @@ export default function App() {
       (acc, event) => {
         return event.minutesRegistered > acc.minutesRegistered ? event : acc;
       },
-      { minutesRegistered: 0, event: "none", registeredAt: new Date() }
+      { minutesRegistered: 0, event: "none", registeredAt: new Date() },
     );
 
     setLargestEvent(largestMinutesRegistered);
@@ -103,7 +92,7 @@ export default function App() {
       (event) => {
         console.log("got event, refreshing events!", event);
         refreshEvents();
-      }
+      },
     );
     return () => {
       listener.remove();
@@ -135,14 +124,14 @@ export default function App() {
             borderColor: "red",
           }}
           onSelectionChange={(
-            event: NativeSyntheticEvent<{ familyActivitySelection: string }>
+            event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
           ) => {
             if (
               event.nativeEvent.familyActivitySelection !==
               familyActivitySelection
             ) {
               setFamilyActivitySelection(
-                event.nativeEvent.familyActivitySelection
+                event.nativeEvent.familyActivitySelection,
               );
               // alert(event.nativeEvent.familyActivitySelection);
             }
@@ -158,7 +147,7 @@ export default function App() {
         <Text>{JSON.stringify(largestEvent, null, 2)}</Text>
       </View>
     ),
-    [familyActivitySelection, largestEvent]
+    [familyActivitySelection, largestEvent],
   );
 }
 

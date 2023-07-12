@@ -130,7 +130,7 @@ class NativeEventObserver {
                                              print("Notification name: \(name)")
            
            mySelf.sendEvent("onDeviceActivityMonitorEvent" as String, [
-            "eventName": name.rawValue
+            "callbackName": name.rawValue
            ])
          }
        },

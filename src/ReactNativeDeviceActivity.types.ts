@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { NativeSyntheticEvent, StyleProp, ViewStyle } from "react-native";
 
-export type CallbackEvent =
+export type CallbackEventName =
   | "intervalDidStart"
   | "intervalDidEnd"
   | "eventDidReachThreshold"
@@ -9,7 +9,14 @@ export type CallbackEvent =
   | "intervalWillEndWarning"
   | "eventWillReachThresholdWarning";
 export type DeviceActivityMonitorEventPayload = {
-  eventName: CallbackEvent;
+  callbackName: CallbackEventName;
+};
+
+export type EventParsed = {
+  activityName: string;
+  callbackName: CallbackEventName;
+  eventName: string;
+  lastCalledAt: Date;
 };
 
 export type EventsLookup = Record<string, number>;

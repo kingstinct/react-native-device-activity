@@ -7,10 +7,71 @@
 
 Provides access to Apples DeviceActivity API. It does require a Custom Dev Client to work with Expo.
 
-# API documentation
+# Examples
 
-- [Documentation for the main branch](https://github.com/expo/expo/blob/main/docs/pages/versions/unversioned/sdk/react-native-device-activity.md)
-- [Documentation for the latest stable release](https://docs.expo.dev/versions/latest/sdk/react-native-device-activity/)
+```TypeScript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
+const DeviceActivityPicker = () => {
+  // First things first, you need to request authorization
+  useEffect(() => {
+    ReactNativeDeviceActivity.requestAuthorization()
+  }, [])
+
+  const [familyActivitySelection, setFamilyActivitySelection] = React.useState(null);
+
+  // next you need to present a native view to let the user select which activities to track, you need to do this before you can start tracking (this is a completely unstyled clickable native view):
+  return (
+    <ReactNativeDeviceActivity.DeviceActivitySelectionView
+      onSelectionChange={(event) => {
+        setFamilyActivitySelection(
+          event.nativeEvent.familyActivitySelection
+        )
+      }}
+      familyActivitySelection={familyActivitySelection}>
+        <Text>Click here</Text>
+    </ReactNativeDeviceActivity.DeviceActivitySelectionView>)
+  }
+}
+
+// once you have authorization and got hold of the familyActivitySelection (which is a base64 string) you can start tracking with it:
+const trackDeviceActivity = (activitySelection: string) => {
+  ReactNativeDeviceActivity.startMonitoring(
+    "DeviceActivity.AppLoggedTimeDaily",
+    {
+      // repeat logging every 24 hours
+      intervalStart: { hour: 0, minute: 0, second: 0 },
+      intervalEnd: { hour: 23, minute: 59, second: 59 },
+      repeats: true,
+    },
+    events: [
+      {
+        eventName: 'user_activity_reached_10_minutes',
+        familyActivitySelection: activitySelection,
+        threshold: { minute: 10 },
+      }
+    ]
+  );
+}
+
+// you can listen to events (which I guess only works when the app is alive):
+const listener = ReactNativeDeviceActivity.addEventReceivedListener(
+      (event) => {
+        const name = event.nativeEvent.callbackName; // the name of the event
+        /* callbackName is one of, corresponding to the events received from the native API:
+          - "intervalDidStart"
+          - "intervalDidEnd"
+          - "eventDidReachThreshold"
+          - "intervalWillStartWarning"
+          - "intervalWillEndWarning"
+          - "eventWillReachThresholdWarning";
+        */
+      }
+    );
+
+// you can also get a history of events called with the time where called:
+const events = ReactNativeDeviceActivityModule.getEvents();
+```
 
 # Installation in managed Expo projects
 
