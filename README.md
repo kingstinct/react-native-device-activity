@@ -99,6 +99,8 @@ The package requires native code, which includes a custom app target. Currently 
   ],
   ```
 
+The Swift files for the iOS target will be copied to your local `/targets` directory. You might want to add it to your .gitignore.
+
 ⚠️ Please note that you need to apply to [apply to use this API](https://developer.apple.com/contact/request/family-controls-distribution) before launching it in AppStore
 
 # Installation in bare React Native projects
