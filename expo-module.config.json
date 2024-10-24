@@ -1,9 +1,6 @@
 {
-  "platforms": ["ios", "tvos", "android", "web"],
+  "platforms": ["ios"],
   "ios": {
     "modules": ["ReactNativeDeviceActivityModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.deviceactivity.ReactNativeDeviceActivityModule"]
   }
 }

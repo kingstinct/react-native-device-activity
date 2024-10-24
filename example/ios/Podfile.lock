@@ -1462,7 +1462,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
-  ReactNativeDeviceActivity: b12de4011e183fe4068e3bf4ed5d760086f8f809
+  ReactNativeDeviceActivity: a0a6f93aa4e6aff812da277daddbc54384d2f671
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
 

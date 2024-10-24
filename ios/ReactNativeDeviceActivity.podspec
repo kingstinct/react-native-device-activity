@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license        = package['license']
   s.author         = package['author']
   s.homepage       = package['homepage']
-  s.platforms      = { :ios => '13.4', :tvos => '13.4' }
+  s.platforms      = { :ios => '14.0', :tvos => '14.0' }
   s.swift_version  = '5.4'
   s.source         = { git: 'https://github.com/kingstinct/react-native-device-activity' }
   s.static_framework = true
