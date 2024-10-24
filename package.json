@@ -1,0 +1,42 @@
+{
+  "name": "react-native-device-activity",
+  "version": "0.1.0",
+  "description": "Expose Device Activity and Screen Time APIs to React Native",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "react-native-device-activity",
+    "ReactNativeDeviceActivity"
+  ],
+  "repository": "https://github.com/kingstinct/react-native-device-activity",
+  "bugs": {
+    "url": "https://github.com/kingstinct/react-native-device-activity/issues"
+  },
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "license": "MIT",
+  "homepage": "https://github.com/kingstinct/react-native-device-activity#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "^18.0.25",
+    "expo-module-scripts": "^3.5.2",
+    "expo-modules-core": "^1.12.24"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
