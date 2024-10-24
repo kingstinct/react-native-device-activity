@@ -10,35 +10,36 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		38DF005661A3410CB8BE3263 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132394F00DD14EA3860EC449 /* noop-file.swift */; };
+		14C92C2C30F44A7796FD8436 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E677FCD090848D1B7B808F4 /* DeviceActivityMonitorExtension.swift */; };
+		38CCE30857EEE5B2D9D88467 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 01AD4CE7D7DF0A16D5B70BA3 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		5F26FB526BCB48FEA657E831 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA781766F91E4C64B0779067 /* DeviceActivity.framework */; };
-		8A066ED4446E47DC97C76118 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0380C8B3CF514983B8CDA538 /* DeviceActivityMonitorExtension.swift */; };
-		8AB9CA7210914B06A9025976 /* ActivityMonitorExtension.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 65F89981CA70436C8727AD08 /* ActivityMonitorExtension.entitlements */; };
+		7A6C5D83C517458BAA41AA99 /* ActivityMonitorExtension.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 0DA77763192E47429182D9CC /* ActivityMonitorExtension.entitlements */; };
+		87EAAFC5A2E7495F88512C7B /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FDAEAC0394841FFA7FFF288 /* DeviceActivity.framework */; };
 		96905EF65AED1B983A6B3ABC /* libPods-reactnativedeviceactivityexample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */; };
+		A608C6585EA04A46A2995675 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0CDF88FD4E4B068990BA47 /* noop-file.swift */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C716C784C82F4A1ABEECF10D /* ActivityMonitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 200B1D91F5DF406F8B0FCB7E /* ActivityMonitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		ECB92B78CBB44DC0BD4D8ECF /* ActivityMonitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 377EE737D5FE4C578EF96E8C /* ActivityMonitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B81301843B314050B67FE493 /* PBXContainerItemProxy */ = {
+		44C28585595C40EBBB3CD980 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = DC44F85BBCDE4D5FA293A10E;
+			remoteGlobalIDString = 475E71A8110A4BCBA368B23D;
 			remoteInfo = ActivityMonitorExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2EB7D144A9F94B29A50BA9DC /* Embed Foundation Extensions */ = {
+		F4F266364E0A4CFB89663F2A /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				C716C784C82F4A1ABEECF10D /* ActivityMonitorExtension.appex in Embed Foundation Extensions */,
+				ECB92B78CBB44DC0BD4D8ECF /* ActivityMonitorExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,26 +47,26 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text; name = main.jsbundle; path = main.jsbundle; sourceTree = "<group>"; };
-		0380C8B3CF514983B8CDA538 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; name = DeviceActivityMonitorExtension.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
-		132394F00DD14EA3860EC449 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "reactnativedeviceactivityexample/noop-file.swift"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* reactnativedeviceactivityexample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; fileEncoding = 4; includeInIndex = 0; name = reactnativedeviceactivityexample.app; path = reactnativedeviceactivityexample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0021CF49F75B4C329E1A4349 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		01AD4CE7D7DF0A16D5B70BA3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ../targets/ActivityMonitorExtension/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		0DA77763192E47429182D9CC /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.entitlements; name = ActivityMonitorExtension.entitlements; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* reactnativedeviceactivityexample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = wrapper.application; name = reactnativedeviceactivityexample.app; path = reactnativedeviceactivityexample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = reactnativedeviceactivityexample/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = reactnativedeviceactivityexample/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = reactnativedeviceactivityexample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = reactnativedeviceactivityexample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = main.m; path = reactnativedeviceactivityexample/main.m; sourceTree = "<group>"; };
-		1E88C9F9D83A4D3CBE14925A /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		200B1D91F5DF406F8B0FCB7E /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; name = ActivityMonitorExtension.appex; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; fileEncoding = 4; includeInIndex = 0; name = "libPods-reactnativedeviceactivityexample.a"; path = "libPods-reactnativedeviceactivityexample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		65F89981CA70436C8727AD08 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; name = ActivityMonitorExtension.entitlements; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		377EE737D5FE4C578EF96E8C /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; name = ActivityMonitorExtension.appex; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = archive.ar; name = "libPods-reactnativedeviceactivityexample.a"; path = "libPods-reactnativedeviceactivityexample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-reactnativedeviceactivityexample.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.debug.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-reactnativedeviceactivityexample.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.release.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.release.xcconfig"; sourceTree = "<group>"; };
+		7E677FCD090848D1B7B808F4 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		7FDAEAC0394841FFA7FFF288 /* DeviceActivity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = reactnativedeviceactivityexample/SplashScreen.storyboard; sourceTree = "<group>"; };
-		ADE090B6F96A48FEBD8A063F /* DeviceActivity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = 0; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		BA0CDF88FD4E4B068990BA47 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "reactnativedeviceactivityexample/noop-file.swift"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Expo.plist; path = Expo.plist; sourceTree = "<group>"; };
-		CA781766F91E4C64B0779067 /* DeviceActivity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = 0; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
-		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		C39816BDFCEE438B93C325BE /* reactnativedeviceactivityexample-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "reactnativedeviceactivityexample-Bridging-Header.h"; path = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h"; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = undefined; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-reactnativedeviceactivityexample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,11 +79,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2A6B112E689D4140AD302701 /* Frameworks */ = {
+		4FD40CC61B5D4464AF260811 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F26FB526BCB48FEA657E831 /* DeviceActivity.framework in Frameworks */,
+				87EAAFC5A2E7495F88512C7B /* DeviceActivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,14 +94,15 @@
 			isa = PBXGroup;
 			children = (
 				BB2F792B24A3F905000567C9 /* Supporting */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				132394F00DD14EA3860EC449 /* noop-file.swift */,
+				BA0CDF88FD4E4B068990BA47 /* noop-file.swift */,
+				C39816BDFCEE438B93C325BE /* reactnativedeviceactivityexample-Bridging-Header.h */,
+				01AD4CE7D7DF0A16D5B70BA3 /* PrivacyInfo.xcprivacy */,
 			);
 			name = reactnativedeviceactivityexample;
 			sourceTree = "<group>";
@@ -110,15 +112,26 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */,
-				ADE090B6F96A48FEBD8A063F /* DeviceActivity.framework */,
+				7FDAEAC0394841FFA7FFF288 /* DeviceActivity.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		333FC5B85DF14A1DA996AB1F /* expo:targets */ = {
+		49ED6D7D33814C8DAC6B5DE6 /* ActivityMonitorExtension */ = {
 			isa = PBXGroup;
 			children = (
-				D10CDA51BCA74D4C86230750 /* ActivityMonitorExtension */,
+				7E677FCD090848D1B7B808F4 /* DeviceActivityMonitorExtension.swift */,
+				0DA77763192E47429182D9CC /* ActivityMonitorExtension.entitlements */,
+				0021CF49F75B4C329E1A4349 /* Info.plist */,
+			);
+			name = ActivityMonitorExtension;
+			path = ../targets/ActivityMonitorExtension;
+			sourceTree = "<group>";
+		};
+		6FA8E5E19E0F4D3699F0EFBB /* expo:targets */ = {
+			isa = PBXGroup;
+			children = (
+				49ED6D7D33814C8DAC6B5DE6 /* ActivityMonitorExtension */,
 			);
 			name = "expo:targets";
 			sourceTree = "<group>";
@@ -133,7 +146,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				333FC5B85DF14A1DA996AB1F /* expo:targets */,
+				6FA8E5E19E0F4D3699F0EFBB /* expo:targets */,
 				13B07FAE1A68108700A75B9A /* reactnativedeviceactivityexample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -150,7 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* reactnativedeviceactivityexample.app */,
-				200B1D91F5DF406F8B0FCB7E /* ActivityMonitorExtension.appex */,
+				377EE737D5FE4C578EF96E8C /* ActivityMonitorExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,17 +183,6 @@
 			);
 			name = Supporting;
 			path = reactnativedeviceactivityexample/Supporting;
-			sourceTree = "<group>";
-		};
-		D10CDA51BCA74D4C86230750 /* ActivityMonitorExtension */ = {
-			isa = PBXGroup;
-			children = (
-				0380C8B3CF514983B8CDA538 /* DeviceActivityMonitorExtension.swift */,
-				65F89981CA70436C8727AD08 /* ActivityMonitorExtension.entitlements */,
-				1E88C9F9D83A4D3CBE14925A /* Info.plist */,
-			);
-			name = ActivityMonitorExtension;
-			path = ../targets/ActivityMonitorExtension;
 			sourceTree = "<group>";
 		};
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
@@ -208,32 +210,32 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "reactnativedeviceactivityexample" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				FD10A7F022414F080027D42C /* Start Packager */,
+				4C786A87E98BD82C06F6F3EE /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				2EB7D144A9F94B29A50BA9DC /* Embed Foundation Extensions */,
-				468EEE62E23F96465E26E9EA /* [CP] Embed Pods Frameworks */,
+				F4F266364E0A4CFB89663F2A /* Embed Foundation Extensions */,
+				61D0508B777FAE7977C212D9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E3AFB561CB5643D288B2AB8E /* PBXTargetDependency */,
+				52E4E50D1BFC44F9819B604B /* PBXTargetDependency */,
 			);
 			name = reactnativedeviceactivityexample;
 			productName = reactnativedeviceactivityexample;
 			productReference = 13B07F961A680F5B00A75B9A /* reactnativedeviceactivityexample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DC44F85BBCDE4D5FA293A10E /* ActivityMonitorExtension */ = {
+		475E71A8110A4BCBA368B23D /* ActivityMonitorExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 92F34D3503F24C2FA320CA61 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */;
+			buildConfigurationList = 04E75AB134784115ABB09576 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */;
 			buildPhases = (
-				7678F5C190624F96A94B9C2F /* Sources */,
-				2A6B112E689D4140AD302701 /* Frameworks */,
-				AD90317564574FECAB16FA6A /* Resources */,
+				1AD448CE991442628D73B944 /* Sources */,
+				4FD40CC61B5D4464AF260811 /* Frameworks */,
+				0C9558B0F8FE4D8E853158C8 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -241,7 +243,7 @@
 			);
 			name = ActivityMonitorExtension;
 			productName = ActivityMonitorExtension;
-			productReference = 200B1D91F5DF406F8B0FCB7E /* ActivityMonitorExtension.appex */;
+			productReference = 377EE737D5FE4C578EF96E8C /* ActivityMonitorExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -250,15 +252,12 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						CreatedOnToolsVersion = 14.3;
-						DevelopmentTeam = 34SE8X7Q58;
-						ProvisioningStyle = Automatic;
+						LastSwiftMigration = 1250;
 					};
-					DC44F85BBCDE4D5FA293A10E = {
+					475E71A8110A4BCBA368B23D = {
 						CreatedOnToolsVersion = 14.3;
 						DevelopmentTeam = 34SE8X7Q58;
 						ProvisioningStyle = Automatic;
@@ -279,12 +278,19 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* reactnativedeviceactivityexample */,
-				DC44F85BBCDE4D5FA293A10E /* ActivityMonitorExtension */,
+				475E71A8110A4BCBA368B23D /* ActivityMonitorExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0C9558B0F8FE4D8E853158C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -292,13 +298,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AD90317564574FECAB16FA6A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				38CCE30857EEE5B2D9D88467 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +307,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -321,7 +322,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" $PROJECT_ROOT ios relative | tail -n 1)\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -345,7 +346,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		468EEE62E23F96465E26E9EA /* [CP] Embed Pods Frameworks */ = {
+		4C786A87E98BD82C06F6F3EE /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-reactnativedeviceactivityexample/expo-configure-project.sh\"\n";
+		};
+		61D0508B777FAE7977C212D9 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -371,35 +391,20 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FD10A7F022414F080027D42C /* Start Packager */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Start Packager";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\nexport RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/.packager.env'\"`\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/launchPackager.command'\"` || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -412,91 +417,31 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				38DF005661A3410CB8BE3263 /* noop-file.swift in Sources */,
+				A608C6585EA04A46A2995675 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7678F5C190624F96A94B9C2F /* Sources */ = {
+		1AD448CE991442628D73B944 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A066ED4446E47DC97C76118 /* DeviceActivityMonitorExtension.swift in Sources */,
-				8AB9CA7210914B06A9025976 /* ActivityMonitorExtension.entitlements in Sources */,
+				14C92C2C30F44A7796FD8436 /* DeviceActivityMonitorExtension.swift in Sources */,
+				7A6C5D83C517458BAA41AA99 /* ActivityMonitorExtension.entitlements in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E3AFB561CB5643D288B2AB8E /* PBXTargetDependency */ = {
+		52E4E50D1BFC44F9819B604B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DC44F85BBCDE4D5FA293A10E /* ActivityMonitorExtension */;
-			targetProxy = B81301843B314050B67FE493 /* PBXContainerItemProxy */;
+			target = 475E71A8110A4BCBA368B23D /* ActivityMonitorExtension */;
+			targetProxy = 44C28585595C40EBBB3CD980 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		13B07F941A680F5B00A75B9A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-reactnativedeviceactivityexample.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = reactnativedeviceactivityexample/reactnativedeviceactivityexample.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 34SE8X7Q58;
-				ENABLE_BITCODE = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"FB_SONARKIT_ENABLED=1",
-				);
-				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lc++",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example;
-				PRODUCT_NAME = reactnativedeviceactivityexample;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Debug;
-		};
-		13B07F951A680F5B00A75B9A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-reactnativedeviceactivityexample.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = reactnativedeviceactivityexample/reactnativedeviceactivityexample.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 34SE8X7Q58;
-				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lc++",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example;
-				PRODUCT_NAME = reactnativedeviceactivityexample;
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		5BEE77EC67CB4C449C302D1E /* Release */ = {
+		0B4360AADD5F473D91D33724 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -532,12 +477,75 @@
 			};
 			name = Release;
 		};
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-reactnativedeviceactivityexample.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = reactnativedeviceactivityexample/reactnativedeviceactivityexample.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				ENABLE_BITCODE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"FB_SONARKIT_ENABLED=1",
+				);
+				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example;
+				PRODUCT_NAME = reactnativedeviceactivityexample;
+				SWIFT_OBJC_BRIDGING_HEADER = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-reactnativedeviceactivityexample.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = reactnativedeviceactivityexample/reactnativedeviceactivityexample.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example;
+				PRODUCT_NAME = reactnativedeviceactivityexample;
+				SWIFT_OBJC_BRIDGING_HEADER = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -562,9 +570,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CXX = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -580,13 +588,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -594,8 +609,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -620,9 +636,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				CXX = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -631,17 +647,24 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		CDB366DCC66746A6982B0C38 /* Debug */ = {
+		CB950760D6FB4DBCB19DDD0C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -682,6 +705,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		04E75AB134784115ABB09576 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB950760D6FB4DBCB19DDD0C /* Debug */,
+				0B4360AADD5F473D91D33724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "reactnativedeviceactivityexample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -696,15 +728,6 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		92F34D3503F24C2FA320CA61 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CDB366DCC66746A6982B0C38 /* Debug */,
-				5BEE77EC67CB4C449C302D1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

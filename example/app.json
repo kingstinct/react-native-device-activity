@@ -11,16 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.deviceactivity.example",
-      "entitlements": {
-        "com.apple.developer.family-controls": true,
-        "com.apple.security.application-groups": ["group.ActivityMonitor"],
-      }
+      "bundleIdentifier": "expo.modules.deviceactivity.example"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,22 +24,44 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
+    }, 
     "plugins": [
       [
         "expo-build-properties",
         {
           "ios": {
             "deploymentTarget": "15.0"
-          },
+          }
         },
       ],
       [
         "../app.plugin.js",
         {
           "appleTeamId": "34SE8X7Q58"
-        },
+        }
       ]
     ],
-  },
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "ActivityMonitorExtension",
+                  "bundleIdentifier": "com.myapp.extension",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.ActivityMonitor"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
 }
