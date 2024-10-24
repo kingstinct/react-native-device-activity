@@ -28,7 +28,11 @@
   "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
   "license": "MIT",
   "homepage": "https://github.com/kingstinct/react-native-device-activity#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@bacons/xcode": "^1.0.0-alpha.5",
+    "@kingstinct/expo-apple-targets": "^0.0.1",
+    "@react-native/normalize-color": "^2.1.0"
+  },
   "devDependencies": {
     "@types/react": "^18.0.25",
     "expo-module-scripts": "^3.5.2",

@@ -32,8 +32,36 @@
           "ios": {
             "deploymentTarget": "15.0"
           }
+        },
+      ],
+      [
+        "../app.plugin.js",
+        {
+          "appleTeamId": "34SE8X7Q58"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "ActivityMonitorExtension",
+                  "bundleIdentifier": "com.myapp.extension",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.ActivityMonitor"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
   }
 }
