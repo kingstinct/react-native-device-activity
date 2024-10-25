@@ -196,7 +196,7 @@ public class ReactNativeDeviceActivityModule: Module {
       let schedule = DeviceActivitySchedule(
         intervalStart: convertToSwiftDateComponents(from: schedule.intervalStart),
         intervalEnd: convertToSwiftDateComponents(from: schedule.intervalEnd),
-        repeats: true,
+        repeats: schedule.repeats ?? false,
         warningTime: schedule.warningTime != nil
         ? convertToSwiftDateComponents(from: schedule.warningTime!)
         : nil
@@ -216,6 +216,8 @@ public class ReactNativeDeviceActivityModule: Module {
       
       let dictionary = Dictionary(uniqueKeysWithValues: events.map { (event: DeviceActivityEventFromJS) in
         let familyActivitySelection = decodedFamilyActivitySelections[event.familyActivitySelectionIndex]
+          
+        userDefaults?.set(familyActivitySelections[event.familyActivitySelectionIndex], forKey: event.eventName + "_familyActivitySelection")
         
         return (
           DeviceActivityEvent.Name(event.eventName),
