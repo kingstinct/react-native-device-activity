@@ -1,13 +1,15 @@
 {
   "name": "react-native-device-activity",
-  "version": "0.1.0",
-  "description": "Expose Device Activity and Screen Time APIs to React Native",
+  "version": "0.0.18",
+  "description": "Provides access to Apples DeviceActivity API",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "expo-module lint",
+    "pre-push": "npm run typecheck && npm run lint",
+    "typecheck": "tsc --noEmit",
     "test": "expo-module test",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
