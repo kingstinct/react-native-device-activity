@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.license        = package['license']
   s.author         = package['author']
   s.homepage       = package['homepage']
-  s.platform       = :ios, '15.0'
+  s.platforms      = { :ios => '14.0', :tvos => '14.0' }
   s.swift_version  = '5.4'
-  s.source         = { git: 'https://github.com/Kingstinct/react-native-device-activity' }
+  s.source         = { git: 'https://github.com/kingstinct/react-native-device-activity' }
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
@@ -22,6 +22,6 @@ Pod::Spec.new do |s|
     'DEFINES_MODULE' => 'YES',
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
   }
-  
+
   s.source_files = "**/*.{h,m,swift}"
 end

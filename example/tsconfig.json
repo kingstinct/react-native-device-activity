@@ -1,6 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "strict": true,
     "paths": {
       "react-native-device-activity": ["../src/index"],
       "react-native-device-activity/*": ["../src/*"]
