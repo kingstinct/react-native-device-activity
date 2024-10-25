@@ -40,7 +40,9 @@ export function getEvents(
     };
   });
 
-  return eventsParsed;
+  return eventsParsed.sort(
+    (a, b) => a.lastCalledAt.getTime() - b.lastCalledAt.getTime(),
+  );
 }
 
 function convertDeviceActivityEvents(
