@@ -7,31 +7,44 @@ import {
   View,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import {
-  DeviceActivityEvent,
-  EventParsed,
-} from "react-native-device-activity/ReactNativeDeviceActivity.types";
+import { DeviceActivityEvent } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
 const startMonitoring = (activitySelection: string) => {
-  const event: DeviceActivityEvent = {
-    eventName: "GoalReached",
-    familyActivitySelection: activitySelection,
-    threshold: { minute: 2 },
-  };
-  ReactNativeDeviceActivity.startMonitoring(
-    "Goal1",
-    {
-      warningTime: { minute: 1 },
-      intervalStart: { hour: 0, minute: 0, second: 0 },
-      intervalEnd: { hour: 23, minute: 59, second: 59 },
-      repeats: false,
-    },
-    [event],
-  );
+  const timeLimitMinutes = 1;
+
+  const totalEvents = (1 * 60) / timeLimitMinutes;
+
+  let events: DeviceActivityEvent[] = [];
+
+  // loop over each our of the day
+  for (let hour = 0; hour < 24; hour++) {
+    for (let i = 0; i < totalEvents; i++) {
+      const name = `${(i + 1) * timeLimitMinutes}_minutes_today`;
+      events.push({
+        eventName: name,
+        familyActivitySelection: activitySelection,
+        threshold: { minute: (i + 1) * timeLimitMinutes },
+      });
+    }
+
+    ReactNativeDeviceActivity.startMonitoring(
+      "DeviceActivity.AppLoggedTimeDaily." + hour,
+      {
+        intervalStart: { hour, minute: 0, second: 0 },
+        intervalEnd: { hour, minute: 59, second: 59 },
+        repeats: true,
+      },
+      events,
+    );
+    events = [];
+  }
 };
 
 export default function App() {
-  const [events, setEvents] = React.useState<EventParsed[]>([]);
+  const [largestEvent, setLargestEvent] = React.useState<null | {
+    minutesRegistered: number;
+    registeredAt: Date;
+  }>(null);
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null
@@ -39,10 +52,38 @@ export default function App() {
 
   const refreshEvents = useCallback(() => {
     const eventsParsed = ReactNativeDeviceActivity.getEvents();
+    const today = new Date();
 
-    setEvents(eventsParsed);
+    const todaysThresholdsReached = eventsParsed.filter(
+      ({ callbackName, lastCalledAt }) =>
+        callbackName === "eventDidReachThreshold" &&
+        lastCalledAt.getHours() === today.getHours() &&
+        lastCalledAt.getDate() === today.getDate() &&
+        lastCalledAt.getMonth() === today.getMonth() &&
+        lastCalledAt.getFullYear() === today.getFullYear(),
+    );
 
-    console.log("eventsParsed", eventsParsed);
+    const eventsOccurredToday = todaysThresholdsReached.map((event) => {
+      const minutesRegistered = parseInt(
+        event.eventName.split("_minutes_today")[0],
+        10,
+      );
+      return {
+        activity: event.activityName,
+        event: event.eventName,
+        registeredAt: event.lastCalledAt,
+        minutesRegistered,
+      };
+    });
+
+    const largestMinutesRegistered = eventsOccurredToday.reduce(
+      (acc, event) => {
+        return event.minutesRegistered > acc.minutesRegistered ? event : acc;
+      },
+      { minutesRegistered: 0, event: "none", registeredAt: new Date() },
+    );
+
+    setLargestEvent(largestMinutesRegistered);
   }, []);
 
   useEffect(() => {
@@ -63,13 +104,11 @@ export default function App() {
       <View style={styles.container}>
         <Button
           title="Start monitoring"
-          disabled={!familyActivitySelection}
           onPress={() => startMonitoring(familyActivitySelection!)}
         />
 
         <Button
           title="Stop monitoring"
-          disabled={!familyActivitySelection}
           onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
         />
 
@@ -105,10 +144,10 @@ export default function App() {
             pointerEvents="none"
           />
         </ReactNativeDeviceActivity.DeviceActivitySelectionView>
-        <Text>{JSON.stringify(events, null, 2)}</Text>
+        <Text>{JSON.stringify(largestEvent, null, 2)}</Text>
       </View>
     ),
-    [familyActivitySelection, events],
+    [familyActivitySelection, largestEvent],
   );
 }
 
