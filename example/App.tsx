@@ -2,12 +2,17 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Button,
   NativeSyntheticEvent,
+  ScrollView,
   StyleSheet,
   Text,
+  Linking,
   View,
+  Alert,
+  SafeAreaView,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
+  AuthorizationStatus,
   DeviceActivityEvent,
   EventParsed,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
@@ -30,12 +35,27 @@ const startMonitoring = (activitySelection: string) => {
   );
 };
 
+const authorizationStatusMap = {
+  [AuthorizationStatus.approved]: "approved",
+  [AuthorizationStatus.denied]: "denied",
+  [AuthorizationStatus.notDetermined]: "notDetermined",
+};
+
 export default function App() {
   const [events, setEvents] = React.useState<EventParsed[]>([]);
+  const [activities, setActivities] = React.useState<string[]>([]);
+  const [authorizationStatus, setAuthorizationStatus] =
+    React.useState<AuthorizationStatus | null>(null);
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null
   >(null);
+
+  useEffect(() => {
+    const status = ReactNativeDeviceActivity.getAuthorizationStatus();
+    console.log("authorization status", authorizationStatusMap[status]);
+    setAuthorizationStatus(status);
+  }, []);
 
   const refreshEvents = useCallback(() => {
     const eventsParsed = ReactNativeDeviceActivity.getEvents();
@@ -45,8 +65,32 @@ export default function App() {
     console.log("eventsParsed", eventsParsed);
   }, []);
 
+  const requestAuthorization = useCallback(async () => {
+    if (authorizationStatus === AuthorizationStatus.notDetermined) {
+      const status = await ReactNativeDeviceActivity.requestAuthorization();
+      setAuthorizationStatus(status);
+    } else if (authorizationStatus === AuthorizationStatus.denied) {
+      Alert.alert(
+        "You didn't grant access",
+        "Please go to settings and enable it",
+        [
+          {
+            text: "Open settings",
+            onPress: () => Linking.openSettings(),
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+        ],
+      );
+    } else {
+      const status = await ReactNativeDeviceActivity.revokeAuthorization();
+      setAuthorizationStatus(status);
+    }
+  }, [authorizationStatus]);
+
   useEffect(() => {
-    ReactNativeDeviceActivity.requestAuthorization();
     const listener = ReactNativeDeviceActivity.addEventReceivedListener(
       (event) => {
         console.log("got event, refreshing events!", event);
@@ -60,63 +104,95 @@ export default function App() {
 
   return useMemo(
     () => (
-      <View style={styles.container}>
-        <Button
-          title="Start monitoring"
-          disabled={!familyActivitySelection}
-          onPress={() => startMonitoring(familyActivitySelection!)}
-        />
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView style={styles.container}>
+          <Text>
+            Authorization status:
+            {authorizationStatus !== null
+              ? authorizationStatusMap[authorizationStatus]
+              : "unknown"}
+          </Text>
 
-        <Button
-          title="Stop monitoring"
-          disabled={!familyActivitySelection}
-          onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
-        />
-
-        <Button title="Get events" onPress={refreshEvents} />
-
-        <ReactNativeDeviceActivity.DeviceActivitySelectionView
-          style={{
-            width: 200,
-            height: 200,
-            backgroundColor: "red",
-            borderRadius: 10,
-            borderWidth: 10,
-            borderColor: "red",
-          }}
-          onSelectionChange={(
-            event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
-          ) => {
-            if (
-              event.nativeEvent.familyActivitySelection !==
-              familyActivitySelection
-            ) {
-              setFamilyActivitySelection(
-                event.nativeEvent.familyActivitySelection,
-              );
-              // alert(event.nativeEvent.familyActivitySelection);
+          <Button
+            title={
+              authorizationStatus === AuthorizationStatus.approved
+                ? "Revoke authorization"
+                : "Request authorization"
             }
-            console.log(event.nativeEvent.familyActivitySelection);
-          }}
-          familyActivitySelection={familyActivitySelection}
-        >
-          <View
-            style={{ backgroundColor: "green", height: 100 }}
-            pointerEvents="none"
+            onPress={requestAuthorization}
           />
-        </ReactNativeDeviceActivity.DeviceActivitySelectionView>
-        <Text>{JSON.stringify(events, null, 2)}</Text>
-      </View>
+
+          <Button
+            title="Start monitoring"
+            disabled={!familyActivitySelection}
+            onPress={() => startMonitoring(familyActivitySelection!)}
+          />
+
+          <Button
+            title="Stop monitoring"
+            disabled={!familyActivitySelection}
+            onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
+          />
+
+          <Button
+            title="Get activities"
+            onPress={() =>
+              setActivities(ReactNativeDeviceActivity.getActivities())
+            }
+          />
+
+          <Button title="Get events" onPress={refreshEvents} />
+
+          <ReactNativeDeviceActivity.DeviceActivitySelectionView
+            style={{
+              width: 200,
+              height: 40,
+              alignSelf: "center",
+              borderRadius: 20,
+              borderWidth: 10,
+              borderColor: "rgb(213,85,37)",
+            }}
+            onSelectionChange={(
+              event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
+            ) => {
+              if (
+                event.nativeEvent.familyActivitySelection !==
+                familyActivitySelection
+              ) {
+                setFamilyActivitySelection(
+                  event.nativeEvent.familyActivitySelection,
+                );
+                // alert(event.nativeEvent.familyActivitySelection);
+              }
+              // console.log(event.nativeEvent.familyActivitySelection);
+            }}
+            familyActivitySelection={familyActivitySelection}
+          >
+            <View
+              pointerEvents="none"
+              style={{
+                backgroundColor: "rgb(213,85,37)",
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white" }}>Select apps</Text>
+            </View>
+          </ReactNativeDeviceActivity.DeviceActivitySelectionView>
+          <Text>{JSON.stringify(events, null, 2)}</Text>
+          <Text>{JSON.stringify(activities, null, 2)}</Text>
+        </ScrollView>
+      </SafeAreaView>
     ),
-    [familyActivitySelection, events],
+    [familyActivitySelection, events, authorizationStatus],
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    margin: 10,
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

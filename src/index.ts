@@ -6,8 +6,11 @@ import {
 
 // Import the native module. On web, it will be resolved to ReactNativeDeviceActivity.web.ts
 // and on native platforms to ReactNativeDeviceActivity.ts
+import { Platform } from "react-native";
+
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
+  AuthorizationStatus,
   CallbackEventName,
   DeviceActivityEvent,
   DeviceActivityEventRaw,
@@ -19,8 +22,19 @@ import {
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
-export async function requestAuthorization(): Promise<void> {
-  return await ReactNativeDeviceActivityModule.requestAuthorization();
+export async function requestAuthorization(): Promise<AuthorizationStatus> {
+  try {
+    await ReactNativeDeviceActivityModule.requestAuthorization();
+  } catch (error) {
+    // seems like we get a promise rejection if the user denies the authorization, but we can still request again
+    console.error(error);
+  }
+  return getAuthorizationStatus();
+}
+
+export async function revokeAuthorization(): Promise<AuthorizationStatus> {
+  await ReactNativeDeviceActivityModule.revokeAuthorization();
+  return getAuthorizationStatus();
 }
 
 export function getEvents(
@@ -96,6 +110,14 @@ export function stopMonitoring(activityNames?: string[]): void {
   return ReactNativeDeviceActivityModule.stopMonitoring(activityNames);
 }
 
+export function getActivities(): string[] {
+  return ReactNativeDeviceActivityModule.activities();
+}
+
+export function getAuthorizationStatus(): AuthorizationStatus {
+  return ReactNativeDeviceActivityModule.authorizationStatus();
+}
+
 const emitter = new EventEmitter(
   ReactNativeDeviceActivityModule ??
     NativeModulesProxy.ReactNativeDeviceActivity,
@@ -108,6 +130,10 @@ export function addEventReceivedListener(
     "onDeviceActivityMonitorEvent",
     listener,
   );
+}
+
+export function isAvailable(): boolean {
+  return Platform.OS === "ios" && parseInt(Platform.Version, 10) >= 15;
 }
 
 export {

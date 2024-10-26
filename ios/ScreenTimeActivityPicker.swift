@@ -29,6 +29,9 @@ struct ScreenTimeSelectAppsContentView: View {
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .familyActivityPicker(
+            /* only available on iOS 16, skipping for now
+            headerText: "Header text",
+            footerText: "Footer text",*/
               isPresented: $pickerIsPresented,
               selection: $model.activitySelection
           )

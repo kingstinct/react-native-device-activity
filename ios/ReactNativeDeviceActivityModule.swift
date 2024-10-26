@@ -191,6 +191,12 @@ public class ReactNativeDeviceActivityModule: Module {
       
       return filteredDict
     }
+      
+      Function("authorizationStatus") {
+          let currentStatus = AuthorizationCenter.shared.authorizationStatus
+
+          return currentStatus.rawValue
+      }
     
     AsyncFunction("startMonitoring") { (activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS], familyActivitySelections: [String]) in
       let schedule = DeviceActivitySchedule(
@@ -226,12 +232,15 @@ public class ReactNativeDeviceActivityModule: Module {
             categories: familyActivitySelection.categoryTokens,
             webDomains: familyActivitySelection.webDomainTokens,
             threshold: convertToSwiftDateComponents(from: event.threshold)
+            // might be interesting for iOS 17.4 or later
+            // ,includesPastActivity: false
           )
         )
       })
       
       do {
         let activityName = DeviceActivityName(activityName)
+          
         try center.startMonitoring(
           activityName,
           during: schedule,
@@ -252,6 +261,14 @@ public class ReactNativeDeviceActivityModule: Module {
         return DeviceActivityName(activityName)
       }))
     }
+      
+      Function("activities") {
+        let activities = center.activities
+          
+        return activities.map { activity in
+          return activity.rawValue
+        }
+      }
     
     AsyncFunction("requestAuthorization"){
       let ac = AuthorizationCenter.shared
@@ -263,6 +280,22 @@ public class ReactNativeDeviceActivityModule: Module {
       }
       
     }
+      
+      AsyncFunction("revokeAuthorization") { () async throws -> Void in
+        let ac = AuthorizationCenter.shared
+        
+        return try await withCheckedThrowingContinuation { continuation in
+          ac.revokeAuthorization { result in
+            switch result {
+            case .success:
+              continuation.resume()
+            case .failure(let error):
+              logger.log("❌ Failed to revoke authorization: \(error.localizedDescription)")
+              continuation.resume(throwing: error)
+            }
+          }
+        }
+      }
     
     Events(
       "onSelectionChange",

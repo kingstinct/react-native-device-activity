@@ -135,7 +135,7 @@ export default function App() {
               );
               // alert(event.nativeEvent.familyActivitySelection);
             }
-            console.log(event.nativeEvent.familyActivitySelection);
+            // console.log(event.nativeEvent.familyActivitySelection);
           }}
           familyActivitySelection={familyActivitySelection}
         >

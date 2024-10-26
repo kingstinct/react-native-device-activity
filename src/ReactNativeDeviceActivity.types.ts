@@ -70,9 +70,18 @@ export type DeviceActivityEventRaw = Omit<
   familyActivitySelectionIndex: number;
 };
 
+export enum AuthorizationStatus {
+  notDetermined = 0,
+  denied = 1,
+  approved = 2,
+}
+
 export type ReactNativeDeviceActivityNativeModule = {
-  requestAuthorization: () => PromiseLike<void> | void;
+  requestAuthorization: () => PromiseLike<void>;
+  revokeAuthorization: () => PromiseLike<void>;
   getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
+  activities: () => string[];
+  authorizationStatus: () => AuthorizationStatus;
   stopMonitoring: (activityNames?: string[]) => void;
   startMonitoring: (
     activityName: string,
