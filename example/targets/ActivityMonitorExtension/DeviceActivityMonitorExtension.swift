@@ -45,27 +45,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidStart"
     )
     
-    /*let str = userDefaults?.string(forKey: activity.rawValue + "_familyActivitySelection")
-    
-    var activitySelection = FamilyActivitySelection()
-    
-    if(str != nil){
-      let decoder = JSONDecoder()
-        let data = Data(base64Encoded: str!)
-        do {
-          activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-        }
-        catch {
-          // return FamilyActivitySelection()
-        }
-    }
-    
-    store.shield.applications = activitySelection.applicationTokens
-    store.shield.webDomains = activitySelection.webDomainTokens
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())*/
-    
-    
     self.sendNotification(name: "intervalDidStart")
   }
   
@@ -96,26 +75,30 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       eventName: event.rawValue
     )
 
+    logger.log("tring to get base64")
      
     let str = userDefaults?.string(forKey: activity.rawValue + "_familyActivitySelection")
     
     var activitySelection = FamilyActivitySelection()
     
     if(str != nil){
+      logger.log("got base64")
       let decoder = JSONDecoder()
         let data = Data(base64Encoded: str!)
         do {
+          logger.log("decoding base64..")
           activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+          logger.log("decoded base64!")
         }
         catch {
-          // return FamilyActivitySelection()
+          logger.log("decode error \(error.localizedDescription)")
         }
     }
     
     store.shield.applications = activitySelection.applicationTokens
     store.shield.webDomains = activitySelection.webDomainTokens
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
 
     self.sendNotification(name: "eventDidReachThreshold")
   }
