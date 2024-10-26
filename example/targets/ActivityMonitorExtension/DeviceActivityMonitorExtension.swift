@@ -9,6 +9,7 @@ import DeviceActivity
 import ManagedSettings
 import Foundation
 import os
+import FamilyControls
 
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
@@ -19,6 +20,7 @@ let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-n
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
   let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+  let store = ManagedSettingsStore()
   
   func sendNotification(name: String){
     let notificationName = CFNotificationName(name as CFString)
@@ -43,6 +45,27 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidStart"
     )
     
+    /*let str = userDefaults?.string(forKey: activity.rawValue + "_familyActivitySelection")
+    
+    var activitySelection = FamilyActivitySelection()
+    
+    if(str != nil){
+      let decoder = JSONDecoder()
+        let data = Data(base64Encoded: str!)
+        do {
+          activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+        }
+        catch {
+          // return FamilyActivitySelection()
+        }
+    }
+    
+    store.shield.applications = activitySelection.applicationTokens
+    store.shield.webDomains = activitySelection.webDomainTokens
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())*/
+    
+    
     self.sendNotification(name: "intervalDidStart")
   }
   
@@ -55,6 +78,11 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidEnd"
     )
 
+    store.shield.applications = nil
+    store.shield.webDomains = nil
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
+
     self.sendNotification(name: "intervalDidEnd")
   }
   
@@ -64,9 +92,30 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.persistToUserDefaults(
       activityName: activity.rawValue,
-      callbackName: "eventDidReachThreshold", 
+      callbackName: "eventDidReachThreshold",
       eventName: event.rawValue
     )
+
+     
+    let str = userDefaults?.string(forKey: activity.rawValue + "_familyActivitySelection")
+    
+    var activitySelection = FamilyActivitySelection()
+    
+    if(str != nil){
+      let decoder = JSONDecoder()
+        let data = Data(base64Encoded: str!)
+        do {
+          activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+        }
+        catch {
+          // return FamilyActivitySelection()
+        }
+    }
+    
+    store.shield.applications = activitySelection.applicationTokens
+    store.shield.webDomains = activitySelection.webDomainTokens
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
 
     self.sendNotification(name: "eventDidReachThreshold")
   }

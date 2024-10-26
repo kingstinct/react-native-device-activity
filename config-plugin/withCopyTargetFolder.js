@@ -7,9 +7,15 @@ const withCopyTargetFolder = (config) => {
   const packageTargetFolderPath = __dirname + "/../targets";
   const projectTargetFolderPath = projectRoot + "/targets";
 
+  // if (fs.existsSync(projectTargetFolderPath)) {
+  //   fs.rmdirSync(projectTargetFolderPath);
+  // }
+
   if (!fs.existsSync(projectTargetFolderPath)) {
     fs.mkdirSync(projectTargetFolderPath);
   }
+
+  //fs.symlinkSync(packageTargetFolderPath, projectTargetFolderPath);
 
   fs.cpSync(packageTargetFolderPath, projectTargetFolderPath, {
     recursive: true,
