@@ -1,0 +1,400 @@
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/customColorFromCSS.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/customColorFromCSS.js
+index 1d0d1b4..8839b4f 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/customColorFromCSS.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/customColorFromCSS.js
+@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.customColorFromCSS = void 0;
++exports.customColorFromCSS = customColorFromCSS;
+ const normalize_color_1 = __importDefault(require("@react-native/normalize-color"));
+ function customColorFromCSS(color) {
+     let colorInt = (0, normalize_color_1.default)(color);
+@@ -19,4 +19,3 @@ function customColorFromCSS(color) {
+         alpha,
+     };
+ }
+-exports.customColorFromCSS = customColorFromCSS;
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/withAccentColor.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/withAccentColor.js
+index 48ebdfb..689d9cd 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/withAccentColor.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/accentColor/withAccentColor.js
+@@ -35,7 +35,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.setColorAsync = exports.withIosWidgetBackgroundColor = exports.withIosAccentColor = void 0;
++exports.withIosWidgetBackgroundColor = exports.withIosAccentColor = void 0;
++exports.setColorAsync = setColorAsync;
+ const config_plugins_1 = require("@expo/config-plugins");
+ const fs_1 = __importDefault(require("fs"));
+ const path_1 = __importStar(require("path"));
+@@ -70,8 +71,8 @@ function createColor(color) {
+         components: (0, customColorFromCSS_1.customColorFromCSS)(color),
+     };
+ }
+-function setColorAsync({ color, darkColor }, colorsetFilePath) {
+-    return __awaiter(this, void 0, void 0, function* () {
++function setColorAsync(_a, colorsetFilePath_1) {
++    return __awaiter(this, arguments, void 0, function* ({ color, darkColor }, colorsetFilePath) {
+         // Ensure the Images.xcassets/AppIcon.appiconset path exists
+         yield fs_1.default.promises.mkdir(colorsetFilePath, { recursive: true });
+         // Store the image JSON data for assigning via the Contents.json
+@@ -95,9 +96,8 @@ function setColorAsync({ color, darkColor }, colorsetFilePath) {
+         });
+     });
+ }
+-exports.setColorAsync = setColorAsync;
+-function writeContentsJsonAsync(directory, { colors }) {
+-    return __awaiter(this, void 0, void 0, function* () {
++function writeContentsJsonAsync(directory_1, _a) {
++    return __awaiter(this, arguments, void 0, function* (directory, { colors }) {
+         yield fs_1.default.promises.mkdir(directory, { recursive: true });
+         yield fs_1.default.promises.writeFile(path_1.default.join(directory, "Contents.json"), JSON.stringify({
+             colors,
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/icon/withIosIcon.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/icon/withIosIcon.js
+index 4db1f38..af461ac 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/icon/withIosIcon.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/icon/withIosIcon.js
+@@ -32,7 +32,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
+     });
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.generateWatchIconsInternalAsync = exports.generateIconsInternalAsync = exports.setIconsAsync = exports.ICON_CONTENTS = exports.withIosIcon = void 0;
++exports.ICON_CONTENTS = exports.withIosIcon = void 0;
++exports.setIconsAsync = setIconsAsync;
++exports.generateIconsInternalAsync = generateIconsInternalAsync;
++exports.generateWatchIconsInternalAsync = generateWatchIconsInternalAsync;
+ const config_plugins_1 = require("@expo/config-plugins");
+ const image_utils_1 = require("@expo/image-utils");
+ const AssetContents_1 = require("@expo/prebuild-config/build/plugins/icons/AssetContents");
+@@ -135,7 +138,6 @@ function setIconsAsync(icon, projectRoot, iosNamedProjectRoot, cacheComponent) {
+         });
+     });
+ }
+-exports.setIconsAsync = setIconsAsync;
+ function generateIconsInternalAsync(icon, projectRoot, iosNamedProjectRoot, cacheComponent) {
+     return __awaiter(this, void 0, void 0, function* () {
+         // Store the image JSON data for assigning via the Contents.json
+@@ -186,7 +188,6 @@ function generateIconsInternalAsync(icon, projectRoot, iosNamedProjectRoot, cach
+         return imagesJson;
+     });
+ }
+-exports.generateIconsInternalAsync = generateIconsInternalAsync;
+ function generateWatchIconsInternalAsync(icon, projectRoot, iosNamedProjectRoot, cacheComponent) {
+     return __awaiter(this, void 0, void 0, function* () {
+         // Store the image JSON data for assigning via the Contents.json
+@@ -219,7 +220,6 @@ function generateWatchIconsInternalAsync(icon, projectRoot, iosNamedProjectRoot,
+         return imagesJson;
+     });
+ }
+-exports.generateWatchIconsInternalAsync = generateWatchIconsInternalAsync;
+ function getAppleIconName(size, scale) {
+     return `App-Icon-${size}x${size}@${scale}x.png`;
+ }
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/sync/generate.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/sync/generate.js
+index 306251f..79119f6 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/sync/generate.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/sync/generate.js
+@@ -13,7 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.getNativeTargetId = exports.getFrameworksForTargets = exports.getPossibleExtensionIds = exports.printPlistsAsJson = void 0;
++exports.printPlistsAsJson = printPlistsAsJson;
++exports.getPossibleExtensionIds = getPossibleExtensionIds;
++exports.getFrameworksForTargets = getFrameworksForTargets;
++exports.getNativeTargetId = getNativeTargetId;
+ const plist_1 = __importDefault(require("@expo/plist"));
+ const fs_extra_1 = __importDefault(require("fs-extra"));
+ const path_1 = __importDefault(require("path"));
+@@ -28,7 +31,6 @@ function printPlistsAsJson() {
+     });
+     console.log(JSON.stringify(json, null, 2));
+ }
+-exports.printPlistsAsJson = printPlistsAsJson;
+ function getPossibleExtensionIds(project) {
+     return project.rootObject.props.targets
+         .map((target) => {
+@@ -36,7 +38,6 @@ function getPossibleExtensionIds(project) {
+     })
+         .filter(Boolean);
+ }
+-exports.getPossibleExtensionIds = getPossibleExtensionIds;
+ function getFrameworksForTargets(project) {
+     const items = [];
+     project.rootObject.props.targets.forEach((target) => {
+@@ -66,7 +67,6 @@ function getFrameworksForTargets(project) {
+     })
+         .join("\n");
+ }
+-exports.getFrameworksForTargets = getFrameworksForTargets;
+ // printPlistsAsJson();
+ function getNativeTargetId(target) {
+     var _a, _b;
+@@ -88,7 +88,6 @@ function getNativeTargetId(target) {
+     }
+     return (_b = infoPlist.NSExtension) === null || _b === void 0 ? void 0 : _b.NSExtensionPointIdentifier;
+ }
+-exports.getNativeTargetId = getNativeTargetId;
+ (() => __awaiter(void 0, void 0, void 0, function* () {
+     const projPath = (0, glob_1.sync)("ios/*/project.pbxproj", {
+         cwd: process.cwd(),
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.d.ts b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.d.ts
+index 77d7de1..b7ddd18 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.d.ts
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.d.ts
+@@ -1,5 +1,5 @@
+ import { PBXNativeTarget, XcodeProject } from "@bacons/xcode";
+-export type ExtensionType = "widget" | "notification-content" | "notification-service" | "share" | "intent" | "bg-download" | "intent-ui" | "spotlight" | "matter" | "quicklook-thumbnail" | "imessage" | "clip" | "watch" | "location-push" | "credentials-provider" | "account-auth" | "device-activity-monitor" | "safari";
++export type ExtensionType = "widget" | "notification-content" | "notification-service" | "share" | "intent" | "bg-download" | "intent-ui" | "spotlight" | "matter" | "quicklook-thumbnail" | "imessage" | "clip" | "watch" | "location-push" | "credentials-provider" | "account-auth" | "device-activity-monitor" | "shield-action" | "shield-configuration" | "safari";
+ export declare const KNOWN_EXTENSION_POINT_IDENTIFIERS: Record<string, ExtensionType>;
+ export declare function getTargetInfoPlistForType(type: ExtensionType): string;
+ export declare function productTypeForType(type: ExtensionType): "com.apple.product-type.application.on-demand-install-capable" | "com.apple.product-type.application" | "com.apple.product-type.app-extension";
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.js
+index cfbaf34..19ee697 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/target.js
+@@ -3,7 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.getInfoPlistPathForTarget = exports.getInfoPlistForTarget = exports.getDefaultBuildConfigurationForTarget = exports.getMainAppTarget = exports.isNativeTargetOfType = exports.getFrameworksForType = exports.needsEmbeddedSwift = exports.productTypeForType = exports.getTargetInfoPlistForType = exports.KNOWN_EXTENSION_POINT_IDENTIFIERS = void 0;
++exports.KNOWN_EXTENSION_POINT_IDENTIFIERS = void 0;
++exports.getTargetInfoPlistForType = getTargetInfoPlistForType;
++exports.productTypeForType = productTypeForType;
++exports.needsEmbeddedSwift = needsEmbeddedSwift;
++exports.getFrameworksForType = getFrameworksForType;
++exports.isNativeTargetOfType = isNativeTargetOfType;
++exports.getMainAppTarget = getMainAppTarget;
++exports.getDefaultBuildConfigurationForTarget = getDefaultBuildConfigurationForTarget;
++exports.getInfoPlistForTarget = getInfoPlistForTarget;
++exports.getInfoPlistPathForTarget = getInfoPlistPathForTarget;
+ const xcode_1 = require("@bacons/xcode");
+ const plist_1 = __importDefault(require("@expo/plist"));
+ const fs_1 = __importDefault(require("fs"));
+@@ -204,7 +213,6 @@ function getTargetInfoPlistForType(type) {
+         },
+     });
+ }
+-exports.getTargetInfoPlistForType = getTargetInfoPlistForType;
+ function productTypeForType(type) {
+     switch (type) {
+         case "clip":
+@@ -215,7 +223,6 @@ function productTypeForType(type) {
+             return "com.apple.product-type.app-extension";
+     }
+ }
+-exports.productTypeForType = productTypeForType;
+ function needsEmbeddedSwift(type) {
+     return [
+         "watch",
+@@ -229,7 +236,6 @@ function needsEmbeddedSwift(type) {
+         "clip",
+     ].includes(type);
+ }
+-exports.needsEmbeddedSwift = needsEmbeddedSwift;
+ function getFrameworksForType(type) {
+     if (type === "widget") {
+         return [
+@@ -254,9 +260,14 @@ function getFrameworksForType(type) {
+     else if (type === "device-activity-monitor") {
+         return ["DeviceActivity"];
+     }
++    else if (type === "shield-action") {
++        return ["ManagedSettingsUI"];
++    }
++    else if (type === "shield-configuration") {
++        return [];
++    }
+     return [];
+ }
+-exports.getFrameworksForType = getFrameworksForType;
+ function isNativeTargetOfType(target, type) {
+     var _a, _b;
+     if (type === "watch" &&
+@@ -286,7 +297,6 @@ function isNativeTargetOfType(target, type) {
+     }
+     return (exports.KNOWN_EXTENSION_POINT_IDENTIFIERS[(_b = infoPlist.NSExtension) === null || _b === void 0 ? void 0 : _b.NSExtensionPointIdentifier] === type);
+ }
+-exports.isNativeTargetOfType = isNativeTargetOfType;
+ function getMainAppTarget(project) {
+     const mainAppTarget = project.rootObject.props.targets.filter(target => {
+         if (xcode_1.PBXNativeTarget.is(target) && target.props.productType === "com.apple.product-type.application") {
+@@ -299,16 +309,13 @@ function getMainAppTarget(project) {
+     }
+     return mainAppTarget[0];
+ }
+-exports.getMainAppTarget = getMainAppTarget;
+ function getDefaultBuildConfigurationForTarget(target) {
+     return target.props.buildConfigurationList.props.buildConfigurations.find((config) => config.props.name ===
+         target.props.buildConfigurationList.props.defaultConfigurationName);
+ }
+-exports.getDefaultBuildConfigurationForTarget = getDefaultBuildConfigurationForTarget;
+ function getInfoPlistForTarget(target) {
+     return plist_1.default.parse(fs_1.default.readFileSync(getInfoPlistPathForTarget(target), "utf8"));
+ }
+-exports.getInfoPlistForTarget = getInfoPlistForTarget;
+ function getInfoPlistPathForTarget(target) {
+     const infoPlistPath = path_1.default.join(
+     // TODO: Resolve root better
+@@ -316,4 +323,3 @@ function getInfoPlistPathForTarget(target) {
+         .INFOPLIST_FILE);
+     return infoPlistPath;
+ }
+-exports.getInfoPlistPathForTarget = getInfoPlistPathForTarget;
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcodeChanges.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcodeChanges.js
+index 61973dc..dbd02ae 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcodeChanges.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcodeChanges.js
+@@ -84,7 +84,7 @@ function createShareConfigurationList(project, { name, cwd, bundleId, deployment
+         CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: "YES",
+         CLANG_WARN_UNGUARDED_AVAILABILITY: "YES_AGGRESSIVE",
+         CODE_SIGN_STYLE: "Automatic",
+-        DEBUG_INFORMATION_FORMAT: "dwarf",
++        DEBUG_INFORMATION_FORMAT: "dwarf", // NOTE
+         GCC_C_LANGUAGE_STANDARD: "gnu11",
+         GENERATE_INFOPLIST_FILE: "YES",
+         CURRENT_PROJECT_VERSION: currentProjectVersion,
+@@ -145,7 +145,7 @@ function createIMessageConfigurationList(project, { name, cwd, bundleId, deploym
+         CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: "YES",
+         CLANG_WARN_UNGUARDED_AVAILABILITY: "YES_AGGRESSIVE",
+         CODE_SIGN_STYLE: "Automatic",
+-        DEBUG_INFORMATION_FORMAT: "dwarf",
++        DEBUG_INFORMATION_FORMAT: "dwarf", // NOTE
+         GCC_C_LANGUAGE_STANDARD: "gnu11",
+         GENERATE_INFOPLIST_FILE: "YES",
+         CURRENT_PROJECT_VERSION: currentProjectVersion,
+@@ -202,7 +202,6 @@ function createWatchAppConfigurationList(project, { name, cwd, bundleId, deploym
+         INFOPLIST_FILE: cwd + "/Info.plist",
+         GENERATE_INFOPLIST_FILE: "YES",
+         INFOPLIST_KEY_CFBundleDisplayName: name,
+-        // @ts-expect-error
+         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
+         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: mainAppTarget.props.buildSettings.PRODUCT_BUNDLE_IDENTIFIER,
+         // INFOPLIST_KEY_WKCompanionAppBundleIdentifier: "$(BUNDLE_IDENTIFIER)",
+@@ -471,8 +470,8 @@ function addFrameworksToDisplayFolder(project, frameworks) {
+     });
+ }
+ function applyXcodeChanges(config, project, props) {
+-    var _a, _b;
+     return __awaiter(this, void 0, void 0, function* () {
++        var _a, _b;
+         const mainAppTarget = (0, target_1.getMainAppTarget)(project);
+         // Special setting for share extensions.
+         if ((0, target_1.needsEmbeddedSwift)(props.type)) {
+@@ -833,22 +832,17 @@ function applyXcodeChanges(config, project, props) {
+             path: props.cwd,
+             sourceTree: "<group>",
+             children: [
+-                // @ts-expect-error
+                 ...swiftFiles
+                     .map((buildFile) => buildFile.props.fileRef)
+                     .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+-                // @ts-expect-error
+                 ...intentFiles.sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+-                // @ts-expect-error
+                 ...assetFiles
+                     .map((buildFile) => buildFile.props.fileRef)
+                     .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+-                // @ts-expect-error
+                 ...entitlementFiles
+                     .map((buildFile) => buildFile.props.fileRef)
+                     .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+                 // CD0706192A2EBE2F009C1192 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+-                // @ts-expect-error
+                 xcode_1.PBXFileReference.create(project, {
+                     path: "Info.plist",
+                     sourceTree: "<group>",
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcparse.js b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcparse.js
+index 5d36281..f0f1d2c 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcparse.js
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/build/withXcparse.js
+@@ -56,8 +56,8 @@ const withXcodeProjectBetaBaseModInternal = (config) => {
+             [customModName]: config_plugins_1.BaseMods.provider({
+                 isIntrospective: false,
+                 // isIntrospective: true,
+-                getFilePath({ modRequest, _internal }) {
+-                    return __awaiter(this, void 0, void 0, function* () {
++                getFilePath(_a) {
++                    return __awaiter(this, arguments, void 0, function* ({ modRequest, _internal }) {
+                         // console.log("_internal", _internal.projectRoot);
+                         // HACK: To keep soft-clean working, we need to read from the the project and not the template.
+                         return config_plugins_1.IOSConfig.Paths.getPBXProjectPath(_internal.projectRoot);
+@@ -74,8 +74,8 @@ const withXcodeProjectBetaBaseModInternal = (config) => {
+                         }
+                     });
+                 },
+-                write(filePath, { modResults, modRequest: { introspect } }) {
+-                    return __awaiter(this, void 0, void 0, function* () {
++                write(filePath_1, _a) {
++                    return __awaiter(this, arguments, void 0, function* (filePath, { modResults, modRequest: { introspect } }) {
+                         if (introspect) {
+                             return;
+                         }
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/target.ts b/node_modules/@kingstinct/expo-apple-targets/target-plugin/target.ts
+index 50aecce..b12f8af 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/target.ts
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/target.ts
+@@ -21,6 +21,8 @@ export type ExtensionType =
+   | "credentials-provider"
+   | "account-auth"
+   | "device-activity-monitor"
++  | "shield-action"
++  | "shield-configuration"
+   | "safari";
+ 
+ export const KNOWN_EXTENSION_POINT_IDENTIFIERS: Record<string, ExtensionType> =
+@@ -270,6 +272,10 @@ export function getFrameworksForType(type: ExtensionType) {
+     return ["UserNotifications", "UserNotificationsUI"];
+   } else if (type === "device-activity-monitor") {
+     return ["DeviceActivity"];
++  } else if (type === "shield-action") {
++    return ["ManagedSettingsUI"];
++  } else if (type === "shield-configuration") {
++    return [];
+   }
+ 
+   return [];
+diff --git a/node_modules/@kingstinct/expo-apple-targets/target-plugin/withXcodeChanges.ts b/node_modules/@kingstinct/expo-apple-targets/target-plugin/withXcodeChanges.ts
+index 98ed0ba..4ee7ff2 100644
+--- a/node_modules/@kingstinct/expo-apple-targets/target-plugin/withXcodeChanges.ts
++++ b/node_modules/@kingstinct/expo-apple-targets/target-plugin/withXcodeChanges.ts
+@@ -318,7 +318,6 @@ function createWatchAppConfigurationList(
+     INFOPLIST_FILE: cwd + "/Info.plist",
+     GENERATE_INFOPLIST_FILE: "YES",
+     INFOPLIST_KEY_CFBundleDisplayName: name,
+-    // @ts-expect-error
+     INFOPLIST_KEY_UISupportedInterfaceOrientations:
+       "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
+     INFOPLIST_KEY_WKCompanionAppBundleIdentifier:
+@@ -1154,28 +1153,23 @@ async function applyXcodeChanges(
+     path: props.cwd,
+     sourceTree: "<group>",
+     children: [
+-      // @ts-expect-error
+       ...swiftFiles
+         .map((buildFile) => buildFile.props.fileRef)
+         .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+ 
+-      // @ts-expect-error
+       ...intentFiles.sort((a, b) =>
+         a.getDisplayName().localeCompare(b.getDisplayName())
+       ),
+ 
+-      // @ts-expect-error
+       ...assetFiles
+         .map((buildFile) => buildFile.props.fileRef)
+         .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+ 
+-      // @ts-expect-error
+       ...entitlementFiles
+         .map((buildFile) => buildFile.props.fileRef)
+         .sort((a, b) => a.getDisplayName().localeCompare(b.getDisplayName())),
+ 
+       // CD0706192A2EBE2F009C1192 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+-      // @ts-expect-error
+       PBXFileReference.create(project, {
+         path: "Info.plist",
+         sourceTree: "<group>",
