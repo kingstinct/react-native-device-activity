@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import ManagedSettingsUI
 import DeviceActivity
 import FamilyControls
 import ManagedSettings
@@ -50,6 +51,8 @@ struct ScheduleFromJS: Record {
   @Field
   var warningTime: DateComponentsFromJS?
 }
+
+let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
 
 struct DeviceActivityEventFromJS: Record {
   @Field
@@ -172,7 +175,7 @@ public class ReactNativeDeviceActivityModule: Module {
     
     let observer = NativeEventObserver(module: self)
 
-    let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+    
     
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
       
@@ -262,6 +265,14 @@ public class ReactNativeDeviceActivityModule: Module {
       }))
     }
       
+      let store = ManagedSettingsStore()
+      
+      Function("updateShieldConfiguration") { (shieldConfiguration: [String:Any]) -> Void in
+          logger.log("\(shieldConfiguration)")
+        userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+          
+      }
+      
       Function("activities") {
         let activities = center.activities
           
@@ -280,6 +291,16 @@ public class ReactNativeDeviceActivityModule: Module {
       }
       
     }
+      
+      Function("blockAllApps"){
+          store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+          store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+      }
+      
+      Function("unblockApps"){
+          store.shield.applicationCategories = nil
+          store.shield.webDomainCategories = nil
+      }
       
       AsyncFunction("revokeAuthorization") { () async throws -> Void in
         let ac = AuthorizationCenter.shared

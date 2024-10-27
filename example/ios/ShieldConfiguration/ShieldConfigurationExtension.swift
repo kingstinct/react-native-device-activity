@@ -8,6 +8,74 @@
 import ManagedSettings
 import ManagedSettingsUI
 import UIKit
+import os
+import Foundation
+
+let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+
+
+let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
+
+
+func getColor(color: [String: Double]?) -> UIColor? {
+  if let color = color {
+    return UIColor(
+      red: color["red"] ?? 0,
+      green: color["green"] ?? 0,
+      blue: color["blue"] ?? 0,
+      alpha: color["alpha"] ?? 1
+    )
+  }
+  
+  return nil
+}
+
+func convertBase64StringToImage (imageBase64String: String?) -> UIImage? {
+  if let imageBase64String = imageBase64String {
+    let imageData = Data(base64Encoded: imageBase64String)
+    let image = UIImage(data: imageData!)
+    return image
+  }
+  
+  return nil
+}
+func getShieldConfiguration() -> ShieldConfiguration {
+  logger.log("Calling getShieldConfiguration")
+  let dict = userDefaults?.object(forKey: "shieldConfiguration") as? [String:Any]
+  
+  let backgroundColor = getColor(color: dict?["backgroundColor"] as? [String: Double])
+  
+  let title = dict?["title"] as? String
+  let titleColor = getColor(color: dict?["titleColor"] as? [String: Double]) ?? UIColor.label
+  
+  let subtitle = dict?["subtitle"] as? String
+  let subtitleColor = getColor(color: dict?["subtitleColor"] as? [String: Double]) ?? UIColor.label
+
+  let primaryButtonLabel = dict?["primaryButtonLabel"] as? String
+  let primaryButtonLabelColor = getColor(color: dict?["primaryButtonLabelColor"] as? [String: Double]) ?? UIColor.label
+  let primaryButtonBackgroundColor = getColor(color: dict?["primaryButtonBackgroundColor"] as? [String: Double])
+  
+  let secondaryButtonLabel = dict?["secondaryButtonLabel"] as? String
+  let secondaryButtonColor = getColor(color: dict?["secondaryButtonColor"] as? [String: Double]) ?? UIColor.label
+  
+  let icon = convertBase64StringToImage(imageBase64String: dict?["icon"] as? String)
+  
+  logger.log("got everything")
+
+  let shield = ShieldConfiguration(
+    backgroundBlurStyle: dict?["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: dict!["backgroundBlurStyle"] as! Int) : nil,
+    backgroundColor: backgroundColor,
+    icon: icon,
+    title: title != nil ? .init(text: title!, color: titleColor) : nil,
+    subtitle: subtitle != nil ? .init(text: subtitle!, color: subtitleColor) : nil,
+    primaryButtonLabel: primaryButtonLabel != nil ? .init(text: primaryButtonLabel!, color: primaryButtonLabelColor) : nil,
+    primaryButtonBackgroundColor: primaryButtonBackgroundColor,
+    secondaryButtonLabel: secondaryButtonLabel != nil ? .init(text: secondaryButtonLabel!, color: secondaryButtonColor) : nil
+  )
+  logger.log("shield initialized")
+  
+  return shield
+}
 
 // Override the functions below to customize the shields used in various situations.
 // The system provides a default appearance for any methods that your subclass doesn't override.
@@ -16,55 +84,28 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding application: Application) -> ShieldConfiguration {
         // Customize the shield as needed for applications.
       
-        return ShieldConfiguration(
-          backgroundBlurStyle: .dark,
-          backgroundColor: UIColor.green,
-          title: .init(text: "Title", color: .cyan),
-          subtitle: .init(text: "Subtitle", color: .brown),
-          primaryButtonLabel: .init(text: "Primary button", color: UIColor.blue),
-          primaryButtonBackgroundColor: UIColor.yellow,
-          secondaryButtonLabel: .init(text: "Secondary button", color: .blue)
-        )
+      logger.log("shielding application")
+      
+      return getShieldConfiguration()
     }
     
     override func configuration(shielding application: Application, in category: ActivityCategory) -> ShieldConfiguration {
       
-        // Customize the shield as needed for applications shielded because of their category.
-      return ShieldConfiguration(
-          backgroundBlurStyle: .dark,
-          backgroundColor: UIColor.green,
-          title: .init(text: "Title", color: .cyan),
-          subtitle: .init(text: "Subtitle", color: .brown),
-          primaryButtonLabel: .init(text: "Primary button", color: UIColor.blue),
-          primaryButtonBackgroundColor: UIColor.yellow,
-          secondaryButtonLabel: .init(text: "Secondary button", color: .blue)
-        )
+      logger.log("shielding application category")
+      
+      return getShieldConfiguration()
     }
     
     override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
+      
+      logger.log("shielding web domain")
         // Customize the shield as needed for web domains.
-
-      return ShieldConfiguration(
-          backgroundBlurStyle: .dark,
-          backgroundColor: UIColor.green,
-          title: .init(text: "Title", color: .cyan),
-          subtitle: .init(text: "Subtitle", color: .brown),
-          primaryButtonLabel: .init(text: "Primary button", color: UIColor.blue),
-          primaryButtonBackgroundColor: UIColor.yellow,
-          secondaryButtonLabel: .init(text: "Secondary button", color: .blue)
-        )
+      return getShieldConfiguration()
     }
     
     override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory) -> ShieldConfiguration {
-        // Customize the shield as needed for web domains shielded because of their category.
-      return ShieldConfiguration(
-          backgroundBlurStyle: .dark,
-          backgroundColor: UIColor.green,
-          title: .init(text: "Title", color: .cyan),
-          subtitle: .init(text: "Subtitle", color: .brown),
-          primaryButtonLabel: .init(text: "Primary button", color: UIColor.blue),
-          primaryButtonBackgroundColor: UIColor.yellow,
-          secondaryButtonLabel: .init(text: "Secondary button", color: .blue)
-        )
+      
+      logger.log("shielding web domain category")
+      return getShieldConfiguration()
     }
 }

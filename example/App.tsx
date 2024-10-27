@@ -9,12 +9,14 @@ import {
   View,
   Alert,
   SafeAreaView,
+  TextInput,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
   AuthorizationStatus,
   DeviceActivityEvent,
   EventParsed,
+  UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
 const startMonitoring = (activitySelection: string) => {
@@ -43,6 +45,7 @@ const authorizationStatusMap = {
 
 export default function App() {
   const [events, setEvents] = React.useState<EventParsed[]>([]);
+  const [shieldTitle, setShieldTitle] = React.useState<string>("");
   const [activities, setActivities] = React.useState<string[]>([]);
   const [authorizationStatus, setAuthorizationStatus] =
     React.useState<AuthorizationStatus | null>(null);
@@ -143,6 +146,54 @@ export default function App() {
 
           <Button title="Get events" onPress={refreshEvents} />
 
+          <Button
+            title="Block all apps"
+            onPress={ReactNativeDeviceActivity.blockAllApps}
+          />
+          <Button
+            title="Unblock all apps"
+            onPress={ReactNativeDeviceActivity.unblockAllApps}
+          />
+
+          <TextInput
+            placeholder="Enter shield title"
+            onChangeText={(text) => setShieldTitle(text)}
+            value={shieldTitle}
+            onSubmitEditing={() =>
+              ReactNativeDeviceActivity.updateShieldConfiguration({
+                title: shieldTitle,
+                backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
+                // backgroundColor: null,
+                titleColor: {
+                  red: 1,
+                  green: 0,
+                  blue: 0,
+                },
+                subtitle: "subtitle",
+                subtitleColor: {
+                  red: Math.random() * 1,
+                  green: Math.random() * 1,
+                  blue: Math.random() * 1,
+                },
+                primaryButtonBackgroundColor: {
+                  red: Math.random() * 1,
+                  green: Math.random() * 1,
+                  blue: Math.random() * 1,
+                },
+                primaryButtonLabelColor: {
+                  red: Math.random() * 1,
+                  green: Math.random() * 1,
+                  blue: Math.random() * 1,
+                },
+                secondaryButtonLabelColor: {
+                  red: Math.random() * 1,
+                  green: Math.random() * 1,
+                  blue: Math.random() * 1,
+                },
+              })
+            }
+          />
+
           <ReactNativeDeviceActivity.DeviceActivitySelectionView
             style={{
               width: 200,
@@ -185,7 +236,7 @@ export default function App() {
         </ScrollView>
       </SafeAreaView>
     ),
-    [familyActivitySelection, events, authorizationStatus],
+    [familyActivitySelection, events, authorizationStatus, shieldTitle],
   );
 }
 

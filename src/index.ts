@@ -19,6 +19,7 @@ import {
   DeviceActivitySelectionViewProps,
   EventParsed,
   FamilyActivitySelection,
+  ShieldConfiguration,
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
@@ -114,6 +115,14 @@ export function getActivities(): string[] {
   return ReactNativeDeviceActivityModule.activities();
 }
 
+export function blockAllApps(): void {
+  return ReactNativeDeviceActivityModule.blockAllApps();
+}
+
+export function unblockAllApps(): void {
+  return ReactNativeDeviceActivityModule.unblockApps();
+}
+
 export function getAuthorizationStatus(): AuthorizationStatus {
   return ReactNativeDeviceActivityModule.authorizationStatus();
 }
@@ -129,6 +138,14 @@ export function addEventReceivedListener(
   return emitter.addListener<DeviceActivityMonitorEventPayload>(
     "onDeviceActivityMonitorEvent",
     listener,
+  );
+}
+
+export function updateShieldConfiguration(
+  shieldConfiguration: ShieldConfiguration,
+) {
+  return ReactNativeDeviceActivityModule.updateShieldConfiguration(
+    shieldConfiguration,
   );
 }
 
