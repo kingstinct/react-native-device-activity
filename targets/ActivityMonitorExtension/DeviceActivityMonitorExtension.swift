@@ -77,7 +77,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     logger.log("tring to get base64")
      
-    let str = userDefaults?.string(forKey: activity.rawValue + "_familyActivitySelection")
+    let str = userDefaults?.string(forKey: event.rawValue + "_familyActivitySelection")
     
     var activitySelection = FamilyActivitySelection()
     

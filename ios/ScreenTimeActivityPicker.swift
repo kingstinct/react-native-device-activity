@@ -11,7 +11,7 @@ import SwiftUI
 
 @available(iOS 15.0, *)
 class ScreenTimeSelectAppsModel: ObservableObject {
-    @Published var activitySelection = FamilyActivitySelection(includeEntireCategory: true)
+    @Published var activitySelection = FamilyActivitySelection()
 
     init() { }
 }
