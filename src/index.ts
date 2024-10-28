@@ -115,11 +115,11 @@ export function getActivities(): string[] {
   return ReactNativeDeviceActivityModule.activities();
 }
 
-export function blockAllApps(): void {
+export function blockAllApps(): PromiseLike<void> | void {
   return ReactNativeDeviceActivityModule.blockAllApps();
 }
 
-export function unblockAllApps(): void {
+export function unblockAllApps(): PromiseLike<void> | void {
   return ReactNativeDeviceActivityModule.unblockApps();
 }
 

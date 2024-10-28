@@ -1,13 +1,11 @@
 const { withEntitlementsPlist } = require("expo/config-plugins");
 
-/**
- * @type {ConfigPlugin}
- */
-const withEntitlementsPlugin = (config) =>
+/** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; }>} */
+const withEntitlementsPlugin = (config, { appGroup }) =>
   withEntitlementsPlist(config, (config) => {
     // todo: make this configurable - but would requiring changes in both Swift code and the /target/Info.plist to make sense
     config.modResults["com.apple.security.application-groups"] = [
-      "group.ActivityMonitor",
+      appGroup ?? "group.ActivityMonitor",
     ];
     config.modResults["com.apple.developer.family-controls"] = true;
 

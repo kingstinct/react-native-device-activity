@@ -7,10 +7,10 @@ const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
 const pkg = require("./package.json");
 
-/** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string; }>} */
+/** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string, appGroup: string; }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
   return withTargetPlugin(
-    withEntitlementsPlugin(withCopyTargetFolder(config)),
+    withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
     props,
   );
 };
