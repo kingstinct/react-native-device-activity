@@ -33,14 +33,28 @@ const withCopyTargetFolder = (config, { appGroup }) => {
     const parsedEntitlements = plist.parse(entitlementsFileContents);
 
     if (parsedEntitlements["com.apple.security.application-groups"]) {
-      parsedEntitlements["com.apple.security.application-groups"] = [
-        appGroup ?? "group.ActivityMonitor",
-      ];
+      parsedEntitlements["com.apple.security.application-groups"] = [appGroup];
     }
 
     const modifiedEntitlementsFileContents = plist.build(parsedEntitlements);
 
     fs.writeFileSync(entitlementsFilePath, modifiedEntitlementsFileContents);
+  }
+
+  const swiftFiles = fs
+    .readdirSync(projectTargetFolderPath, { recursive: true })
+    .filter((file) => file.endsWith(".swift"));
+
+  for (const swiftFile of swiftFiles) {
+    const swiftFilePath = projectTargetFolderPath + "/" + swiftFile;
+    const swiftFileContents = fs.readFileSync(swiftFilePath, "utf8");
+
+    const modifiedSwiftFileContents = swiftFileContents.replace(
+      "group.ActivityMonitor",
+      appGroup,
+    );
+
+    fs.writeFileSync(swiftFilePath, modifiedSwiftFileContents);
   }
 
   return config;

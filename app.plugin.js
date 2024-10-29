@@ -9,6 +9,12 @@ const pkg = require("./package.json");
 
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string, appGroup: string; }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
+  if (!props || !props.appGroup || typeof props.appleTeamId !== "string") {
+    throw Error(
+      "'appGroup' and 'appleTeamId' props are required for react-native-device-activity config plugin",
+    );
+  }
+
   return withTargetPlugin(
     withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
     props,

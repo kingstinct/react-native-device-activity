@@ -52,8 +52,6 @@ struct ScheduleFromJS: Record {
   var warningTime: DateComponentsFromJS?
 }
 
-let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
-
 struct DeviceActivityEventFromJS: Record {
   @Field
   var familyActivitySelectionIndex: Int;
@@ -174,8 +172,12 @@ public class ReactNativeDeviceActivityModule: Module {
     //])
     
     let observer = NativeEventObserver(module: self)
-
-    
+      
+    var userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+      
+    Function("setAppGroup") { (appGroup: String) in
+        userDefaults = UserDefaults(suiteName: appGroup)
+    }
     
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
       
