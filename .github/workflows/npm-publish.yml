@@ -29,10 +29,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
-      - run: npm ci
-      # - run: npm test
-      - run: npm run lint
-      - run: npm run typecheck
+          cache: yarn
+
+      - run: yarn install
+      
+      - run: yarn lint
+      
+      - run: yarn typecheck
 
   publish-to-npm:
     needs: test
@@ -42,12 +45,14 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
+          cache: yarn
           registry-url: https://registry.npmjs.org/
           scope: '@kingstinct'
+
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
       - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
-      - run: npm ci
+      - run: yarn install
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
