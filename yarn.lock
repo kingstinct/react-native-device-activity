@@ -1543,10 +1543,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kingstinct/expo-apple-targets@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@kingstinct/expo-apple-targets/-/expo-apple-targets-0.0.3.tgz#9ec4a97d9a96cad7e590da082c5779f48fc62dd4"
-  integrity sha512-+GHCSeXtJYdDthBzotwpaDkC9NFDYA+QnHd2p9kgKAVgj4RefR2LDAmHc3XqeKWDS/COnAyr28HWN3YQsnyX3Q==
+"@kingstinct/expo-apple-targets@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@kingstinct/expo-apple-targets/-/expo-apple-targets-0.0.4.tgz#b2c493d0dc2391aaf2726fc252bb5cada2f21fb5"
+  integrity sha512-ihApQFF1AHnnmZO5Hm9Ifq7Marcx3JNImRYI0abvtMI4JjPg17ai1icKzu7VJax6/iOr1by+rma+EZeGj6OeGw==
 
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
   version "2.1.8-no-fsevents.3"
