@@ -42,6 +42,8 @@
     "eslint": "8",
     "expo-module-scripts": "^3.5.2",
     "expo-modules-core": "^1.12.24",
+    "prettier": "^3.3.3",
+    "react": "18.2.0",
     "react-native": "0.74.5"
   },
   "peerDependencies": {
