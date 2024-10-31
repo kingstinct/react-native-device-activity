@@ -5,6 +5,7 @@ const withEntitlementsPlugin = (config, { appGroup }) =>
   withEntitlementsPlist(config, (config) => {
     // todo: make this configurable - but would requiring changes in both Swift code and the /target/Info.plist to make sense
     config.modResults["com.apple.security.application-groups"] = [
+      ...(config.modResults["com.apple.security.application-groups"] ?? []),
       appGroup ?? "group.ActivityMonitor",
     ];
     config.modResults["com.apple.developer.family-controls"] = true;
