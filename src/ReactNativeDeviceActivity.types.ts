@@ -41,11 +41,26 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   footerText?: string | null;
 }>;
 
+/**
+ * @link https://developer.apple.com/documentation/foundation/datecomponents
+ */
 export type DateComponents = {
   // calendar: Calendar?;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779909-era
+   */
   era?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779943-year
+   */
   year?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1780256-month
+   */
   month?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779808-day
+   */
   day?: number;
   hour?: number;
   minute?: number;
@@ -58,17 +73,40 @@ export type DateComponents = {
   weekOfYear?: number;
   yearForWeekOfYear?: number;
 
-  // mapped to init(identifier:) https://developer.apple.com/documentation/foundation/timezone/3126780-init or init(abbreviation:) https://developer.apple.com/documentation/foundation/timezone/3126779-init
+  /**
+   * mapped to init(identifier:)
+   * @link https://developer.apple.com/documentation/foundation/timezone/3126780-init
+   * or init(abbreviation:)
+   * @link https://developer.apple.com/documentation/foundation/timezone/3126779-init
+   */
   timeZoneIdentifier?: string;
 
-  // mapped to init(secondsFromGMT:) https://developer.apple.com/documentation/foundation/timezone/2293718-init
+  /**
+   * mapped to init(secondsFromGMT:)
+   * @link https://developer.apple.com/documentation/foundation/timezone/2293718-init
+   */
   timeZoneOffsetInSeconds?: number;
 };
 
+/**
+ * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityschedule
+ */
 export type DeviceActivitySchedule = {
+  /**
+   * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityschedule/intervalstart
+   */
   intervalStart: DateComponents;
+  /**
+   * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityschedule/intervalend
+   */
   intervalEnd: DateComponents;
+  /**
+   * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityschedule/repeats
+   */
   repeats: boolean;
+  /**
+   * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityschedule/warningtime
+   */
   warningTime?: DateComponents;
 };
 
@@ -116,25 +154,73 @@ export type ReactNativeDeviceActivityNativeModule = {
   ) => void;
 };
 
+/**
+ * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration
+ */
 export type ShieldConfiguration = {
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/backgroundblurstyle
+   */
   backgroundColor?: UIColor;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/backgroundblurstyle
+   */
   backgroundBlurStyle?: UIBlurEffectStyle;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/title
+   */
   title?: string;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/titlecolor
+   */
   titleColor?: UIColor;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/subtitle
+   */
   subtitle?: string;
   subtitleColor?: UIColor;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/icon
+   */
   icon?: string;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/primarybuttonlabel
+   */
   primaryButtonLabel?: string;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/primarybuttonlabelcolor
+   */
   primaryButtonLabelColor?: UIColor;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/primarybuttonbackgroundcolor
+   */
   primaryButtonBackgroundColor?: UIColor;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/secondarybuttonlabel
+   */
   secondaryButtonLabel?: string;
+  /**
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/secondarybuttonlabelcolor
+   */
   secondaryButtonLabelColor?: UIColor;
 };
 
 type UIColor = {
+  /**
+   * Something between 0 and 255
+   */
   red: number;
+  /**
+   * Something between 0 and 255
+   */
   green: number;
+  /**
+   * Something between 0 and 255
+   */
   blue: number;
+  /**
+   * Something between 0 and 1
+   */
   alpha?: number;
 };
 
