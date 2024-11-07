@@ -51,7 +51,7 @@ class ReactNativeDeviceActivityView: ExpoView {
         "familyActivitySelection": jsonString,
         "applicationCount": selection.applicationTokens.count,
         "categoryCount": selection.categoryTokens.count,
-        "webdomainCount": selection.webDomainTokens.count,
+        "webdomainCount": selection.webDomainTokens.count
       ])
     } catch {
       
