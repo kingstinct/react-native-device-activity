@@ -19,11 +19,16 @@ let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-n
 
 func getColor(color: [String: Double]?) -> UIColor? {
   if let color = color {
+    let red = color["red"] ?? 0
+    let green = color["green"] ?? 0
+    let blue = color["blue"] ?? 0
+    let alpha = color["alpha"] ?? 1
+    
     return UIColor(
-      red: color["red"] ?? 0,
-      green: color["green"] ?? 0,
-      blue: color["blue"] ?? 0,
-      alpha: color["alpha"] ?? 1
+      red: red / 255,
+      green: green / 255,
+      blue: blue / 255,
+      alpha: alpha
     )
   }
   
