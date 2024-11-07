@@ -37,6 +37,10 @@ struct DateComponentsFromJS: Record {
   var weekOfYear: Int?;
   @Field
   var yearForWeekOfYear: Int?;
+  @Field
+  var timeZoneOffsetInSeconds: Int?;
+  @Field
+  var timeZoneIdentifier: String?;
 }
 
 struct ScheduleFromJS: Record {
@@ -105,6 +109,15 @@ func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJ
   }
   if let yearForWeekOfYear = dateComponentsFromJS.yearForWeekOfYear {
     swiftDateComponents.yearForWeekOfYear = yearForWeekOfYear
+  }
+  if let timeZoneIdentifier = dateComponentsFromJS.timeZoneIdentifier {
+    swiftDateComponents.timeZone = TimeZone(identifier: timeZoneIdentifier)
+    if(swiftDateComponents.timeZone == nil){
+      swiftDateComponents.timeZone = TimeZone(abbreviation: timeZoneIdentifier)
+    }
+  }
+  if let timeZoneOffsetInSeconds = dateComponentsFromJS.timeZoneOffsetInSeconds {
+    swiftDateComponents.timeZone = TimeZone(secondsFromGMT: timeZoneOffsetInSeconds)
   }
   
   return swiftDateComponents

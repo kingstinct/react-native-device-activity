@@ -31,7 +31,6 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
 
 export type DateComponents = {
   // calendar: Calendar?;
-  // timeZone: TimeZone?;
   era?: number;
   year?: number;
   month?: number;
@@ -46,6 +45,12 @@ export type DateComponents = {
   weekOfMonth?: number;
   weekOfYear?: number;
   yearForWeekOfYear?: number;
+
+  // mapped to init(identifier:) https://developer.apple.com/documentation/foundation/timezone/3126780-init or init(abbreviation:) https://developer.apple.com/documentation/foundation/timezone/3126779-init
+  timeZoneIdentifier?: string;
+
+  // mapped to init(secondsFromGMT:) https://developer.apple.com/documentation/foundation/timezone/2293718-init
+  timeZoneOffsetInSeconds?: number;
 };
 
 export type DeviceActivitySchedule = {
