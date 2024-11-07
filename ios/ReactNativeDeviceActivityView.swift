@@ -51,7 +51,7 @@ class ReactNativeDeviceActivityView: ExpoView {
         "familyActivitySelection": jsonString,
         "applicationCount": selection.applicationTokens.count,
         "categoryCount": selection.categoryTokens.count,
-        "webdomainCount": selection.webDomainTokens.count,
+        "webDomainCount": selection.webDomainTokens.count,
         "categoryTokens": selection.categoryTokens.map({ token in
             return token.hashValue
         }),
