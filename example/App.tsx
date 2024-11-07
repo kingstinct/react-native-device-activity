@@ -19,12 +19,32 @@ import {
   UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
+const initialMinutes = 2;
+const postponeMinutes = 1;
+
+const potentialMaxEvents = Math.floor(
+  (60 * 24 - initialMinutes) / postponeMinutes,
+);
+
 const startMonitoring = (activitySelection: string) => {
-  const event: DeviceActivityEvent = {
-    eventName: "GoalReached",
-    familyActivitySelection: activitySelection,
-    threshold: { minute: 2 },
-  };
+  const events: DeviceActivityEvent[] = [
+    {
+      eventName: `minutes_reached_${initialMinutes}`,
+      familyActivitySelection: activitySelection,
+      threshold: { minute: initialMinutes },
+    },
+  ];
+
+  for (let i = 0; i < potentialMaxEvents; i++) {
+    const eventName = `minutes_reached_${initialMinutes + i * postponeMinutes}`;
+    const event: DeviceActivityEvent = {
+      eventName,
+      familyActivitySelection: activitySelection,
+      threshold: { minute: initialMinutes + i * postponeMinutes },
+    };
+    events.push(event);
+  }
+
   ReactNativeDeviceActivity.startMonitoring(
     "Goal1",
     {
@@ -33,7 +53,7 @@ const startMonitoring = (activitySelection: string) => {
       intervalEnd: { hour: 23, minute: 59, second: 59 },
       repeats: false,
     },
-    [event],
+    events,
   );
 };
 

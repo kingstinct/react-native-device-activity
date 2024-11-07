@@ -63,6 +63,8 @@ struct DeviceActivityEventFromJS: Record {
   var threshold: DateComponentsFromJS;
   @Field
   var eventName: String;
+  @Field
+  var includesPastActivity: Bool?;
 }
 
 func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJS) -> DateComponents {
@@ -283,21 +285,36 @@ public class ReactNativeDeviceActivityModule: Module {
         }
       }
       
-      let dictionary = Dictionary(uniqueKeysWithValues: events.map { (event: DeviceActivityEventFromJS) in
-        let familyActivitySelection = decodedFamilyActivitySelections[event.familyActivitySelectionIndex]
+        let dictionary = Dictionary<DeviceActivityEvent.Name, DeviceActivityEvent>(uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
+        let familyActivitySelection = decodedFamilyActivitySelections[eventRaw.familyActivitySelectionIndex]
           
-        userDefaults?.set(familyActivitySelections[event.familyActivitySelectionIndex], forKey: event.eventName + "_familyActivitySelection")
-        
-        return (
-          DeviceActivityEvent.Name(event.eventName),
-          DeviceActivityEvent(
+        userDefaults?.set(familyActivitySelections[eventRaw.familyActivitySelectionIndex], forKey: eventRaw.eventName + "_familyActivitySelection")
+            
+        let threshold = convertToSwiftDateComponents(from: eventRaw.threshold)
+          var event: DeviceActivityEvent
+          
+          if #available(iOS 17.4, *) {
+              event = DeviceActivityEvent(
+                applications: familyActivitySelection.applicationTokens,
+                categories: familyActivitySelection.categoryTokens,
+                webDomains: familyActivitySelection.webDomainTokens,
+                threshold: threshold,
+                includesPastActivity: eventRaw.includesPastActivity ?? false
+              )
+          } else {
+              
+          
+          event = DeviceActivityEvent(
             applications: familyActivitySelection.applicationTokens,
             categories: familyActivitySelection.categoryTokens,
             webDomains: familyActivitySelection.webDomainTokens,
-            threshold: convertToSwiftDateComponents(from: event.threshold)
-            // might be interesting for iOS 17.4 or later
-            // ,includesPastActivity: false
+            threshold: threshold
           )
+          }
+        
+        return (
+          DeviceActivityEvent.Name(eventRaw.eventName),
+          event
         )
       })
       
