@@ -62,10 +62,25 @@ export type DateComponents = {
    * @link https://developer.apple.com/documentation/foundation/datecomponents/1779808-day
    */
   day?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779899-hour
+   */
   hour?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779900-minute
+   */
   minute?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779901-second
+   */
   second?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779902-nanosecond
+   */
   nanosecond?: number;
+  /**
+   * @link https://developer.apple.com/documentation/foundation/datecomponents/1779903-weekday
+   */
   weekday?: number;
   weekdayOrdinal?: number;
   quarter?: number;

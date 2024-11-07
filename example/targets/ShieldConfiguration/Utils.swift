@@ -27,7 +27,7 @@ func parseActions(_ actionsRaw: Any?) -> [Action]{
             if let actionType = action["type"] as? String {
                 switch actionType {
                 /*case "unblockSelf":
-                    return Action.unblockSelf*/ 
+                    return Action.unblockSelf*/
                 case "unblockAll":
                     return Action.unblockAll
                 default:
@@ -68,15 +68,13 @@ func getShieldActionConfig(shieldAction: ShieldAction) -> ShieldActionConfig{
 
 @available(iOS 15.0, *)
 func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
-    let actionConfig = userDefaults?.dictionary(forKey: "shieldActionConfig")
-    
     userDefaults?.set([
         "primaryButtonActionResponse": primary.response.rawValue,
         "primaryButtonAction": primary.actions.map({ action in
             return ["type": "unblockAll"]
         }),
         "secondaryButtonActionResponse": secondary.response.rawValue,
-        "secondaryButtonAction": primary.actions.map({ action in
+        "secondaryButtonAction": secondary.actions.map({ action in
             return ["type": "unblockAll"]
         })
     ], forKey: "shieldActionConfig")
