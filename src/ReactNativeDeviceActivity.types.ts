@@ -91,6 +91,9 @@ export type ReactNativeDeviceActivityNativeModule = {
   revokeAuthorization: () => PromiseLike<void> | void;
   blockAllApps: () => PromiseLike<void> | void;
   unblockApps: () => PromiseLike<void> | void;
+  doesSelectionHaveOverlap: (
+    familyActivitySelections: FamilyActivitySelection[],
+  ) => boolean;
   updateShieldConfiguration: (
     shieldConfiguration: ShieldConfiguration,
   ) => PromiseLike<void> | void;

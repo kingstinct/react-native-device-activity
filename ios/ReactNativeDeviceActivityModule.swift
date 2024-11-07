@@ -210,6 +210,51 @@ public class ReactNativeDeviceActivityModule: Module {
       return filteredDict
     }
       
+      Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
+          let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
+            let decoder = JSONDecoder()
+            let data = Data(base64Encoded: familyActivitySelection)
+            do {
+              let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+              return activitySelection
+            }
+            catch {
+              return FamilyActivitySelection()
+            }
+          }
+          
+          let hasOverlap = decodedFamilyActivitySelections.contains { selection in
+              return decodedFamilyActivitySelections.contains { compareWith in
+                  // if it's the same instance - skip comparison
+                  if(compareWith == selection){
+                      return false
+                  }
+                  
+                  if(compareWith.applicationTokens.contains(where: { token in
+                      return selection.applicationTokens.contains(token)
+                  } )){
+                      return true
+                  }
+                  
+                  if(compareWith.categoryTokens.contains(where: { token in
+                      return selection.categoryTokens.contains(token)
+                  } )){
+                      return true
+                  }
+                  
+                  if(compareWith.webDomainTokens.contains(where: { token in
+                      return selection.webDomainTokens.contains(token)
+                  } )){
+                      return true
+                  }
+                  
+                  return false
+              }
+          }
+          
+          return hasOverlap
+      }
+      
       Function("authorizationStatus") {
           let currentStatus = AuthorizationCenter.shared.authorizationStatus
 
