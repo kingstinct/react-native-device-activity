@@ -13,7 +13,9 @@ import Foundation
 
 let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
 
+
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
+
 
 func getColor(color: [String: Double]?) -> UIColor? {
   if let color = color {

@@ -8,6 +8,9 @@ const withCopyTargetFolder = (config, { appGroup }) => {
   const packageTargetFolderPath = __dirname + "/../targets";
   const projectTargetFolderPath = projectRoot + "/targets";
 
+  // eslint-disable-next-line no-undef
+  const packageSharedFolderPath = __dirname + "/../ios/Shared";
+
   if (!fs.existsSync(projectTargetFolderPath)) {
     fs.mkdirSync(projectTargetFolderPath);
   }
@@ -15,6 +18,20 @@ const withCopyTargetFolder = (config, { appGroup }) => {
   fs.cpSync(packageTargetFolderPath, projectTargetFolderPath, {
     recursive: true,
   });
+
+  const nativeTargets = fs.readdirSync(projectTargetFolderPath, {
+    withFileTypes: false,
+  });
+
+  for (const nativeTarget of nativeTargets) {
+    const targetPath = projectTargetFolderPath + "/" + nativeTarget;
+    // check if is directory
+    if (fs.lstatSync(targetPath).isDirectory()) {
+      fs.cpSync(packageSharedFolderPath, targetPath, {
+        recursive: true,
+      });
+    }
+  }
 
   // find all entitlements files in the projectTargetFolderPath
   const entitlementsFiles = fs

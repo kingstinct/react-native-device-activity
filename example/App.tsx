@@ -206,6 +206,7 @@ export default function App() {
             onSelectionChange={(
               event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
             ) => {
+              console.log("event.nativeEvent", event.nativeEvent);
               if (
                 event.nativeEvent.familyActivitySelection !==
                 familyActivitySelection
@@ -213,6 +214,7 @@ export default function App() {
                 setFamilyActivitySelection(
                   event.nativeEvent.familyActivitySelection,
                 );
+
                 // alert(event.nativeEvent.familyActivitySelection);
               }
               // console.log(event.nativeEvent.familyActivitySelection);
