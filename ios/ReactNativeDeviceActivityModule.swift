@@ -401,6 +401,18 @@ public class ReactNativeDeviceActivityModule: Module {
           logger.log("❌ Failed to deserialize familyActivitySelection to FamilyActivitySelection: \(error.localizedDescription)")
         }
       }
+        
+        Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
+          
+            view.model.footerText = prop
+          
+        }
+        
+        Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
+          
+            view.model.headerText = prop
+          
+        }
     }
   }
 }

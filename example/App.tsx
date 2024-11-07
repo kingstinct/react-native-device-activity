@@ -203,6 +203,8 @@ export default function App() {
               borderWidth: 10,
               borderColor: "rgb(213,85,37)",
             }}
+            headerText="a header text!"
+            footerText="a footer text!"
             onSelectionChange={(
               event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
             ) => {

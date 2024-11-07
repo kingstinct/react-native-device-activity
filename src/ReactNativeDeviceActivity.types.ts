@@ -37,6 +37,8 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
     }>,
   ) => void;
   familyActivitySelection?: string | null;
+  headerText?: string | null;
+  footerText?: string | null;
 }>;
 
 export type DateComponents = {
