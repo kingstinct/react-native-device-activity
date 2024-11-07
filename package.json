@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/react": "^18.0.25",
     "eslint": "8",
+    "expo": "^51.0.38",
     "expo-module-scripts": "^3.5.2",
     "expo-modules-core": "^1.12.24",
     "prettier": "^3.3.3",
