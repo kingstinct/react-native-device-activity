@@ -48,7 +48,10 @@ class ReactNativeDeviceActivityView: ExpoView {
       let jsonString = json.base64EncodedString()
       
       onSelectionChange([
-        "familyActivitySelection": jsonString
+        "familyActivitySelection": jsonString,
+        "applicationCount": selection.applicationTokens.count,
+        "categoryCount": selection.categoryTokens.count,
+        "webdomainCount": selection.webDomainTokens.count,
       ])
     } catch {
       

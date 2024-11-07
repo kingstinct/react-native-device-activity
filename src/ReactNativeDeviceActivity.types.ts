@@ -24,7 +24,12 @@ export type EventsLookup = Record<string, number>;
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
   onSelectionChange?: (
-    selection: NativeSyntheticEvent<{ familyActivitySelection: string }>,
+    selection: NativeSyntheticEvent<{
+      familyActivitySelection: string;
+      appCount: number;
+      categoryCount: number;
+      webDomainCount: number;
+    }>,
   ) => void;
   familyActivitySelection?: string | null;
 }>;
