@@ -131,6 +131,10 @@ export type DeviceActivityEvent = {
   familyActivitySelection: FamilyActivitySelection;
   threshold: DateComponents;
   eventName: string;
+  /**
+   * @link https://developer.apple.com/documentation/deviceactivity/deviceactivityevent/includespastactivity
+   */
+  includesPastActivity?: boolean;
 };
 
 export type DeviceActivityEventRaw = Omit<
