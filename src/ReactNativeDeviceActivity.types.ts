@@ -21,6 +21,25 @@ export type EventParsed = {
 
 export type EventsLookup = Record<string, number>;
 
+export enum DeviceActivityReportViewDevice {
+  iPad = 0,
+  iPhone = 1,
+  iPod = 2,
+  mac = 3,
+}
+
+export type DeviceActivityReportViewProps = PropsWithChildren<{
+  style: StyleProp<ViewStyle>;
+  familyActivitySelection?: string | null;
+  from?: number | null;
+  to?: number | null;
+  segmentation?: "hourly" | "daily" | "weekly";
+  // null to select all devices
+  devices?: DeviceActivityReportViewDevice[] | null;
+  // null to select current user
+  users?: "all" | "children" | null;
+}>;
+
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
   onSelectionChange?: (

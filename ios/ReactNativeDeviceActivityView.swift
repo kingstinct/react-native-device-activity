@@ -6,7 +6,7 @@ import Combine
 
 // This view will be used as a native component. Make sure to inherit from `ExpoView`
 // to apply the proper styling (e.g. border radius and shadows).
-@available(iOS 15.0, *)
+@available(iOS 16.0, *)
 class ReactNativeDeviceActivityView: ExpoView {
     
     public let model = ScreenTimeSelectAppsModel()

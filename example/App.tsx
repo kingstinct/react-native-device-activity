@@ -216,9 +216,8 @@ export default function App() {
 
           <ReactNativeDeviceActivity.DeviceActivitySelectionView
             style={{
-              width: 200,
-              height: 40,
-              alignSelf: "center",
+              width: 300,
+              height: 400,
               borderRadius: 20,
               borderWidth: 10,
               borderColor: "rgb(213,85,37)",
@@ -247,13 +246,19 @@ export default function App() {
               pointerEvents="none"
               style={{
                 backgroundColor: "rgb(213,85,37)",
-                flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               <Text style={{ color: "white" }}>Select apps</Text>
             </View>
+            <ReactNativeDeviceActivity.DeviceActivityReportView
+              style={{
+                width: 300,
+                height: 400,
+              }}
+              familyActivitySelection={familyActivitySelection}
+            />
           </ReactNativeDeviceActivity.DeviceActivitySelectionView>
           <Text>{JSON.stringify(events, null, 2)}</Text>
           <Text>{JSON.stringify(activities, null, 2)}</Text>
