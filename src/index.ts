@@ -8,6 +8,7 @@ import {
 // and on native platforms to ReactNativeDeviceActivity.ts
 import { Platform } from "react-native";
 
+import DeviceActivityReportView from "./DeviceActivityReport";
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
   AuthorizationStatus,
@@ -155,5 +156,6 @@ export function isAvailable(): boolean {
 
 export {
   DeviceActivitySelectionView,
+  DeviceActivityReportView,
   DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
 };

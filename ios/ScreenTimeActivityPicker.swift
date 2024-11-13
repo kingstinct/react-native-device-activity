@@ -7,6 +7,7 @@
 
 import Foundation
 import FamilyControls
+import DeviceActivity
 import SwiftUI
 
 @available(iOS 15.0, *)
@@ -29,7 +30,7 @@ struct InnerView: View {
 }
 
 
-@available(iOS 15.0, *)
+@available(iOS 16.0, *)
 struct ScreenTimeSelectAppsContentView: View {
     @State private var pickerIsPresented = false
     @ObservedObject var model: ScreenTimeSelectAppsModel

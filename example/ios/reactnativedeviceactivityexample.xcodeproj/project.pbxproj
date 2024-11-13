@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -20,6 +20,8 @@
 		7196272736B8369F7352BB3C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */; };
 		96905EF65AED1B983A6B3ABC /* libPods-reactnativedeviceactivityexample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */; };
 		984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */; };
+		A965D3EB2CE02FE400BC6C7C /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = A965D3DF2CE02FE400BC6C7C /* DeviceActivityReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A965D3F12CE0321000BC6C7C /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E01EDC40AAA54847A43C3F99 /* DeviceActivity.framework */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		B4F86CBB9D3C43A59EBE2323 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C383BD5E2049BBBED22172 /* Utils.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -39,6 +41,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B33B275DB45484EAECB1B1B;
 			remoteInfo = ShieldConfiguration;
+		};
+		A965D3E92CE02FE400BC6C7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A965D3DE2CE02FE400BC6C7C;
+			remoteInfo = DeviceActivityReport;
 		};
 		B8AF53079E4145D686123C11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -70,6 +79,17 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A965D3F02CE02FE400BC6C7C /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				A965D3EB2CE02FE400BC6C7C /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +116,7 @@
 		84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../targets/ShieldConfiguration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		A965D3DF2CE02FE400BC6C7C /* DeviceActivityReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = DeviceActivityReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = reactnativedeviceactivityexample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEB321985C804DE4AB33EC69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA3FB2A82413462F881AEB5A /* reactnativedeviceactivityexample-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "reactnativedeviceactivityexample-Bridging-Header.h"; path = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -107,6 +128,20 @@
 		F09AA43EDBAC42989E3EDC4E /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-reactnativedeviceactivityexample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A965D3EC2CE02FE400BC6C7C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A965D3DE2CE02FE400BC6C7C /* DeviceActivityReport */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A965D3E02CE02FE400BC6C7C /* DeviceActivityReport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A965D3EC2CE02FE400BC6C7C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = DeviceActivityReport; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
@@ -122,6 +157,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4B3EB83B4EF427D8D8F7E6C /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A965D3DC2CE02FE400BC6C7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A965D3F12CE0321000BC6C7C /* DeviceActivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +239,7 @@
 				C6BB3FB112304AFCB4071189 /* expo:targets */,
 				13B07FAE1A68108700A75B9A /* reactnativedeviceactivityexample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				A965D3E02CE02FE400BC6C7C /* DeviceActivityReport */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -213,6 +257,7 @@
 				EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */,
 				55BEF032CC20441DA94ED74D /* ShieldAction.appex */,
 				84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */,
+				A965D3DF2CE02FE400BC6C7C /* DeviceActivityReport.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -318,6 +363,7 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				3DB52EB52D2348B6B33DCF43 /* Embed Foundation Extensions */,
 				DC6C57584D7EC65201A20BD6 /* [CP] Embed Pods Frameworks */,
+				A965D3F02CE02FE400BC6C7C /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
@@ -325,6 +371,7 @@
 				09A35F3A3CA14FF7910A7D62 /* PBXTargetDependency */,
 				E79F7418C95C4FDF86F2AC3A /* PBXTargetDependency */,
 				8D395BFCE4984204A074EC2E /* PBXTargetDependency */,
+				A965D3EA2CE02FE400BC6C7C /* PBXTargetDependency */,
 			);
 			name = reactnativedeviceactivityexample;
 			productName = reactnativedeviceactivityexample;
@@ -347,6 +394,28 @@
 			productName = ShieldConfiguration;
 			productReference = EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		A965D3DE2CE02FE400BC6C7C /* DeviceActivityReport */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A965D3ED2CE02FE400BC6C7C /* Build configuration list for PBXNativeTarget "DeviceActivityReport" */;
+			buildPhases = (
+				A965D3DB2CE02FE400BC6C7C /* Sources */,
+				A965D3DC2CE02FE400BC6C7C /* Frameworks */,
+				A965D3DD2CE02FE400BC6C7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A965D3E02CE02FE400BC6C7C /* DeviceActivityReport */,
+			);
+			name = DeviceActivityReport;
+			packageProductDependencies = (
+			);
+			productName = DeviceActivityReport;
+			productReference = A965D3DF2CE02FE400BC6C7C /* DeviceActivityReport.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
 		};
 		B020639A1E02498DA97B7121 /* ActivityMonitorExtension */ = {
 			isa = PBXNativeTarget;
@@ -371,6 +440,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					09AF28B634D54463AF9E2548 = {
@@ -385,6 +455,9 @@
 						CreatedOnToolsVersion = 14.3;
 						DevelopmentTeam = 34SE8X7Q58;
 						ProvisioningStyle = Automatic;
+					};
+					A965D3DE2CE02FE400BC6C7C = {
+						CreatedOnToolsVersion = 16.1;
 					};
 					B020639A1E02498DA97B7121 = {
 						CreatedOnToolsVersion = 14.3;
@@ -410,6 +483,7 @@
 				1B33B275DB45484EAECB1B1B /* ShieldConfiguration */,
 				09AF28B634D54463AF9E2548 /* ShieldAction */,
 				B020639A1E02498DA97B7121 /* ActivityMonitorExtension */,
+				A965D3DE2CE02FE400BC6C7C /* DeviceActivityReport */,
 			);
 		};
 /* End PBXProject section */
@@ -427,6 +501,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A59D4DCB354D450CB3EC7700 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A965D3DD2CE02FE400BC6C7C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -576,6 +657,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A965D3DB2CE02FE400BC6C7C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C5969BCCB0EE45DCB9BBF01A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -609,6 +697,11 @@
 			target = B020639A1E02498DA97B7121 /* ActivityMonitorExtension */;
 			targetProxy = C6D619B1FE3F43EEBE3A40C2 /* PBXContainerItemProxy */;
 		};
+		A965D3EA2CE02FE400BC6C7C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A965D3DE2CE02FE400BC6C7C /* DeviceActivityReport */;
+			targetProxy = A965D3E92CE02FE400BC6C7C /* PBXContainerItemProxy */;
+		};
 		E79F7418C95C4FDF86F2AC3A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 09AF28B634D54463AF9E2548 /* ShieldAction */;
@@ -632,7 +725,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -664,7 +757,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 34SE8X7Q58;
 				INFOPLIST_FILE = reactnativedeviceactivityexample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1020,6 +1113,91 @@
 			};
 			name = Debug;
 		};
+		A965D3EE2CE02FE400BC6C7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityReport/DeviceActivityReport.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DeviceActivityReport/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityReportUI;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example.DeviceActivityReportUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A965D3EF2CE02FE400BC6C7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DeviceActivityReport/DeviceActivityReport.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DeviceActivityReport/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityReportUI;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.deviceactivity.example.DeviceActivityReportUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		AE37E16FFF5F42278976AF2A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1105,6 +1283,15 @@
 			buildConfigurations = (
 				984FD302E06E4F8585276CF2 /* Debug */,
 				19B3FBE53C124BD196F71B6D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A965D3ED2CE02FE400BC6C7C /* Build configuration list for PBXNativeTarget "DeviceActivityReport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A965D3EE2CE02FE400BC6C7C /* Debug */,
+				A965D3EF2CE02FE400BC6C7C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
