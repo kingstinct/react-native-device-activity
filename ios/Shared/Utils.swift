@@ -7,6 +7,7 @@
 
 import Foundation
 import ManagedSettings
+import UIKit
 
 let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
 
@@ -66,6 +67,26 @@ func getShieldActionConfig(shieldAction: ShieldAction) -> ShieldActionConfig{
     )
 }
 
+
+func getColor(color: [String: Double]?) -> UIColor? {
+  if let color = color {
+    let red = color["red"] ?? 0
+    let green = color["green"] ?? 0
+    let blue = color["blue"] ?? 0
+    let alpha = color["alpha"] ?? 1
+    
+    return UIColor(
+      red: red / 255,
+      green: green / 255,
+      blue: blue / 255,
+      alpha: alpha
+    )
+  }
+  
+  return nil
+}
+
+
 @available(iOS 15.0, *)
 func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
     userDefaults?.set([
@@ -78,6 +99,14 @@ func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldAction
             return ["type": "unblockAll"]
         })
     ], forKey: "shieldActionConfig")
+}
+
+func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil){
+  let now = (Date().timeIntervalSince1970 * 1000).rounded()
+  let fullEventName = eventName == nil
+    ? "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)"
+    : "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)#\(eventName!)"
+  userDefaults?.set(now, forKey: fullEventName)
 }
 
 @available(iOS 15.0, *)

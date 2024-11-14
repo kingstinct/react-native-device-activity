@@ -13,24 +13,6 @@ import Foundation
 
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
-func getColor(color: [String: Double]?) -> UIColor? {
-  if let color = color {
-    let red = color["red"] ?? 0
-    let green = color["green"] ?? 0
-    let blue = color["blue"] ?? 0
-    let alpha = color["alpha"] ?? 1
-    
-    return UIColor(
-      red: red / 255,
-      green: green / 255,
-      blue: blue / 255,
-      alpha: alpha
-    )
-  }
-  
-  return nil
-}
-
 func convertBase64StringToImage (imageBase64String: String?) -> UIImage? {
   if let imageBase64String = imageBase64String {
     let imageData = Data(base64Encoded: imageBase64String)
@@ -40,38 +22,55 @@ func convertBase64StringToImage (imageBase64String: String?) -> UIImage? {
   
   return nil
 }
-func getShieldConfiguration() -> ShieldConfiguration {
-  logger.log("Calling getShieldConfiguration")
-  let dict = userDefaults?.object(forKey: "shieldConfiguration") as? [String:Any]
-  
-  let backgroundColor = getColor(color: dict?["backgroundColor"] as? [String: Double])
-  
-  let title = dict?["title"] as? String
-  let titleColor = getColor(color: dict?["titleColor"] as? [String: Double]) ?? UIColor.label
-  
-  let subtitle = dict?["subtitle"] as? String
-  let subtitleColor = getColor(color: dict?["subtitleColor"] as? [String: Double]) ?? UIColor.label
 
-  let primaryButtonLabel = dict?["primaryButtonLabel"] as? String
-  let primaryButtonLabelColor = getColor(color: dict?["primaryButtonLabelColor"] as? [String: Double]) ?? UIColor.label
-  let primaryButtonBackgroundColor = getColor(color: dict?["primaryButtonBackgroundColor"] as? [String: Double])
+func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -> String {
+    let retVal = placeholders.reduce(text) { text, placeholder in
+      text.replacingOccurrences(of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
+    }
+    
+    return retVal
+}
+
+func buildLabel(text: String?, with color: UIColor?, placeholders: [String: String?]) -> ShieldConfiguration.Label? {
+  if let text = text {
+    let color = color ?? UIColor.label
+    return .init(text: replacePlaceholders(text, with: placeholders), color: color)
+  }
   
-  let secondaryButtonLabel = dict?["secondaryButtonLabel"] as? String
-  let secondaryButtonColor = getColor(color: dict?["secondaryButtonColor"] as? [String: Double]) ?? UIColor.label
+  return nil
+}
+
+func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?]) -> ShieldConfiguration {
+  logger.log("Calling getShieldConfiguration")
   
-  let icon = convertBase64StringToImage(imageBase64String: dict?["icon"] as? String)
+  let backgroundColor = getColor(color: dict["backgroundColor"] as? [String: Double])
+  
+  let title = dict["title"] as? String
+  let titleColor = getColor(color: dict["titleColor"] as? [String: Double])
+  
+  let subtitle = dict["subtitle"] as? String
+  let subtitleColor = getColor(color: dict["subtitleColor"] as? [String: Double])
+
+  let primaryButtonLabel = dict["primaryButtonLabel"] as? String
+  let primaryButtonLabelColor = getColor(color: dict["primaryButtonLabelColor"] as? [String: Double])
+  let primaryButtonBackgroundColor = getColor(color: dict["primaryButtonBackgroundColor"] as? [String: Double])
+  
+  let secondaryButtonLabel = dict["secondaryButtonLabel"] as? String
+  let secondaryButtonColor = getColor(color: dict["secondaryButtonColor"] as? [String: Double])
+  
+  let icon = convertBase64StringToImage(imageBase64String: dict["icon"] as? String)
   
   logger.log("got everything")
 
   let shield = ShieldConfiguration(
-    backgroundBlurStyle: dict?["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: dict!["backgroundBlurStyle"] as! Int) : nil,
+    backgroundBlurStyle: dict["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: dict["backgroundBlurStyle"] as! Int) : nil,
     backgroundColor: backgroundColor,
     icon: icon,
-    title: title != nil ? .init(text: title!, color: titleColor) : nil,
-    subtitle: subtitle != nil ? .init(text: subtitle!, color: subtitleColor) : nil,
-    primaryButtonLabel: primaryButtonLabel != nil ? .init(text: primaryButtonLabel!, color: primaryButtonLabelColor) : nil,
+    title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
+    subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
+    primaryButtonLabel: buildLabel(text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),
     primaryButtonBackgroundColor: primaryButtonBackgroundColor,
-    secondaryButtonLabel: secondaryButtonLabel != nil ? .init(text: secondaryButtonLabel!, color: secondaryButtonColor) : nil
+    secondaryButtonLabel: buildLabel(text: secondaryButtonLabel, with: secondaryButtonColor, placeholders: placeholders)
   )
   logger.log("shield initialized")
   
@@ -83,30 +82,52 @@ func getShieldConfiguration() -> ShieldConfiguration {
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding application: Application) -> ShieldConfiguration {
-        // Customize the shield as needed for applications.
+      // Customize the shield as needed for applications.
       
-      logger.log("shielding application")
+      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_application_" + application.token!.hashValue.formatted()) as? [String:Any] {
+        return getShieldConfiguration(dict: dict, placeholders: [
+          "applicationOrDomainDisplayName": application.localizedDisplayName
+        ])
+      }
       
-      return getShieldConfiguration()
+      return ShieldConfiguration()
     }
     
     override func configuration(shielding application: Application, in category: ActivityCategory) -> ShieldConfiguration {
       
       logger.log("shielding application category")
       
-      return getShieldConfiguration()
+      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) as? [String:Any] {
+        return getShieldConfiguration(dict: dict, placeholders: [
+          "applicationOrDomainDisplayName": application.localizedDisplayName
+        ])
+      }
+      
+      return ShieldConfiguration()
     }
     
     override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
-      
       logger.log("shielding web domain")
         // Customize the shield as needed for web domains.
-      return getShieldConfiguration()
+      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_domain_" + webDomain.token!.hashValue.formatted()) as? [String:Any] {
+        return getShieldConfiguration(dict: dict, placeholders: [
+          "applicationOrDomainDisplayName": webDomain.domain
+        ])
+      }
+      
+      return ShieldConfiguration()
     }
     
     override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory) -> ShieldConfiguration {
       
       logger.log("shielding web domain category")
-      return getShieldConfiguration()
+      
+      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) as? [String:Any] {
+        return getShieldConfiguration(dict: dict, placeholders: [
+          "applicationOrDomainDisplayName": webDomain.domain
+        ])
+      }
+      
+      return ShieldConfiguration()
     }
 }

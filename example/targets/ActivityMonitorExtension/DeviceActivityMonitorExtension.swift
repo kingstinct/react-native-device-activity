@@ -19,7 +19,6 @@ let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-n
 @available(iOS 15.0, *)
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-  let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
   let store = ManagedSettingsStore()
   
   func sendNotification(name: String){
@@ -40,10 +39,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     super.intervalDidStart(for: activity)
     logger.log("intervalDidStart")
 
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "intervalDidStart"
     )
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidStart")
     
     self.sendNotification(name: "intervalDidStart")
   }
@@ -52,53 +53,85 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     super.intervalDidEnd(for: activity)
     logger.log("intervalDidEnd")
     
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "intervalDidEnd"
     )
-
-    store.shield.applications = nil
-    store.shield.webDomains = nil
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
 
     self.sendNotification(name: "intervalDidEnd")
+  }
+  
+  func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil){
+    let key = eventName != nil ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)" : "actions_for_\(activityName)_\(callbackName)"
+    if let actions = userDefaults?.array(forKey: key) {
+      actions.forEach { actionRaw in
+        if let action = actionRaw as? Dictionary<String, Any>{
+          let type = action["type"] as? String
+          
+          if(type == "block"){
+            logger.log("tring to get base64")
+            if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
+              var activitySelection = FamilyActivitySelection()
+              
+              logger.log("got base64")
+              let decoder = JSONDecoder()
+              let data = Data(base64Encoded: familyActivitySelectionStr)
+              do {
+                logger.log("decoding base64..")
+                activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+                logger.log("decoded base64!")
+              }
+              catch {
+                logger.log("decode error \(error.localizedDescription)")
+              }
+              
+              store.shield.applications = activitySelection.applicationTokens
+              store.shield.webDomains = activitySelection.webDomainTokens
+              store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+              store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+              
+              if let shieldConfiguration = action["shieldConfiguration"] as? Dictionary<String, Any> {
+                // update default shield
+                userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+                
+                activitySelection.applicationTokens.forEach { applicationToken in
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_application_" + applicationToken.hashValue.formatted())
+                }
+                
+                activitySelection.categoryTokens.forEach { categoryToken in
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_category_" + categoryToken.hashValue.formatted())
+                }
+                
+                activitySelection.webDomainTokens.forEach { webDomainToken in
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_domain_" + webDomainToken.hashValue.formatted())
+                }
+              }
+            }
+          }
+          else if(type == "unblock"){
+            store.shield.applications = nil
+            store.shield.webDomains = nil
+            store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
+            store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
+          }
+        }
+      }
+    }
   }
   
   override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
     super.eventDidReachThreshold(event, activity: activity)
     logger.log("eventDidReachThreshold: \(event.rawValue, privacy: .public)")
     
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "eventDidReachThreshold",
       eventName: event.rawValue
     )
 
-    logger.log("tring to get base64")
-     
-    let str = userDefaults?.string(forKey: event.rawValue + "_familyActivitySelection")
-    
-    var activitySelection = FamilyActivitySelection()
-    
-    if(str != nil){
-      logger.log("got base64")
-      let decoder = JSONDecoder()
-        let data = Data(base64Encoded: str!)
-        do {
-          logger.log("decoding base64..")
-          activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-          logger.log("decoded base64!")
-        }
-        catch {
-          logger.log("decode error \(error.localizedDescription)")
-        }
-    }
-    
-    store.shield.applications = activitySelection.applicationTokens
-    store.shield.webDomains = activitySelection.webDomainTokens
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventDidReachThreshold", eventName: event.rawValue)
 
     self.sendNotification(name: "eventDidReachThreshold")
   }
@@ -107,10 +140,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     super.intervalWillStartWarning(for: activity)
     logger.log("intervalWillStartWarning")
       
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "intervalWillStartWarning"
     )
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
 
     self.sendNotification(name: "intervalWillStartWarning")
   }
@@ -119,10 +154,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     super.intervalWillEndWarning(for: activity)
     logger.log("intervalWillEndWarning")
     
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "intervalWillEndWarning"
     )
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
 
     self.sendNotification(name: "intervalWillEndWarning")
   }
@@ -131,11 +168,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     super.eventWillReachThresholdWarning(event, activity: activity)
     logger.log("eventWillReachThresholdWarning: \(event.rawValue, privacy: .public)")
     
-    self.persistToUserDefaults(
+    persistToUserDefaults(
       activityName: activity.rawValue,
       callbackName: "eventWillReachThresholdWarning",
       eventName: event.rawValue
     )
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning", eventName: event.rawValue)
 
     self.sendNotification(name: "eventWillReachThresholdWarning")
   }
