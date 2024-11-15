@@ -1464,7 +1464,7 @@ SPEC CHECKSUMS:
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
   ReactNativeDeviceActivity: 46fe92d60b6568d5f4ce6aae92e2418cb4bf0ae9
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
+  Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
 
 PODFILE CHECKSUM: 058e061fe2fc88e03b7aa4cc9fcbc4630a5d257d
 

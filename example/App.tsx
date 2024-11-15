@@ -16,11 +16,71 @@ import {
   AuthorizationStatus,
   DeviceActivityEvent,
   EventParsed,
+  ShieldConfiguration,
   UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
-const initialMinutes = 2;
-const postponeMinutes = 1;
+const initialMinutes = 1;
+const postponeMinutes = 60;
+
+type Action = {
+  type: "block";
+  familyActivitySelection: string;
+  shieldConfiguration: ShieldConfiguration;
+};
+
+// ReactNativeDeviceActivity.userDefaultsClear();
+
+// gets run on reload, so easy to play around with
+/*void ReactNativeDeviceActivity.updateShieldConfiguration({
+  backgroundBlurStyle: UIBlurEffectStyle.prominent,
+  title: "Default shield",
+  subtitle: "You have reached your limit!",
+  titleColor: {
+    red: 255,
+    green: 0.329 * 255,
+    blue: 0,
+    alpha: 1,
+  },
+  subtitleColor: {
+    red: 255,
+    green: 0.329 * 255,
+    blue: 0,
+    alpha: 1,
+  },
+  primaryButtonBackgroundColor: {
+    red: 255,
+    green: 0.329 * 255,
+    blue: 0,
+    alpha: 1,
+  },
+});*/
+
+type CallbackName =
+  | "warningTime"
+  | "intervalStart"
+  | "intervalEnd"
+  | "eventDidReachThreshold";
+
+const activityName = "Goal4";
+
+const configureActions = ({
+  activityName,
+  callbackName,
+  actions,
+  eventName,
+}: {
+  activityName: string;
+  callbackName: CallbackName;
+  actions: Action[];
+  eventName?: string;
+}) => {
+  const key = eventName
+    ? `actions_for_${activityName}_${callbackName}_${eventName}`
+    : `actions_for_${activityName}_${callbackName}`;
+
+  ReactNativeDeviceActivity.userDefaultsSet(key, actions);
+};
 
 const potentialMaxEvents = Math.floor(
   (60 * 24 - initialMinutes) / postponeMinutes,
@@ -33,22 +93,65 @@ const startMonitoring = (activitySelection: string) => {
       familyActivitySelection: activitySelection,
       threshold: { minute: initialMinutes },
     },
+    {
+      eventName: `minutes_reached_${initialMinutes}_override`,
+      familyActivitySelection: activitySelection,
+      threshold: { minute: initialMinutes, second: 1 },
+    },
   ];
 
-  for (let i = 0; i < potentialMaxEvents; i++) {
+  for (let i = 1; i < potentialMaxEvents; i++) {
     const eventName = `minutes_reached_${initialMinutes + i * postponeMinutes}`;
     const event: DeviceActivityEvent = {
       eventName,
       familyActivitySelection: activitySelection,
       threshold: { minute: initialMinutes + i * postponeMinutes },
+      includesPastActivity: false,
     };
     events.push(event);
   }
 
+  console.log("events", events);
+
+  configureActions({
+    activityName,
+    callbackName: "eventDidReachThreshold",
+    eventName: "minutes_reached_1",
+    actions: [
+      {
+        type: "block",
+        familyActivitySelection: activitySelection,
+        shieldConfiguration: {
+          backgroundBlurStyle: UIBlurEffectStyle.prominent,
+          title: "{applicationOrDomainDisplayName} blocked by Zabit",
+          subtitle: "You have reached your limit!",
+          titleColor: {
+            red: 255,
+            green: 0.329 * 255,
+            blue: 0,
+            alpha: 1,
+          },
+          subtitleColor: {
+            red: 255,
+            green: 0.329 * 255,
+            blue: 0,
+            alpha: 1,
+          },
+          primaryButtonBackgroundColor: {
+            red: 255,
+            green: 0.329 * 255,
+            blue: 0,
+            alpha: 1,
+          },
+        },
+      },
+    ],
+  });
+
   ReactNativeDeviceActivity.startMonitoring(
-    "Goal1",
+    activityName,
     {
-      warningTime: { minute: 1 },
+      // warningTime: { minute: 1 },
       intervalStart: { hour: 0, minute: 0, second: 0 },
       intervalEnd: { hour: 23, minute: 59, second: 59 },
       repeats: false,
@@ -69,6 +172,10 @@ export default function App() {
   const [activities, setActivities] = React.useState<string[]>([]);
   const [authorizationStatus, setAuthorizationStatus] =
     React.useState<AuthorizationStatus | null>(null);
+
+  console.log(
+    JSON.stringify(ReactNativeDeviceActivity.userDefaultsAll(), null, 2),
+  );
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null

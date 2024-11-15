@@ -212,6 +212,36 @@ public class ReactNativeDeviceActivityModule: Module {
       return filteredDict
     }
       
+      Function("userDefaultsSet") { (params: [String: Any]) in
+          guard let key = params["key"] as? String,
+                let value = params["value"] else {
+              return
+          }
+          userDefaults?.set(value, forKey: key)
+      }
+      
+      Function("userDefaultsGet") { (forKey: String) -> Any? in
+        return userDefaults?.object(forKey: forKey)
+      }
+      
+      Function("userDefaultsRemove") { (forKey: String) -> Any? in
+          return userDefaults?.removeObject(forKey: forKey)
+      }
+      
+      Function("userDefaultsClear") { () in
+          let dictionary = userDefaults?.dictionaryRepresentation()
+          dictionary?.keys.forEach { key in
+              userDefaults?.removeObject(forKey: key)
+          }
+      }
+      
+      Function("userDefaultsAll") { () -> Any? in
+          if let userDefaults = userDefaults {
+              return userDefaults.dictionaryRepresentation()
+          }
+          return nil
+      }
+      
       Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
           let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
             let decoder = JSONDecoder()
@@ -285,10 +315,10 @@ public class ReactNativeDeviceActivityModule: Module {
         }
       }
       
-        let dictionary = Dictionary<DeviceActivityEvent.Name, DeviceActivityEvent>(uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
+    let dictionary = Dictionary<DeviceActivityEvent.Name, DeviceActivityEvent>(uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
         let familyActivitySelection = decodedFamilyActivitySelections[eventRaw.familyActivitySelectionIndex]
           
-        userDefaults?.set(familyActivitySelections[eventRaw.familyActivitySelectionIndex], forKey: eventRaw.eventName + "_familyActivitySelection")
+        /*userDefaults?.set(familyActivitySelections[eventRaw.familyActivitySelectionIndex], forKey: eventRaw.eventName + "_familyActivitySelection")*/
             
         let threshold = convertToSwiftDateComponents(from: eventRaw.threshold)
           var event: DeviceActivityEvent
@@ -302,14 +332,12 @@ public class ReactNativeDeviceActivityModule: Module {
                 includesPastActivity: eventRaw.includesPastActivity ?? false
               )
           } else {
-              
-          
-          event = DeviceActivityEvent(
-            applications: familyActivitySelection.applicationTokens,
-            categories: familyActivitySelection.categoryTokens,
-            webDomains: familyActivitySelection.webDomainTokens,
-            threshold: threshold
-          )
+              event = DeviceActivityEvent(
+                applications: familyActivitySelection.applicationTokens,
+                categories: familyActivitySelection.categoryTokens,
+                webDomains: familyActivitySelection.webDomainTokens,
+                threshold: threshold
+              )
           }
         
         return (

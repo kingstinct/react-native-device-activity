@@ -60,6 +60,26 @@ export function getEvents(
   );
 }
 
+export function userDefaultsSet(key: string, value: any) {
+  return ReactNativeDeviceActivityModule.userDefaultsSet({ key, value });
+}
+
+export function userDefaultsGet<T>(key: string): T | undefined {
+  return ReactNativeDeviceActivityModule.userDefaultsGet(key) as T | undefined;
+}
+
+export function userDefaultsRemove(key: string) {
+  return ReactNativeDeviceActivityModule.userDefaultsRemove(key);
+}
+
+export function userDefaultsAll(): Record<string, any> {
+  return ReactNativeDeviceActivityModule.userDefaultsAll();
+}
+
+export function userDefaultsClear() {
+  return ReactNativeDeviceActivityModule.userDefaultsClear();
+}
+
 function convertDeviceActivityEvents(
   events: DeviceActivityEvent[],
 ): [DeviceActivityEventRaw[], FamilyActivitySelection[]] {
