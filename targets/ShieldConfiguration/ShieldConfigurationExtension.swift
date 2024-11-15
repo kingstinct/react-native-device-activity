@@ -83,11 +83,15 @@ func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?])
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding application: Application) -> ShieldConfiguration {
       // Customize the shield as needed for applications.
+
+      let placeholders: [String : String?] = [
+        "applicationOrDomainDisplayName": application.localizedDisplayName
+      ]
       
-      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_application_" + application.token!.hashValue.formatted()) as? [String:Any] {
-        return getShieldConfiguration(dict: dict, placeholders: [
-          "applicationOrDomainDisplayName": application.localizedDisplayName
-        ])
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_application_" + application.token!.hashValue.formatted()) {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders  )
+      } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -96,11 +100,15 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding application: Application, in category: ActivityCategory) -> ShieldConfiguration {
       
       logger.log("shielding application category")
+
+      let placeholders = [
+        "applicationOrDomainDisplayName": application.localizedDisplayName
+      ]
       
-      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) as? [String:Any] {
-        return getShieldConfiguration(dict: dict, placeholders: [
-          "applicationOrDomainDisplayName": application.localizedDisplayName
-        ])
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -108,11 +116,16 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     
     override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
       logger.log("shielding web domain")
-        // Customize the shield as needed for web domains.
-      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_domain_" + webDomain.token!.hashValue.formatted()) as? [String:Any] {
-        return getShieldConfiguration(dict: dict, placeholders: [
-          "applicationOrDomainDisplayName": webDomain.domain
-        ])
+
+      let placeholders = [
+        "applicationOrDomainDisplayName": webDomain.domain
+      ]
+      
+      // Customize the shield as needed for web domains.
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_domain_" + webDomain.token!.hashValue.formatted()) {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -121,11 +134,15 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory) -> ShieldConfiguration {
       
       logger.log("shielding web domain category")
+
+      let placeholders = [
+        "applicationOrDomainDisplayName": webDomain.domain
+      ]
       
-      if let dict = userDefaults?.object(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) as? [String:Any] {
-        return getShieldConfiguration(dict: dict, placeholders: [
-          "applicationOrDomainDisplayName": webDomain.domain
-        ])
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(dict: dict, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
