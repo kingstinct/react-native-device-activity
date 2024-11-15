@@ -93,6 +93,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 // update default shield
                 userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
                 
+                /* ok so this does not work, tokens change across executions
                 activitySelection.applicationTokens.forEach { applicationToken in
                   userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_application_\(applicationToken.hashValue)")
                 }
@@ -104,9 +105,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 activitySelection.webDomainTokens.forEach { webDomainToken in
                   userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_domain_\(webDomainToken.hashValue)")
                 }
+                */
               }
               
               if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
+                userDefaults?.set(shieldActions, forKey: "shieldActions")
+                /*
                 activitySelection.applicationTokens.forEach { applicationToken in
                   userDefaults?.set(shieldActions, forKey: "shieldActions_for_application_\(applicationToken.hashValue)")
                 }
@@ -118,6 +122,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 activitySelection.webDomainTokens.forEach { webDomainToken in
                   userDefaults?.set(shieldActions, forKey: "shieldActions_for_domain_\(webDomainToken.hashValue)")
                 }
+                */
               }
             }
           }

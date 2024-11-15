@@ -67,7 +67,7 @@ func handleAction(dict: [String: Any]) -> ShieldActionResponse {
 class ShieldActionExtension: ShieldActionDelegate {
   override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
     logger.log("handle application")
-    if let obj = userDefaults?.dictionary(forKey: "shieldAction_for_application_\(application.hashValue)") {
+    if let obj = userDefaults?.dictionary(forKey: "shieldActions") {
       if let dict = obj[action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
         let response = handleAction(dict: dict)
         completionHandler(response)
@@ -81,7 +81,7 @@ class ShieldActionExtension: ShieldActionDelegate {
   
   override func handle(action: ShieldAction, for webDomain: WebDomainToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
     logger.log("handle domain")
-    if let obj = userDefaults?.dictionary(forKey: "shieldAction_for_domain_\(webDomain.hashValue)") {
+    if let obj = userDefaults?.dictionary(forKey: "shieldActions") {
       if let dict = obj[action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] { 
         let response = handleAction(dict: dict)
         completionHandler(response)
@@ -97,7 +97,7 @@ class ShieldActionExtension: ShieldActionDelegate {
     logger.log("handle category")
     // openUrl(urlString: "device-activity://")
 
-    if let obj = userDefaults?.dictionary(forKey: "shieldAction_for_category_\(category.hashValue)") {
+    if let obj = userDefaults?.dictionary(forKey: "shieldActions") {
       if let dict = obj[action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
         let response = handleAction(dict: dict)
         completionHandler(response)
