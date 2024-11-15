@@ -142,8 +142,10 @@ const startMonitoring = (activitySelection: string) => {
         },
         shieldConfiguration: {
           backgroundBlurStyle: UIBlurEffectStyle.prominent,
-          title: "{appname} Blocked by Zabit",
+          title: "{applicationOrDomainDisplayName} Blocked by Zabit",
           subtitle: "You have reached your limit! {token} {tokenType}",
+          primaryButtonLabel: "Give me 5 more minutes",
+          secondaryButtonLabel: "Close",
           titleColor: {
             red: 255,
             green: 0.329 * 255,
@@ -192,9 +194,13 @@ export default function App() {
   const [authorizationStatus, setAuthorizationStatus] =
     React.useState<AuthorizationStatus | null>(null);
 
-  /*console.log(
-    JSON.stringify(ReactNativeDeviceActivity.userDefaultsAll(), null, 2),
-  );*/
+  console.log(
+    JSON.stringify(
+      ReactNativeDeviceActivity.userDefaultsGet("shieldActions"),
+      null,
+      2,
+    ),
+  );
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null
