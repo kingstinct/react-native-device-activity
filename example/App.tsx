@@ -23,19 +23,34 @@ import {
 const initialMinutes = 1;
 const postponeMinutes = 60;
 
+type ShieldActionType = "unblockAll" | "dismiss";
+
+type ShieldAction = {
+  type: ShieldActionType;
+  behavior: "close" | "defer";
+};
+
+type ShieldActions = {
+  primary: ShieldAction;
+  secondary: ShieldAction;
+};
+
 type Action = {
   type: "block";
   familyActivitySelection: string;
   shieldConfiguration: ShieldConfiguration;
+  shieldActions: ShieldActions;
 };
 
 // ReactNativeDeviceActivity.userDefaultsClear();
 
 // gets run on reload, so easy to play around with
-/*void ReactNativeDeviceActivity.updateShieldConfiguration({
+void ReactNativeDeviceActivity.updateShieldConfiguration({
   backgroundBlurStyle: UIBlurEffectStyle.prominent,
-  title: "Default shield",
-  subtitle: "You have reached your limit!",
+  title: "{applicationOrDomainDisplayName} blocked by Zabit",
+  subtitle: "You have reached your limit! {token} {tokenType}",
+  primaryButtonLabel: "Give me 5 more minutes",
+  secondaryButtonLabel: "Close",
   titleColor: {
     red: 255,
     green: 0.329 * 255,
@@ -54,7 +69,7 @@ type Action = {
     blue: 0,
     alpha: 1,
   },
-});*/
+});
 
 type CallbackName =
   | "warningTime"
@@ -121,10 +136,14 @@ const startMonitoring = (activitySelection: string) => {
       {
         type: "block",
         familyActivitySelection: activitySelection,
+        shieldActions: {
+          primary: { type: "unblockAll", behavior: "defer" },
+          secondary: { type: "dismiss", behavior: "close" },
+        },
         shieldConfiguration: {
           backgroundBlurStyle: UIBlurEffectStyle.prominent,
-          title: "{applicationOrDomainDisplayName} blocked by Zabit",
-          subtitle: "You have reached your limit!",
+          title: "{appname} Blocked by Zabit",
+          subtitle: "You have reached your limit! {token} {tokenType}",
           titleColor: {
             red: 255,
             green: 0.329 * 255,
@@ -173,9 +192,9 @@ export default function App() {
   const [authorizationStatus, setAuthorizationStatus] =
     React.useState<AuthorizationStatus | null>(null);
 
-  console.log(
+  /*console.log(
     JSON.stringify(ReactNativeDeviceActivity.userDefaultsAll(), null, 2),
-  );
+  );*/
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null

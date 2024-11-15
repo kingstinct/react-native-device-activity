@@ -6,8 +6,6 @@ import ManagedSettings
 import os
 import Foundation
 
-let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
-
 struct DateComponentsFromJS: Record {
   @Field
   var era: Int?;
@@ -166,6 +164,22 @@ class NativeEventObserver {
   }
 }
 
+func handleAction(dict: [String: Any]) -> Void {
+  if let type = dict["type"] as? String {
+    if(type == "unblockAll"){
+        logger.info("Should unblock all")
+    }
+  }
+  
+  if let behaviour = dict["behavior"] as? String {
+    if(behaviour == "defer"){
+        logger.info("Should defer!")
+    }
+  }
+  
+    logger.info("Should close!")
+}
+
 @available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
   
@@ -237,6 +251,7 @@ public class ReactNativeDeviceActivityModule: Module {
       
       Function("userDefaultsAll") { () -> Any? in
           if let userDefaults = userDefaults {
+              handleAction(dict: userDefaults.dictionary(forKey: "shieldActions_for_category_175566987801366043")!["primary"] as! [String : Any])
               return userDefaults.dictionaryRepresentation()
           }
           return nil

@@ -11,8 +11,6 @@ import UIKit
 import os
 import Foundation
 
-let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
-
 func convertBase64StringToImage (imageBase64String: String?) -> UIImage? {
   if let imageBase64String = imageBase64String {
     let imageData = Data(base64Encoded: imageBase64String)
@@ -85,10 +83,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       // Customize the shield as needed for applications.
 
       let placeholders: [String : String?] = [
-        "applicationOrDomainDisplayName": application.localizedDisplayName
+        "applicationOrDomainDisplayName": application.localizedDisplayName,
+        "token": "\(application.token!.hashValue)",
+        "tokenType": "application"
       ]
       
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_application_" + application.token!.hashValue.formatted()) {
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_application_\(application.token!.hashValue)") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders  )
       } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
@@ -102,10 +102,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       logger.log("shielding application category")
 
       let placeholders = [
-        "applicationOrDomainDisplayName": application.localizedDisplayName
+        "applicationOrDomainDisplayName": application.localizedDisplayName,
+        "token": "\(category.token!.hashValue)",
+        "tokenType": "application_category"
       ]
       
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) {
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_\(category.token!.hashValue)") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
       } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
@@ -118,11 +120,13 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       logger.log("shielding web domain")
 
       let placeholders = [
-        "applicationOrDomainDisplayName": webDomain.domain
+        "applicationOrDomainDisplayName": webDomain.domain,
+        "token": "\(webDomain.token!.hashValue)",
+        "tokenType": "web_domain"
       ]
       
       // Customize the shield as needed for web domains.
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_domain_" + webDomain.token!.hashValue.formatted()) {
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_domain_\(webDomain.token!.hashValue)") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
       } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
@@ -136,10 +140,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       logger.log("shielding web domain category")
 
       let placeholders = [
-        "applicationOrDomainDisplayName": webDomain.domain
+        "applicationOrDomainDisplayName": webDomain.domain,
+        "token": "\(category.token!.hashValue)",
+        "tokenType": "web_domain_category"
       ]
       
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_" + category.token!.hashValue.formatted()) {
+      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration_for_category_\(category.token!.hashValue)") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
       } else if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
         return getShieldConfiguration(dict: dict, placeholders: placeholders)
