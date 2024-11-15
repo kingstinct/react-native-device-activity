@@ -42,13 +42,21 @@ type Action = {
   shieldActions: ShieldActions;
 };
 
-// ReactNativeDeviceActivity.userDefaultsClear();
+console.log(
+  JSON.stringify(
+    ReactNativeDeviceActivity.userDefaultsGet(
+      "familyActivitySelectionToActivityNameMap",
+    ),
+    null,
+    2,
+  ),
+);
 
 // gets run on reload, so easy to play around with
 void ReactNativeDeviceActivity.updateShieldConfiguration({
   backgroundBlurStyle: UIBlurEffectStyle.prominent,
   title: "{applicationOrDomainDisplayName} blocked by Zabit",
-  subtitle: "You have reached your limit! {token} {tokenType}",
+  subtitle: "You have reached your limit! {activityName}",
   primaryButtonLabel: "Give me 5 more minutes",
   secondaryButtonLabel: "Close",
   titleColor: {
@@ -97,11 +105,37 @@ const configureActions = ({
   ReactNativeDeviceActivity.userDefaultsSet(key, actions);
 };
 
+const updateFamilyActivitySelectionToActivityNameMap = ({
+  activityName,
+  familyActivitySelection,
+}: {
+  activityName: string;
+  familyActivitySelection: string;
+}) => {
+  const previousValue =
+    (ReactNativeDeviceActivity.userDefaultsGet(
+      "familyActivitySelectionToActivityNameMap",
+    ) as Record<string, string>) ?? {};
+
+  ReactNativeDeviceActivity.userDefaultsSet(
+    "familyActivitySelectionToActivityNameMap",
+    {
+      ...previousValue,
+      [activityName]: familyActivitySelection,
+    },
+  );
+};
+
 const potentialMaxEvents = Math.floor(
   (60 * 24 - initialMinutes) / postponeMinutes,
 );
 
 const startMonitoring = (activitySelection: string) => {
+  updateFamilyActivitySelectionToActivityNameMap({
+    activityName,
+    familyActivitySelection: activitySelection,
+  });
+
   const events: DeviceActivityEvent[] = [
     {
       eventName: `minutes_reached_${initialMinutes}`,
@@ -143,7 +177,7 @@ const startMonitoring = (activitySelection: string) => {
         shieldConfiguration: {
           backgroundBlurStyle: UIBlurEffectStyle.prominent,
           title: "{applicationOrDomainDisplayName} Blocked by Zabit",
-          subtitle: "You have reached your limit! {token} {tokenType}",
+          subtitle: "You have reached your limit! {activityName}",
           primaryButtonLabel: "Give me 5 more minutes",
           secondaryButtonLabel: "Close",
           titleColor: {

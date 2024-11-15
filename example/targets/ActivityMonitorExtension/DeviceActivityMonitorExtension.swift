@@ -70,19 +70,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           if(type == "block"){
             logger.log("tring to get base64")
             if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
-              var activitySelection = FamilyActivitySelection()
-              
-              logger.log("got base64")
-              let decoder = JSONDecoder()
-              let data = Data(base64Encoded: familyActivitySelectionStr)
-              do {
-                logger.log("decoding base64..")
-                activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-                logger.log("decoded base64!")
-              }
-              catch {
-                logger.log("decode error \(error.localizedDescription)")
-              }
+              let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
               
               store.shield.applications = activitySelection.applicationTokens
               store.shield.webDomains = activitySelection.webDomainTokens
