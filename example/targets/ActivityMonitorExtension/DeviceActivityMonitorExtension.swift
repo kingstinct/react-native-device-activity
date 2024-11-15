@@ -11,9 +11,6 @@ import Foundation
 import os
 import FamilyControls
 
-@available(iOS 14.0, *)
-let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
-
 // Optionally override any of the functions below.
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 @available(iOS 15.0, *)
@@ -97,15 +94,29 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
                 
                 activitySelection.applicationTokens.forEach { applicationToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_application_" + applicationToken.hashValue.formatted())
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_application_\(applicationToken.hashValue)")
                 }
                 
                 activitySelection.categoryTokens.forEach { categoryToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_category_" + categoryToken.hashValue.formatted())
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_category_\(categoryToken.hashValue)")
                 }
                 
                 activitySelection.webDomainTokens.forEach { webDomainToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_domain_" + webDomainToken.hashValue.formatted())
+                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_domain_\(webDomainToken.hashValue)")
+                }
+              }
+              
+              if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
+                activitySelection.applicationTokens.forEach { applicationToken in
+                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_application_\(applicationToken.hashValue)")
+                }
+                
+                activitySelection.categoryTokens.forEach { categoryToken in
+                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_category_\(categoryToken.hashValue)")
+                }
+                
+                activitySelection.webDomainTokens.forEach { webDomainToken in
+                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_domain_\(webDomainToken.hashValue)")
                 }
               }
             }

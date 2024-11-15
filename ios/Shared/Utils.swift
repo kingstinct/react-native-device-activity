@@ -8,8 +8,12 @@
 import Foundation
 import ManagedSettings
 import UIKit
+import os
 
 let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+
+@available(iOS 14.0, *)
+let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
 @available(iOS 15.0, *)
 func parseShieldActionResponse(_ action: Any?) -> ShieldActionResponse{
