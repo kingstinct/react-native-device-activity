@@ -9,11 +9,89 @@ import Foundation
 import ManagedSettings
 import UIKit
 import os
+import FamilyControls
 
 let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
 
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
+
+
+
+@available(iOS 15.0, *)
+struct SelectionWithActivityName {
+  var selection: FamilyActivitySelection
+  var activityName: String
+}
+
+@available(iOS 15.0, *)
+func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?]{
+  if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(forKey: "familyActivitySelectionToActivityNameMap") {
+    return familyActivitySelectionToActivityNameMap.map { (key: String, value: Any) in
+      if let familyActivitySelectionStr = value as? String {
+        let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+        
+        return SelectionWithActivityName(selection: activitySelection, activityName: key)
+      }
+      return nil
+    }
+  }
+  return []
+}
+
+@available(iOS 15.0, *)
+func getPossibleActivityName(
+    applicationToken: ApplicationToken?,
+    webDomainToken: WebDomainToken?,
+    categoryToken: ActivityCategoryToken?
+) -> String? {
+    let familyActivitySelectionToActivityNameMap = getFamilyActivitySelectionToActivityNameMap()
+    
+    let foundIt = familyActivitySelectionToActivityNameMap.first(where: { (mapping) in
+        if let mapping = mapping {
+            if let applicationToken = applicationToken {
+                if(mapping.selection.applicationTokens.contains(applicationToken)){
+                    return true
+                }
+            }
+            
+            if let webDomainToken = webDomainToken {
+                if(mapping.selection.webDomainTokens.contains(webDomainToken)){
+                    return true
+                }
+            }
+            
+            if let categoryToken = categoryToken {
+                if(mapping.selection.categoryTokens.contains(categoryToken)){
+                    return true
+                }
+            }
+        }
+        
+        return false
+    })
+    
+    return foundIt??.activityName
+}
+
+@available(iOS 15.0, *)
+func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyActivitySelection {
+  var activitySelection = FamilyActivitySelection()
+  
+  logger.log("got base64")
+  let decoder = JSONDecoder()
+  let data = Data(base64Encoded: familyActivitySelectionStr)
+  do {
+    logger.log("decoding base64..")
+    activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+    logger.log("decoded base64!")
+  }
+  catch {
+    logger.log("decode error \(error.localizedDescription)")
+  }
+  
+  return activitySelection
+}
 
 @available(iOS 15.0, *)
 func parseShieldActionResponse(_ action: Any?) -> ShieldActionResponse{

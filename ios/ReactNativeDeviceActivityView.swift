@@ -55,34 +55,7 @@ class ReactNativeDeviceActivityView: ExpoView {
                 "familyActivitySelection": jsonString,
                 "applicationCount": selection.applicationTokens.count,
                 "categoryCount": selection.categoryTokens.count,
-                "webDomainCount": selection.webDomainTokens.count,
-                "categoryTokens": selection.categoryTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "applicationTokens": selection.applicationTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "webDomainTokens": selection.webDomainTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "categoryTokensCopy": selection.categoryTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "applicationTokensCopy": selection.applicationTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "webDomainTokensCopy": selection.webDomainTokens.map({ token in
-                    return "\(String(token.hashValue))"
-                }),
-                "categoryTokensInt": selection.categoryTokens.map({ token in
-                    return token.hashValue
-                }),
-                "applicationTokensInt": selection.applicationTokens.map({ token in
-                    return token.hashValue
-                }),
-                "webDomainTokensInt": selection.webDomainTokens.map({ token in
-                    return token.hashValue
-                })
+                "webDomainCount": selection.webDomainTokens.count
             ])
         } catch {
             
