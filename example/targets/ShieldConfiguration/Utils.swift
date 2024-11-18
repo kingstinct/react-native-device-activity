@@ -94,6 +94,29 @@ func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyAc
 }
 
 @available(iOS 15.0, *)
+func unblockAllApps(){
+    store.shield.applicationCategories = nil
+    store.shield.webDomainCategories = nil
+
+    store.shield.applications = nil
+    store.shield.webDomains = nil
+}
+
+@available(iOS 15.0, *)
+func blockAllApps(){
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+}
+
+@available(iOS 15.0, *)
+func blockSelectedApps(activitySelection: FamilyActivitySelection){
+    store.shield.applications = activitySelection.applicationTokens
+    store.shield.webDomains = activitySelection.webDomainTokens
+    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+}
+
+@available(iOS 15.0, *)
 func parseShieldActionResponse(_ action: Any?) -> ShieldActionResponse{
 
     if let actionResponseRaw = action as? Int {
@@ -216,3 +239,4 @@ func executeShieldActionConfig(shieldAction: ShieldAction, completionHandler: @e
     
     completionHandler(actionConfig.response)
 }
+

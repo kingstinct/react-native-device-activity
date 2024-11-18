@@ -411,14 +411,53 @@ public class ReactNativeDeviceActivityModule: Module {
       
     }
       
-      Function("blockAllApps"){
-          store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
-          store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+      Function("isShieldActive"){
+          let areAnyApplicationsShielded = store.shield.applications != nil && store.shield.applications!.count > 0
+          let areAnyWebDomainsShielded = store.shield.webDomains != nil && store.shield.webDomains!.count > 0
+          let areAnyApplicationCategoriesShielded = store.shield.applicationCategories != nil && store.shield.applicationCategories != ShieldSettings.ActivityCategoryPolicy<Application>.none
+          let areAnyWebDomainCategoriesShielded = store.shield.webDomainCategories != nil && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+          
+          return areAnyApplicationsShielded || areAnyWebDomainsShielded || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
+      }
+
+      Function("isShieldActiveWithSelection"){ (familyActivitySelectionStr: String) -> Bool in
+          let selection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+          
+          let areAnyApplicationsEqual = store.shield.applications?.map({ token in
+              token
+          }) == selection.applicationTokens.map({ token in
+              token
+          })
+          let areAnyWebDomainsEqual = store.shield.webDomains?.map({ token in
+              token
+          }) == selection.webDomainTokens.map({ token in
+              token
+          })
+          
+          let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(selection.categoryTokens, except: Set())
+          
+          let areAnyApplicationCategoriesEqual = store.shield.applicationCategories == appCategoryPolicy
+          
+          let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(selection.categoryTokens, except: Set())
+          
+          let areAnyWebDomainCategoriesEqual = webDomainCategoryPolicy == store.shield.webDomainCategories
+          
+          return areAnyApplicationsEqual && areAnyWebDomainsEqual && areAnyApplicationCategoriesEqual && areAnyWebDomainCategoriesEqual
+      }
+      
+      Function("blockApps"){ (familyActivitySelectionStr: String?) in
+          if let familyActivitySelectionStr {
+              let selection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+              
+              blockSelectedApps(activitySelection: selection)
+          } else {
+              // block all apps
+              blockAllApps()
+          }
       }
       
       Function("unblockApps"){
-          store.shield.applicationCategories = nil
-          store.shield.webDomainCategories = nil
+          unblockAllApps()
       }
       
       AsyncFunction("revokeAuthorization") { () async throws -> Void in
@@ -450,15 +489,9 @@ public class ReactNativeDeviceActivityModule: Module {
       )
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelection") { (view: ReactNativeDeviceActivityView, prop: String) in
-        do {
-          let decoder = JSONDecoder()
-          let data = Data(base64Encoded: prop)!
-          let selection = try decoder.decode(FamilyActivitySelection.self, from: data)
+        let selection = getActivitySelectionFromStr(familyActivitySelectionStr: prop)
           
-          view.model.activitySelection = selection
-        } catch {
-          logger.log("❌ Failed to deserialize familyActivitySelection to FamilyActivitySelection: \(error.localizedDescription)")
-        }
+        view.model.activitySelection = selection
       }
         
         Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in

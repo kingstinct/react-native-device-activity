@@ -176,8 +176,10 @@ export enum AuthorizationStatus {
 export type ReactNativeDeviceActivityNativeModule = {
   requestAuthorization: () => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
-  blockAllApps: () => PromiseLike<void> | void;
+  blockApps: (familyActivitySelectionStr?: string) => PromiseLike<void> | void;
   unblockApps: () => PromiseLike<void> | void;
+  isShieldActive: () => boolean;
+  isShieldActiveWithSelection: (familyActivitySelectionStr: string) => boolean;
   doesSelectionHaveOverlap: (
     familyActivitySelections: FamilyActivitySelection[],
   ) => boolean;

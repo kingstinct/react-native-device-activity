@@ -1199,7 +1199,7 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
-  - ReactNativeDeviceActivity (0.0.23):
+  - ReactNativeDeviceActivity (0.0.24):
     - ExpoModulesCore
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
@@ -1462,9 +1462,9 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
-  ReactNativeDeviceActivity: 46fe92d60b6568d5f4ce6aae92e2418cb4bf0ae9
+  ReactNativeDeviceActivity: 9d787bc8629ba0a19a3901e038f0935b223dd3dc
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
+  Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
 PODFILE CHECKSUM: 058e061fe2fc88e03b7aa4cc9fcbc4630a5d257d
 

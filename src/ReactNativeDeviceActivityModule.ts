@@ -27,10 +27,12 @@ const mockModule: ReactNativeDeviceActivityNativeModule & ProxyNativeModule = {
   isAvailable: () => false,
   requestAuthorization: warnFn,
   revokeAuthorization: warnFn,
+  isShieldActive: warnFnBoolean,
+  isShieldActiveWithSelection: warnFnBoolean,
   doesSelectionHaveOverlap: warnFnBoolean,
   updateShieldConfiguration: warnFn,
   unblockApps: warnFn,
-  blockAllApps: warnFn,
+  blockApps: warnFn,
   activities: warnFnArray,
   authorizationStatus: warnFnNumber,
   getEvents: () => {

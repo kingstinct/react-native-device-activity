@@ -135,11 +135,25 @@ export function getActivities(): string[] {
   return ReactNativeDeviceActivityModule.activities();
 }
 
-export function blockAllApps(): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule.blockAllApps();
+export function isShieldActive(): boolean {
+  return ReactNativeDeviceActivityModule.isShieldActive();
 }
 
-export function unblockAllApps(): PromiseLike<void> | void {
+export function isShieldActiveWithSelection(
+  familyActivitySelectionStr: string,
+): boolean {
+  return ReactNativeDeviceActivityModule.isShieldActiveWithSelection(
+    familyActivitySelectionStr,
+  );
+}
+
+export function blockApps(
+  familyActivitySelectionStr?: string,
+): PromiseLike<void> | void {
+  return ReactNativeDeviceActivityModule.blockApps(familyActivitySelectionStr);
+}
+
+export function unblockApps(): PromiseLike<void> | void {
   return ReactNativeDeviceActivityModule.unblockApps();
 }
 
