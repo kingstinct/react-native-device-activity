@@ -137,6 +137,29 @@ export type DeviceActivityEvent = {
   includesPastActivity?: boolean;
 };
 
+export type ShieldActionType = "unblockAll" | "dismiss";
+
+export type ShieldAction = {
+  type: ShieldActionType;
+  behavior: "close" | "defer";
+};
+
+export type ShieldActions = {
+  primary: ShieldAction;
+  secondary?: ShieldAction;
+};
+
+export type Action =
+  | {
+      type: "block";
+      familyActivitySelection: string;
+      shieldConfiguration: ShieldConfiguration;
+      shieldActions: ShieldActions;
+    }
+  | {
+      type: "unblockAll";
+    };
+
 export type DeviceActivityEventRaw = Omit<
   DeviceActivityEvent,
   "familyActivitySelection"

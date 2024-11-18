@@ -13,34 +13,15 @@ import {
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
+  Action,
   AuthorizationStatus,
   DeviceActivityEvent,
   EventParsed,
-  ShieldConfiguration,
   UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
 const initialMinutes = 1;
 const postponeMinutes = 60;
-
-type ShieldActionType = "unblockAll" | "dismiss";
-
-type ShieldAction = {
-  type: ShieldActionType;
-  behavior: "close" | "defer";
-};
-
-type ShieldActions = {
-  primary: ShieldAction;
-  secondary: ShieldAction;
-};
-
-type Action = {
-  type: "block";
-  familyActivitySelection: string;
-  shieldConfiguration: ShieldConfiguration;
-  shieldActions: ShieldActions;
-};
 
 console.log(
   JSON.stringify(
