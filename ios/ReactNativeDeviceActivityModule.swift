@@ -216,28 +216,17 @@ public class ReactNativeDeviceActivityModule: Module {
         userDefaults = UserDefaults(suiteName: appGroup)
     }
       
+      OnStartObserving {
+          watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
+              self.sendEvent("onDeviceActivityDetected" as String, [
+                "activityName": activity.rawValue,
+              ])
+          })
+      }
       
-  Function("registerManagedStoreListener"){
-      watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
-          self.sendEvent("onDeviceActivityDetected" as String, [
-            "activityName": activity.rawValue,
-          ])
-      })
-/*
- does not seem possible
- 
-      watchStoreHandle = store.shield.applicationCategories.publisher.sink(receiveValue: { policy in
-          self.sendEvent("onManagedStoreWillChange" as String, [
-            :
-          ])
-      })
-      
-      watchStoreHandle = store.shield.webDomainCategories.publisher.sink(receiveValue: { policy in
-          self.sendEvent("onManagedStoreWillChange" as String, [
-            :
-          ])
-      })*/
-  }
+      OnStopObserving {
+          watchActivitiesHandle?.cancel()
+      }
     
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
       
