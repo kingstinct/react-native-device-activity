@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   NativeSyntheticEvent,
@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
-  Action,
   AuthorizationStatus,
   DeviceActivityEvent,
   EventParsed,
@@ -60,59 +59,14 @@ void ReactNativeDeviceActivity.updateShieldConfiguration({
   },
 });
 
-type CallbackName =
-  | "warningTime"
-  | "intervalStart"
-  | "intervalEnd"
-  | "eventDidReachThreshold";
-
 const activityName = "Goal4";
-
-const configureActions = ({
-  activityName,
-  callbackName,
-  actions,
-  eventName,
-}: {
-  activityName: string;
-  callbackName: CallbackName;
-  actions: Action[];
-  eventName?: string;
-}) => {
-  const key = eventName
-    ? `actions_for_${activityName}_${callbackName}_${eventName}`
-    : `actions_for_${activityName}_${callbackName}`;
-
-  ReactNativeDeviceActivity.userDefaultsSet(key, actions);
-};
-
-const updateFamilyActivitySelectionToActivityNameMap = ({
-  activityName,
-  familyActivitySelection,
-}: {
-  activityName: string;
-  familyActivitySelection: string;
-}) => {
-  const previousValue =
-    (ReactNativeDeviceActivity.userDefaultsGet(
-      "familyActivitySelectionToActivityNameMap",
-    ) as Record<string, string>) ?? {};
-
-  ReactNativeDeviceActivity.userDefaultsSet(
-    "familyActivitySelectionToActivityNameMap",
-    {
-      ...previousValue,
-      [activityName]: familyActivitySelection,
-    },
-  );
-};
 
 const potentialMaxEvents = Math.floor(
   (60 * 24 - initialMinutes) / postponeMinutes,
 );
 
 const startMonitoring = (activitySelection: string) => {
-  updateFamilyActivitySelectionToActivityNameMap({
+  ReactNativeDeviceActivity.updateFamilyActivitySelectionToActivityNameMap({
     activityName,
     familyActivitySelection: activitySelection,
   });
@@ -143,7 +97,7 @@ const startMonitoring = (activitySelection: string) => {
 
   console.log("events", events);
 
-  configureActions({
+  ReactNativeDeviceActivity.configureActions({
     activityName,
     callbackName: "eventDidReachThreshold",
     eventName: "minutes_reached_1",
@@ -290,6 +244,9 @@ export default function App() {
   }, [familyActivitySelection]);
 
   useEffect(() => {
+    ReactNativeDeviceActivity.registerManagedStoreListener((hello) => {
+      console.log("hello", hello);
+    });
     refreshIsShieldActive();
   }, [familyActivitySelection, refreshIsShieldActive]);
 
@@ -343,22 +300,18 @@ export default function App() {
 
         <Button title="Get events" onPress={refreshEvents} />
 
-        <Button title="Update shield state" onPress={refreshIsShieldActive} />
-
         <Button
           title="Block all apps"
           onPress={async () => {
             await ReactNativeDeviceActivity.blockApps(
               familyActivitySelection ?? undefined,
             );
-            await refreshIsShieldActive();
           }}
         />
         <Button
           title="Unblock all apps"
           onPress={async () => {
             await ReactNativeDeviceActivity.unblockApps();
-            await refreshIsShieldActive();
           }}
         />
 

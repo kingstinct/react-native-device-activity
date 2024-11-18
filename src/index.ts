@@ -10,8 +10,10 @@ import { Platform } from "react-native";
 
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
+  Action,
   AuthorizationStatus,
   CallbackEventName,
+  CallbackName,
   DeviceActivityEvent,
   DeviceActivityEventRaw,
   DeviceActivityMonitorEventPayload,
@@ -125,6 +127,58 @@ export async function startMonitoring(
     deviceActivityEventsRaw,
     uniqueSelections,
   );
+}
+
+export const configureActions = ({
+  activityName,
+  callbackName,
+  actions,
+  eventName,
+}: {
+  activityName: string;
+  callbackName: CallbackName;
+  actions: Action[];
+  eventName?: string;
+}) => {
+  const key = eventName
+    ? `actions_for_${activityName}_${callbackName}_${eventName}`
+    : `actions_for_${activityName}_${callbackName}`;
+
+  ReactNativeDeviceActivityModule.userDefaultsSet(key, actions);
+};
+
+export const updateFamilyActivitySelectionToActivityNameMap = ({
+  activityName,
+  familyActivitySelection,
+}: {
+  activityName: string;
+  familyActivitySelection: string;
+}) => {
+  const previousValue =
+    (ReactNativeDeviceActivityModule.userDefaultsGet(
+      "familyActivitySelectionToActivityNameMap",
+    ) as Record<string, string>) ?? {};
+
+  ReactNativeDeviceActivityModule.userDefaultsSet(
+    "familyActivitySelectionToActivityNameMap",
+    {
+      ...previousValue,
+      [activityName]: familyActivitySelection,
+    },
+  );
+};
+
+export function registerManagedStoreListener(
+  listener: (event: { activityName: string }) => void,
+) {
+  const handler = emitter.addListener<{ activityName: string }>(
+    "onDeviceActivityDetected",
+    listener,
+  );
+
+  ReactNativeDeviceActivityModule.registerManagedStoreListener();
+
+  return handler;
 }
 
 export function stopMonitoring(activityNames?: string[]): void {

@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import Combine
 import ManagedSettingsUI
 import DeviceActivity
 import FamilyControls
@@ -6,7 +7,7 @@ import ManagedSettings
 import os
 import Foundation
 
-struct DateComponentsFromJS: Record {
+struct DateComponentsFromJS: ExpoModulesCore.Record {
   @Field
   var era: Int?;
   @Field
@@ -41,7 +42,7 @@ struct DateComponentsFromJS: Record {
   var timeZoneIdentifier: String?;
 }
 
-struct ScheduleFromJS: Record {
+struct ScheduleFromJS: ExpoModulesCore.Record {
   @Field
   var intervalStart: DateComponentsFromJS
   @Field
@@ -54,7 +55,7 @@ struct ScheduleFromJS: Record {
   var warningTime: DateComponentsFromJS?
 }
 
-struct DeviceActivityEventFromJS: Record {
+struct DeviceActivityEventFromJS: ExpoModulesCore.Record {
   @Field
   var familyActivitySelectionIndex: Int;
   @Field
@@ -160,7 +161,7 @@ class NativeEventObserver {
     registerListener(name: "eventDidReachThreshold")
     registerListener(name: "intervalWillStartWarning")
     registerListener(name: "intervalWillEndWarning")
-    registerListener(name: "eventWillReachThresholdWarning") 
+    registerListener(name: "eventWillReachThresholdWarning")
   }
 }
 
@@ -182,6 +183,10 @@ func handleAction(dict: [String: Any]) -> Void {
 
 @available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
+    
+    let store = ManagedSettingsStore()
+    
+    
   
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -194,7 +199,6 @@ public class ReactNativeDeviceActivityModule: Module {
     
     let center = DeviceActivityCenter()
     
-    
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     //Constants([
     // "PI": Double.pi
@@ -204,9 +208,36 @@ public class ReactNativeDeviceActivityModule: Module {
       
     var userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
       
+      var watchActivitiesHandle: Cancellable? = nil
+      // var watchStoreHandle: Cancellable? = nil
+  
+      
     Function("setAppGroup") { (appGroup: String) in
         userDefaults = UserDefaults(suiteName: appGroup)
     }
+      
+      
+  Function("registerManagedStoreListener"){
+      watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
+          self.sendEvent("onDeviceActivityDetected" as String, [
+            "activityName": activity.rawValue,
+          ])
+      })
+/*
+ does not seem possible
+ 
+      watchStoreHandle = store.shield.applicationCategories.publisher.sink(receiveValue: { policy in
+          self.sendEvent("onManagedStoreWillChange" as String, [
+            :
+          ])
+      })
+      
+      watchStoreHandle = store.shield.webDomainCategories.publisher.sink(receiveValue: { policy in
+          self.sendEvent("onManagedStoreWillChange" as String, [
+            :
+          ])
+      })*/
+  }
     
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
       
@@ -385,7 +416,7 @@ public class ReactNativeDeviceActivityModule: Module {
       }))
     }
       
-      let store = ManagedSettingsStore()
+      
       
       Function("updateShieldConfiguration") { (shieldConfiguration: [String:Any]) -> Void in
           logger.log("\(shieldConfiguration)")
@@ -478,7 +509,9 @@ public class ReactNativeDeviceActivityModule: Module {
     
     Events(
       "onSelectionChange",
-      "onDeviceActivityMonitorEvent"
+      "onDeviceActivityMonitorEvent",
+      // "onManagedStoreWillChange",
+      "onDeviceActivityDetected"
     )
     
     // Enables the module to be used as a native view. Definition components that are accepted as part of the

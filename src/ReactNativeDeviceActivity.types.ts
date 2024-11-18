@@ -173,6 +173,14 @@ export enum AuthorizationStatus {
   approved = 2,
 }
 
+export type CallbackName =
+  | "intervalDidStart"
+  | "intervalWillStartWarning"
+  | "intervalDidEnd"
+  | "intervalWillEndWarning"
+  | "eventDidReachThreshold"
+  | "eventWillReachThresholdWarning";
+
 export type ReactNativeDeviceActivityNativeModule = {
   requestAuthorization: () => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
