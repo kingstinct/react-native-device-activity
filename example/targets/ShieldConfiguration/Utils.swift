@@ -16,13 +16,15 @@ let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
-
-
 @available(iOS 15.0, *)
 struct SelectionWithActivityName {
   var selection: FamilyActivitySelection
   var activityName: String
 }
+
+@available(iOS 15.0, *)
+let store = ManagedSettingsStore()
+
 
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?]{
@@ -214,29 +216,4 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
   userDefaults?.set(now, forKey: fullEventName)
 }
 
-@available(iOS 15.0, *)
-let store = ManagedSettingsStore()
-
-@available(iOS 15.0, *)
-func executeShieldActionConfig(shieldAction: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
-    let actionConfig = getShieldActionConfig(shieldAction: shieldAction)
-    
-    actionConfig.actions.forEach { action in
-        switch action {
-            /*case .unblockSelf:
-                // todo
-                store.shield.applications = nil
-                store.shield.webDomains = nil
-                store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
-                store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none*/
-            case .unblockAll:
-                store.shield.applications = nil
-                store.shield.webDomains = nil
-                store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
-                store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
-        }
-    }
-    
-    completionHandler(actionConfig.response)
-}
 

@@ -244,9 +244,11 @@ export default function App() {
   }, [familyActivitySelection]);
 
   useEffect(() => {
-    ReactNativeDeviceActivity.registerManagedStoreListener((hello) => {
-      console.log("hello", hello);
-    });
+    ReactNativeDeviceActivity.registerManagedStoreListener(
+      ({ activityName }) => {
+        console.log("activityName", activityName);
+      },
+    );
     refreshIsShieldActive();
   }, [familyActivitySelection, refreshIsShieldActive]);
 
@@ -262,12 +264,12 @@ export default function App() {
 
         <Text>
           Shield active:
-          {isShieldActive ? "yes" : "no"}
+          {isShieldActive ? "✅" : "❌"}
         </Text>
 
         <Text>
-          Shield active:
-          {isShieldActiveWithSelection ? "yes" : "no"}
+          Shielding current selection:
+          {isShieldActiveWithSelection ? "✅" : "❌"}
         </Text>
 
         <Button
@@ -306,12 +308,14 @@ export default function App() {
             await ReactNativeDeviceActivity.blockApps(
               familyActivitySelection ?? undefined,
             );
+            refreshIsShieldActive();
           }}
         />
         <Button
           title="Unblock all apps"
           onPress={async () => {
             await ReactNativeDeviceActivity.unblockApps();
+            refreshIsShieldActive();
           }}
         />
 

@@ -176,8 +176,6 @@ export function registerManagedStoreListener(
     listener,
   );
 
-  ReactNativeDeviceActivityModule.registerManagedStoreListener();
-
   return handler;
 }
 
