@@ -8,6 +8,7 @@ export type CallbackEventName =
   | "intervalWillStartWarning"
   | "intervalWillEndWarning"
   | "eventWillReachThresholdWarning";
+
 export type DeviceActivityMonitorEventPayload = {
   callbackName: CallbackEventName;
 };
@@ -29,11 +30,6 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
       applicationCount: number;
       categoryCount: number;
       webDomainCount: number;
-
-      // might as well expose these on the JS side
-      applicationTokens: number[];
-      categoryTokens: number[];
-      webDomainTokens: number[];
     }>,
   ) => void;
   familyActivitySelection?: string | null;
