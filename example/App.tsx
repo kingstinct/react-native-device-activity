@@ -35,7 +35,8 @@ console.log(
 // gets run on reload, so easy to play around with
 void ReactNativeDeviceActivity.updateShieldConfiguration({
   backgroundBlurStyle: UIBlurEffectStyle.prominent,
-  title: "{applicationOrDomainDisplayName} blocked by Zabit",
+  title:
+    "{applicationOrDomainDisplayName} blocked by react-native-device-activity",
   subtitle: "You have reached your limit! {activityName}",
   primaryButtonLabel: "Give me 5 more minutes",
   secondaryButtonLabel: "Close",
@@ -111,7 +112,8 @@ const startMonitoring = (activitySelection: string) => {
         },
         shieldConfiguration: {
           backgroundBlurStyle: UIBlurEffectStyle.prominent,
-          title: "{applicationOrDomainDisplayName} Blocked by Zabit",
+          title:
+            "{applicationOrDomainDisplayName} Blocked by react-native-device-activity",
           subtitle: "You have reached your limit! {activityName}",
           primaryButtonLabel: "Give me 5 more minutes",
           secondaryButtonLabel: "Close",
