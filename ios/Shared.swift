@@ -25,7 +25,6 @@ struct SelectionWithActivityName {
 @available(iOS 15.0, *)
 let store = ManagedSettingsStore()
 
-
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?]{
   if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(forKey: "familyActivitySelectionToActivityNameMap") {

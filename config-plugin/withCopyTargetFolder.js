@@ -16,7 +16,7 @@ const withCopyTargetFolder = (
   const projectTargetFolderPath = projectRoot + "/targets";
 
   // eslint-disable-next-line no-undef
-  const packageSharedFolderPath = __dirname + "/../ios/Shared";
+  const sharedFilePath = __dirname + "/../ios/Shared.swift";
 
   if (!fs.existsSync(projectTargetFolderPath)) {
     fs.mkdirSync(projectTargetFolderPath);
@@ -34,9 +34,7 @@ const withCopyTargetFolder = (
     const targetPath = projectTargetFolderPath + "/" + nativeTarget;
     // check if is directory
     if (fs.lstatSync(targetPath).isDirectory()) {
-      fs.cpSync(packageSharedFolderPath, targetPath, {
-        recursive: true,
-      });
+      fs.cpSync(sharedFilePath, targetPath);
     }
   }
 
