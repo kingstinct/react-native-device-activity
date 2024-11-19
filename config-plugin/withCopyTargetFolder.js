@@ -1,8 +1,15 @@
 const { default: plist } = require("@expo/plist");
 const fs = require("fs");
 
-/** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; }>} */
-const withCopyTargetFolder = (config, { appGroup }) => {
+/** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; copyToTargetFolder?: boolean }>} */
+const withCopyTargetFolder = (
+  config,
+  { appGroup, copyToTargetFolder = true },
+) => {
+  if (!copyToTargetFolder) {
+    return config;
+  }
+
   const projectRoot = config._internal.projectRoot;
   // eslint-disable-next-line no-undef
   const packageTargetFolderPath = __dirname + "/../targets";

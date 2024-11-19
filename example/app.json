@@ -39,7 +39,8 @@
         "../app.plugin.js",
         {
           "appleTeamId": "34SE8X7Q58",
-          "appGroup": "group.ActivityMonitor"
+          "appGroup": "group.ActivityMonitor",
+          "copyToTargetFolder": false
         }
       ]
     ],
