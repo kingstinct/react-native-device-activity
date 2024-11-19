@@ -16,18 +16,18 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		3EC70A358F3D42C69DFBA42F /* ActivityMonitorExtension.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */; };
 		588D2F5C6FA8454AA654A3C3 /* ShieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55BEF032CC20441DA94ED74D /* ShieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		67393EBB5A674F2D8B74D752 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEB45C5564948668B03405A /* DeviceActivityMonitorExtension.swift */; };
 		7196272736B8369F7352BB3C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */; };
 		96905EF65AED1B983A6B3ABC /* libPods-reactnativedeviceactivityexample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */; };
 		984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */; };
 		A9B2DBE82CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBE92CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBEA2CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
+		A9B2DC002CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */; };
+		A9B2DC022CECB9430001BBAF /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */; };
+		A9B2DC042CECB9600001BBAF /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CF2927581FDF4A8EA5963B5E /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09AA43EDBAC42989E3EDC4E /* ShieldConfigurationExtension.swift */; };
 		D4B3EB83B4EF427D8D8F7E6C /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1413C6DF9E3E4F8795DD1144 /* ManagedSettingsUI.framework */; };
-		D609F925107D42D7B9575885 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BA7D224C84462DA016DD7B /* ShieldActionExtension.swift */; };
 		DA41F741593849B68655A75F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10474BDB8DC49849F0DAB7D /* noop-file.swift */; };
 		FC38F5A2C4C54BAFA2ADD8F5 /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -82,18 +82,19 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = main.m; path = reactnativedeviceactivityexample/main.m; sourceTree = "<group>"; };
 		1413C6DF9E3E4F8795DD1144 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = 1; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
 		22B2DFD666844CC6A73BAB9B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		28BA7D224C84462DA016DD7B /* ShieldActionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
 		2A3C8096FCD54C04AD745FB6 /* ShieldAction.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ShieldAction.entitlements; sourceTree = "<group>"; };
 		55BEF032CC20441DA94ED74D /* ShieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ShieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; fileEncoding = 4; includeInIndex = 0; path = "libPods-reactnativedeviceactivityexample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-reactnativedeviceactivityexample.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.debug.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.debug.xcconfig"; sourceTree = "<group>"; };
-		6EEB45C5564948668B03405A /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-reactnativedeviceactivityexample.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.release.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.release.xcconfig"; sourceTree = "<group>"; };
 		84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../targets/ShieldConfiguration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
 		A9B2DBE72CECAE610001BBAF /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = "/Users/robertherber/code/react-native-device-activity/ios/Shared.swift"; sourceTree = "<absolute>"; };
+		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = "/Users/robertherber/code/react-native-device-activity/targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift"; sourceTree = "<absolute>"; };
+		A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = "/Users/robertherber/code/react-native-device-activity/targets/ShieldConfiguration/ShieldConfigurationExtension.swift"; sourceTree = "<absolute>"; };
+		A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = "/Users/robertherber/code/react-native-device-activity/targets/ShieldAction/ShieldActionExtension.swift"; sourceTree = "<absolute>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = reactnativedeviceactivityexample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEB321985C804DE4AB33EC69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA3FB2A82413462F881AEB5A /* reactnativedeviceactivityexample-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "reactnativedeviceactivityexample-Bridging-Header.h"; path = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -102,7 +103,6 @@
 		E01EDC40AAA54847A43C3F99 /* DeviceActivity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = 1; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		F09AA43EDBAC42989E3EDC4E /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-reactnativedeviceactivityexample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -161,9 +161,9 @@
 		2CA754293FC5430EBFCBDD04 /* ShieldAction */ = {
 			isa = PBXGroup;
 			children = (
-				28BA7D224C84462DA016DD7B /* ShieldActionExtension.swift */,
 				2A3C8096FCD54C04AD745FB6 /* ShieldAction.entitlements */,
 				22B2DFD666844CC6A73BAB9B /* Info.plist */,
+				A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */,
 			);
 			name = ShieldAction;
 			path = ../targets/ShieldAction;
@@ -226,9 +226,9 @@
 		AE110DB5899B4D8887B5B8C9 /* ActivityMonitorExtension */ = {
 			isa = PBXGroup;
 			children = (
-				6EEB45C5564948668B03405A /* DeviceActivityMonitorExtension.swift */,
 				98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */,
 				10F48954B51344E7AF350E1B /* Info.plist */,
+				A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */,
 			);
 			name = ActivityMonitorExtension;
 			path = ../targets/ActivityMonitorExtension;
@@ -256,9 +256,9 @@
 		D0AD29FCE88C41BC90BA7D10 /* ShieldConfiguration */ = {
 			isa = PBXGroup;
 			children = (
-				F09AA43EDBAC42989E3EDC4E /* ShieldConfigurationExtension.swift */,
 				630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */,
 				AEB321985C804DE4AB33EC69 /* Info.plist */,
+				A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */,
 			);
 			name = ShieldConfiguration;
 			path = ../targets/ShieldConfiguration;
@@ -567,7 +567,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B2DBE92CECAE610001BBAF /* Shared.swift in Sources */,
-				67393EBB5A674F2D8B74D752 /* DeviceActivityMonitorExtension.swift in Sources */,
+				A9B2DC002CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift in Sources */,
 				3EC70A358F3D42C69DFBA42F /* ActivityMonitorExtension.entitlements in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,8 +577,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B2DBE82CECAE610001BBAF /* Shared.swift in Sources */,
-				D609F925107D42D7B9575885 /* ShieldActionExtension.swift in Sources */,
 				24076609638B40C29AD3691D /* ShieldAction.entitlements in Sources */,
+				A9B2DC042CECB9600001BBAF /* ShieldActionExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,8 +587,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B2DBEA2CECAE610001BBAF /* Shared.swift in Sources */,
-				CF2927581FDF4A8EA5963B5E /* ShieldConfigurationExtension.swift in Sources */,
 				984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */,
+				A9B2DC022CECB9430001BBAF /* ShieldConfigurationExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
