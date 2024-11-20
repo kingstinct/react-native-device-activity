@@ -215,4 +215,135 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
   userDefaults?.set(now, forKey: fullEventName)
 }
 
+func traverseDirectory(at path: String) {
+    do {
+        let files = try FileManager.default.contentsOfDirectory(atPath: path)
+        
+        for file in files {
+            let fullPath = path + "/" + file
+            var isDirectory: ObjCBool = false
+            
+            if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) {
+                if isDirectory.boolValue {
+                    print("\(fullPath) is a directory")
+                    // Recursively traverse subdirectory
+                    traverseDirectory(at: fullPath)
+                } else if(fullPath.hasSuffix("png")) {
+                    print("\(fullPath) is a file")
+                }
+            } else {
+                print("\(fullPath) does not exist")
+            }
+        }
+    } catch {
+        print("Error traversing directory at path \(path): \(error.localizedDescription)")
+    }
+}
 
+func loadImageFromBundle(assetName: String) -> UIImage? {
+    // Get the main bundle
+    let bundle = Bundle.main
+  // Bundle.main.
+    guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else { return nil }
+
+  logger.info("Found \(fURL.count) png files in bundle")
+  
+  traverseDirectory(at: Bundle.main.bundlePath)
+  
+  for url in fURL {
+    logger.info("url: \(url.lastPathComponent)")
+  }
+    
+    // Construct the file URL for the asset
+    guard let filePath = bundle.path(forResource: assetName, ofType: "png") else {
+        print("Error: Asset not found in bundle: \(assetName).png")
+        return nil
+    }
+    
+    // Load image data
+    guard let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
+        print("Error: Could not load data from \(filePath)")
+        return nil
+    }
+    
+    // Create UIImage from data
+    return UIImage(data: imageData)
+}
+
+func loadImageFromFileSystem(filePath: String) -> UIImage? {
+    let fileURL = URL(fileURLWithPath: filePath)
+    
+    // Load data from the file URL
+    guard let imageData = try? Data(contentsOf: fileURL) else {
+        print("Error: Could not load data from \(filePath)")
+        return nil
+    }
+    
+    // Create UIImage from the data
+    return UIImage(data: imageData)
+}
+
+func loadImageFromRemoteURL(urlString: String, completion: @escaping (UIImage?) -> Void) {
+    guard let url = URL(string: urlString) else {
+        print("Error: Invalid URL string")
+        completion(nil)
+        return
+    }
+    
+    let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        // Handle errors
+        if let error = error {
+            print("Error fetching image from URL: \(error)")
+            completion(nil)
+            return
+        }
+        
+        // Validate data
+        guard let imageData = data, let image = UIImage(data: imageData) else {
+            print("Error: Invalid image data from \(urlString)")
+            completion(nil)
+            return
+        }
+        
+        completion(image)
+    }
+    
+    task.resume()
+}
+
+func loadImageFromRemoteURLSynchronously(urlString: String) -> UIImage? {
+    guard let url = URL(string: urlString) else {
+      logger.info("Error: Invalid URL string")
+        return nil
+    }
+    
+    var image: UIImage? = nil
+    let semaphore = DispatchSemaphore(value: 0)
+  
+  logger.info("Getting image")
+    
+    let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        // Handle errors
+        if let error = error {
+          logger.info("Error fetching image: \(error)")
+        }
+      
+        
+        
+        // Validate data
+        if let imageData = data {
+          logger.info("Got image")
+            image = UIImage(data: imageData)
+        }
+        
+        // Signal the semaphore to release the lock
+        semaphore.signal()
+    }
+    
+    task.resume()
+    
+    // Wait for the task to complete
+    semaphore.wait()
+    
+    return image
+}

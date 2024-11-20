@@ -217,6 +217,8 @@ public class ReactNativeDeviceActivityModule: Module {
     }
       
       OnStartObserving {
+          let img = loadImageFromBundle(assetName: "reactnativedeviceactivityexample/assets/kingstinct")
+          
           watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
               self.sendEvent("onDeviceActivityDetected" as String, [
                 "activityName": activity.rawValue,

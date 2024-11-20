@@ -56,7 +56,7 @@ func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?])
   let secondaryButtonLabel = dict["secondaryButtonLabel"] as? String
   let secondaryButtonLabelColor = getColor(color: dict["secondaryButtonLabelColor"] as? [String: Double])
   
-  let icon = convertBase64StringToImage(imageBase64String: dict["icon"] as? String)
+  let icon = loadImageFromBundle(assetName: "assets/kingstinct")
   
   logger.log("got everything")
 
@@ -68,7 +68,7 @@ func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?])
     subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
     primaryButtonLabel: buildLabel(text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),
     primaryButtonBackgroundColor: primaryButtonBackgroundColor,
-    secondaryButtonLabel: buildLabel(text: secondaryButtonLabel, with: secondaryButtonLabelColor, placeholders: placeholders),
+    secondaryButtonLabel: buildLabel(text: secondaryButtonLabel, with: secondaryButtonLabelColor, placeholders: placeholders)
   )
   logger.log("shield initialized")
   

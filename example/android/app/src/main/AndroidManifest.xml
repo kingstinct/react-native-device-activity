@@ -24,6 +24,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="device-activity"/>
         <data android:scheme="expo.modules.deviceactivity.example"/>
       </intent-filter>
     </activity>

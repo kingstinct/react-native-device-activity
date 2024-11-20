@@ -16,6 +16,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.deviceactivity.example"
     },
+    "assetBundlePatterns": [
+      "assets/*"
+    ],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -34,6 +37,13 @@
             "deploymentTarget": "15.0"
           }
         },
+      ],
+      
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/kingstinct.png"]
+        }
       ],
       [
         "../app.plugin.js",
