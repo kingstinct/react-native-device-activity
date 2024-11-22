@@ -228,9 +228,21 @@ export type ShieldConfiguration = {
   subtitle?: string;
   subtitleColor?: UIColor;
   /**
+   * Use an image from the app group directory.
    * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/icon
    */
-  icon?: string;
+  iconAppGroupRelativePath?: string;
+  /**
+   * Use SF Symbols for the icon.
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/icon
+   * @link https://developer.apple.com/sf-symbols/
+   */
+  iconSystemName?: string;
+
+  /**
+   * Add a tint color to the icon.
+   */
+  iconTint?: UIColor;
   /**
    * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/primarybuttonlabel
    */

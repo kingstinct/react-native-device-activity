@@ -200,25 +200,52 @@ public class ReactNativeDeviceActivityModule: Module {
     let center = DeviceActivityCenter()
     
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    //Constants([
-    // "PI": Double.pi
-    //])
-    
+    Constants([
+     "PI": Double.pi
+    ])
+      let fileManager = FileManager.default
+      
     let observer = NativeEventObserver(module: self)
       
-    var userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+    var appGroup = "group.ActivityMonitor"
       
-      var watchActivitiesHandle: Cancellable? = nil
+    var userDefaults = UserDefaults(suiteName: appGroup)
+      
+    var watchActivitiesHandle: Cancellable? = nil
       // var watchStoreHandle: Cancellable? = nil
-  
+
+    Function("getAppGroupFileDirectory") {
       
-    Function("setAppGroup") { (appGroup: String) in
+      let container = getAppGroupDirectory()
+      // try fileManager.createDirectory(at: container!.appendingPathComponent("Documents"), withIntermediateDirectories: false)
+      return container?.absoluteString
+    }
+      
+      Function("moveFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
+        let from = URL(string: fromUrl)!
+        let to = URL(string: toUrl)!
+          
+          
+        if(overwrite == true){
+            do {
+                try fileManager.removeItem(at: to)
+            }
+            catch {
+                logger.info("Error removing file: \(error)")
+            }
+        }
+        try fileManager.copyItem(at: from, to: to)
+          
+          
+        return to.absoluteString
+      }
+      
+    Function("setAppGroup") { (appGroupIn: String) in
+        appGroup = appGroupIn
         userDefaults = UserDefaults(suiteName: appGroup)
     }
       
       OnStartObserving {
-          let img = loadImageFromBundle(assetName: "reactnativedeviceactivityexample/assets/kingstinct")
-          
           watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
               self.sendEvent("onDeviceActivityDetected" as String, [
                 "activityName": activity.rawValue,

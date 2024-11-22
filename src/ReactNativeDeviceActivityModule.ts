@@ -28,6 +28,7 @@ const mockModule: ReactNativeDeviceActivityNativeModule & ProxyNativeModule = {
   requestAuthorization: warnFn,
   revokeAuthorization: warnFn,
   isShieldActive: warnFnBoolean,
+  getAppGroupFileDirectory: warnFn,
   isShieldActiveWithSelection: warnFnBoolean,
   doesSelectionHaveOverlap: warnFnBoolean,
   updateShieldConfiguration: warnFn,

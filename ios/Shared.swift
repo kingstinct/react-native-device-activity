@@ -11,7 +11,8 @@ import UIKit
 import os
 import FamilyControls
 
-let userDefaults = UserDefaults(suiteName: "group.ActivityMonitor")
+let appGroup = "group.ActivityMonitor"
+let userDefaults = UserDefaults(suiteName: appGroup)
 
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
@@ -238,6 +239,27 @@ func traverseDirectory(at path: String) {
     } catch {
         print("Error traversing directory at path \(path): \(error.localizedDescription)")
     }
+}
+
+func getAppGroupDirectory() -> URL? {
+    let fileManager = FileManager.default
+    let container = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+    return container
+}
+
+func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {
+    let appGroupDirectory = getAppGroupDirectory()
+    
+    let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
+        
+    // Load the image data
+    guard let imageData = try? Data(contentsOf: fileURL) else {
+        print("Error: Could not load data from \(fileURL.path)")
+        return nil
+    }
+    
+    // Create and return the UIImage
+    return UIImage(data: imageData)
 }
 
 func loadImageFromBundle(assetName: String) -> UIImage? {

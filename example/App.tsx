@@ -1,3 +1,4 @@
+import * as FileSystem from "expo-file-system";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -32,6 +33,62 @@ console.log(
   ),
 );
 
+/*console.log("bundleDirectory", FileSystem.bundleDirectory);
+console.log("cacheDirectory", FileSystem.cacheDirectory);
+console.log("documentDirectory", FileSystem.documentDirectory);*/
+
+const readDirectoryRecursively = async (path: string) => {
+  console.log("directory", path);
+  const files = await FileSystem.readDirectoryAsync(path);
+
+  if (files.length > 0) {
+    for (const file of files) {
+      const fullPath = path + "/" + file;
+      if ((await FileSystem.getInfoAsync(fullPath)).isDirectory) {
+        await readDirectoryRecursively(fullPath);
+      } else {
+        console.log(fullPath);
+      }
+    }
+  }
+};
+
+const appGroupFileDirectory =
+  ReactNativeDeviceActivity.getAppGroupFileDirectory();
+
+readDirectoryRecursively(appGroupFileDirectory);
+// readDirectoryRecursively(FileSystem.bundleDirectory ?? "");
+// readDirectoryRecursively(FileSystem.cacheDirectory ?? "");
+readDirectoryRecursively(FileSystem.documentDirectory ?? "");
+
+/*void FileSystem.makeDirectoryAsync(appGroupFileDirectory + "Documents", {
+  intermediates: false,
+});*/
+
+const downloadAndMoveIcon = async (
+  url: string,
+  iconAppGroupRelativePath: string,
+) => {
+  const filename = iconAppGroupRelativePath.split("/").pop();
+  const result = await FileSystem.downloadAsync(
+    url,
+    FileSystem.cacheDirectory! + filename,
+    {
+      cache: true,
+    },
+  );
+  await ReactNativeDeviceActivity.moveFile(
+    result.uri,
+    appGroupFileDirectory + iconAppGroupRelativePath,
+    true,
+  );
+};
+
+downloadAndMoveIcon(
+  "https://s3-alpha-sig.figma.com/img/c35b/b92b/25ecc68b7de92b14b9aa5fa9ddf4b476?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=O20vLYM4Tl5AVkxGnfQznu9DV3HLDhV26T2NUT6EDttxEeKkR4rZPnHJZk4ts89ofSfbtLrIkOamUld7r5DL0jYSGxzy94uq0MlVWCey54n2htYvw74BWHzYGpzHaX24lGc-ETQRI-LTYldGKPE~h6Q7aPxB2iUefcPnHL8a4BYCtYoHaqz11m3gAZaQymrn~lRrqy2K9ld3XSUEz7otvCgl4GXMarE39r~8bsJEmye5oNBAKJ4OZHMDovKhSO0kF3LLmJKXIICAOCkHFHV-2uBT~kl3oNV3B7j5Tx3Jc23QrSTLEIcrifZWmrDKgJkDmsUcfyxqZ202XU723mRSxg__",
+  "my-awesome-image.png",
+);
+
 // gets run on reload, so easy to play around with
 void ReactNativeDeviceActivity.updateShieldConfiguration({
   backgroundBlurStyle: UIBlurEffectStyle.prominent,
@@ -40,6 +97,8 @@ void ReactNativeDeviceActivity.updateShieldConfiguration({
   subtitle: "You have reached your limit! {activityName}",
   primaryButtonLabel: "Give me 5 more minutes",
   secondaryButtonLabel: "Close",
+  //icon: appGroupFileDirectory + "/kingstinct.png",
+  iconAppGroupRelativePath: "my-awesome-image.png",
   titleColor: {
     red: 255,
     green: 0.329 * 255,

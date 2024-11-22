@@ -38,6 +38,28 @@ func buildLabel(text: String?, with color: UIColor?, placeholders: [String: Stri
   return nil
 }
 
+func resolveIcon(dict: [String:Any]) -> UIImage? {
+  let iconAppGroupRelativePath = dict["iconAppGroupRelativePath"] as? String
+  let iconSystemName = dict["iconSystemName"] as? String
+  
+  var image: UIImage? = nil
+  
+  if let iconSystemName = iconSystemName {
+    image = UIImage(systemName: iconSystemName)
+  }
+  
+  if let iconAppGroupRelativePath = iconAppGroupRelativePath {
+    image = loadImageFromAppGroupDirectory(relativeFilePath: iconAppGroupRelativePath)
+  }
+  
+  if let iconTint = getColor(color: dict["iconTint"] as? [String: Double]) {
+    image?.withTintColor(iconTint)
+  }
+
+  
+  return image
+}
+
 func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?]) -> ShieldConfiguration {
   logger.log("Calling getShieldConfiguration")
   
@@ -56,14 +78,10 @@ func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?])
   let secondaryButtonLabel = dict["secondaryButtonLabel"] as? String
   let secondaryButtonLabelColor = getColor(color: dict["secondaryButtonLabelColor"] as? [String: Double])
   
-  let icon = loadImageFromBundle(assetName: "assets/kingstinct")
-  
-  logger.log("got everything")
-
   let shield = ShieldConfiguration(
     backgroundBlurStyle: dict["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: dict["backgroundBlurStyle"] as! Int) : nil,
     backgroundColor: backgroundColor,
-    icon: icon,
+    icon: resolveIcon(dict: dict),
     title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
     subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
     primaryButtonLabel: buildLabel(text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),

@@ -168,6 +168,10 @@ export const updateFamilyActivitySelectionToActivityNameMap = ({
   );
 };
 
+export function getAppGroupFileDirectory(): string {
+  return ReactNativeDeviceActivityModule.getAppGroupFileDirectory();
+}
+
 export function registerManagedStoreListener(
   listener: (event: { activityName: string }) => void,
 ) {
@@ -189,6 +193,18 @@ export function getActivities(): string[] {
 
 export function isShieldActive(): boolean {
   return ReactNativeDeviceActivityModule.isShieldActive();
+}
+
+export function moveFile(
+  sourceUri: string,
+  destinationUri: string,
+  overwrite: boolean = false,
+) {
+  return ReactNativeDeviceActivityModule.moveFile(
+    sourceUri,
+    destinationUri,
+    overwrite,
+  );
 }
 
 export function isShieldActiveWithSelection(
