@@ -34,7 +34,7 @@ const withCopyTargetFolder = (
     const targetPath = projectTargetFolderPath + "/" + nativeTarget;
     // check if is directory
     if (fs.lstatSync(targetPath).isDirectory()) {
-      fs.cpSync(sharedFilePath, targetPath);
+      fs.cpSync(sharedFilePath, targetPath + "/Shared.swift");
     }
   }
 
