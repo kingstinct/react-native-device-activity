@@ -207,10 +207,6 @@ public class ReactNativeDeviceActivityModule: Module {
       
     let observer = NativeEventObserver(module: self)
       
-    var appGroup = "group.ActivityMonitor"
-      
-    var userDefaults = UserDefaults(suiteName: appGroup)
-      
     var watchActivitiesHandle: Cancellable? = nil
       // var watchStoreHandle: Cancellable? = nil
 
@@ -225,6 +221,23 @@ public class ReactNativeDeviceActivityModule: Module {
         let from = URL(string: fromUrl)!
         let to = URL(string: toUrl)!
           
+        if(overwrite == true){
+            do {
+                try fileManager.removeItem(at: to)
+            }
+            catch {
+                logger.info("Error removing file: \(error)")
+            }
+        }
+        try fileManager.moveItem(at: from, to: to)
+          
+          
+        return to.absoluteString
+      }
+      
+      Function("copyFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
+        let from = URL(string: fromUrl)!
+        let to = URL(string: toUrl)!
           
         if(overwrite == true){
             do {

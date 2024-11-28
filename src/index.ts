@@ -207,6 +207,18 @@ export function moveFile(
   );
 }
 
+export function copyFile(
+  sourceUri: string,
+  destinationUri: string,
+  overwrite: boolean = false,
+) {
+  return ReactNativeDeviceActivityModule.copyFile(
+    sourceUri,
+    destinationUri,
+    overwrite,
+  );
+}
+
 export function isShieldActiveWithSelection(
   familyActivitySelectionStr: string,
 ): boolean {

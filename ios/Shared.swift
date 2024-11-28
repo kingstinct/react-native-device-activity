@@ -11,8 +11,8 @@ import UIKit
 import os
 import FamilyControls
 
-let appGroup = "group.ActivityMonitor"
-let userDefaults = UserDefaults(suiteName: appGroup)
+var appGroup = "group.ActivityMonitor"
+var userDefaults = UserDefaults(suiteName: appGroup)
 
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
