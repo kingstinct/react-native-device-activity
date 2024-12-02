@@ -45,10 +45,7 @@ func handleAction(dict: [String: Any]) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = dict["type"] as? String {
     if(type == "unblockAll"){
-      store.shield.applications = nil
-      store.shield.webDomains = nil
-      store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
-      store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
+      unblockAllApps()
     }
   }
   

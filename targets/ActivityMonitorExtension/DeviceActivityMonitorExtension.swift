@@ -115,10 +115,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             }
           }
           else if(type == "unblock"){
-            store.shield.applications = nil
-            store.shield.webDomains = nil
-            store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.none
-            store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.none
+            unblockAllApps()
           }
         }
       }
