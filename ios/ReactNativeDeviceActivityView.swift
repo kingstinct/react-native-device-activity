@@ -9,7 +9,7 @@ import Combine
 @available(iOS 15.0, *)
 class ReactNativeDeviceActivityView: ExpoView {
     
-    public let model = ScreenTimeSelectAppsModel()
+    let model = ScreenTimeSelectAppsModel()
     
     let contentView: UIHostingController<ScreenTimeSelectAppsContentView>
     
@@ -28,10 +28,10 @@ class ReactNativeDeviceActivityView: ExpoView {
         
         self.addSubview(contentView.view)
         
-        model.$activitySelection.sink { selection in
+        model.$activitySelection.debounce(for: .seconds(0.1), scheduler: RunLoop.main).sink { selection in
             if(selection != self.previousSelection){
-                self.updateSelection(selection: selection)
                 self.previousSelection = selection
+                self.updateSelection(selection: selection)
             }
         }
         .store(in: &cancellables)
