@@ -18,6 +18,44 @@ var userDefaults = UserDefaults(suiteName: appGroup)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
 
+func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<String, String?>){
+  let type = action["type"] as? String
+  
+  if(type == "blockSelection"){
+    if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
+      let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+      
+      if let shieldConfiguration = action["shieldConfiguration"] as? Dictionary<String, Any> {
+        // update default shield
+        userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+      }
+      
+      if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
+        userDefaults?.set(shieldActions, forKey: "shieldActions")
+      }
+      
+      blockSelectedApps(activitySelection: activitySelection)
+    }
+  } else if(type == "unblockAllApps"){
+    unblockAllApps()
+  } else if(type == "openApp"){
+    // todo: replace with general string
+    openUrl(urlString: "device-activity://")
+  } else if(type == "blockAllApps"){
+    blockAllApps()
+  } else if(type == "sendNotification"){
+    if let notification = action["payload"] as? [String: Any] {
+      sendNotification(contents: notification, placeholders: placeholders)
+    }
+  } else if(type == "sendHttpRequest"){
+    if let url = action["url"] as? String {
+      let config = action["options"] as? [String: Any] ?? [:]
+      
+      sendHttpRequest(with: url, config: config, placeholders: placeholders)
+    }
+  }
+}
+
 func openUrl(urlString: String){
   guard let url = URL(string: urlString) else {
     return //be safe
@@ -186,15 +224,15 @@ func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) ->
 }
 
 /* handles replacements in an entire dictionary as well as two special cases:
-// - userDefaults:any-key-in-user-defaults -> will replace an entire value with the value in userDefaults, could be used as
-    "headers": {
-      "authorization": "{userDefaults:AUTH_HEADER}"
-    }
-// asNumber:eventName -> will instead of a String parse it as a number:
-  "data": {
-    "minutes": "{asNumber:eventName}"
-  }
-*/
+ // - userDefaults:any-key-in-user-defaults -> will replace an entire value with the value in userDefaults, could be used as
+ "headers": {
+ "authorization": "{userDefaults:AUTH_HEADER}"
+ }
+ // asNumber:eventName -> will instead of a String parse it as a number:
+ "data": {
+ "minutes": "{asNumber:eventName}"
+ }
+ */
 func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholders: [String: String?]) -> [String: T] {
   var retVal = object
   
@@ -204,15 +242,15 @@ func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholder
       if let specialTreatment = textToReplaceWithOptionalSpecialTreatment.specialTreatment {
         if specialTreatment == "asNumber" {
           if let placeholderValue = placeholders[textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String {
-              if let numberValue = Double(placeholderValue) {
-                  retVal[key] = numberValue as? T
-              }
+            if let numberValue = Double(placeholderValue) {
+              retVal[key] = numberValue as? T
+            }
           }
         }
         if specialTreatment == "userDefaults" {
-            if let value = userDefaults?.string(forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
-                retVal[key] = value as? T
-            }
+          if let value = userDefaults?.string(forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
+            retVal[key] = value as? T
+          }
         }
       } else {
         retVal[key] = replacePlaceholders(value, with: placeholders) as? T
@@ -325,63 +363,6 @@ func blockSelectedApps(activitySelection: FamilyActivitySelection){
   store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
   store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
 }
-
-@available(iOS 15.0, *)
-func parseShieldActionResponse(_ action: Any?) -> ShieldActionResponse{
-  
-  if let actionResponseRaw = action as? Int {
-    let actionResponse = ShieldActionResponse(rawValue: actionResponseRaw)
-    return actionResponse ?? .none
-  }
-  
-  return .none
-}
-
-func parseActions(_ actionsRaw: Any?) -> [Action]{
-  if let actions = actionsRaw as? [[String: Any]] {
-    return actions.map { action in
-      if let actionType = action["type"] as? String {
-        switch actionType {
-          /*case "unblockSelf":
-           return Action.unblockSelf*/
-        case "unblockAll":
-          return Action.unblockAll
-        default:
-          return Action.unblockAll
-        }
-      }
-      return Action.unblockAll
-    }
-  }
-  return []
-}
-
-enum Action {
-  case unblockAll
-}
-
-@available(iOS 15.0, *)
-struct ShieldActionConfig {
-  var response: ShieldActionResponse
-  
-  var actions: [Action]
-}
-
-@available(iOS 15.0, *)
-func getShieldActionConfig(shieldAction: ShieldAction) -> ShieldActionConfig{
-  let actionConfig = userDefaults?.dictionary(forKey: "shieldActionConfig")
-  
-  let shieldPrimaryActionResponse = parseShieldActionResponse(actionConfig?["primaryButtonActionResponse"])
-  let shieldSecondaryActionResponse = parseShieldActionResponse(actionConfig?["secondaryButtonActionResponse"])
-  let primaryActions = parseActions(actionConfig?["primaryButtonAction"])
-  let secondaryActions = parseActions(actionConfig?["secondaryButtonAction"])
-  
-  return ShieldActionConfig(
-    response: shieldAction == .primaryButtonPressed ? shieldPrimaryActionResponse : shieldSecondaryActionResponse,
-    actions: shieldAction == .primaryButtonPressed ? primaryActions : secondaryActions
-  )
-}
-
 
 func getColor(color: [String: Double]?) -> UIColor? {
   if let color = color {

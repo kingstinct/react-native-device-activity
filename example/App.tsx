@@ -385,37 +385,49 @@ export default function App() {
           onChangeText={(text) => setShieldTitle(text)}
           value={shieldTitle}
           onSubmitEditing={() =>
-            ReactNativeDeviceActivity.updateShieldConfiguration({
-              title: shieldTitle,
-              backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
-              // backgroundColor: null,
-              titleColor: {
-                red: 1,
-                green: 0,
-                blue: 0,
+            ReactNativeDeviceActivity.updateShieldConfiguration(
+              {
+                title: shieldTitle,
+                backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
+                // backgroundColor: null,
+                titleColor: {
+                  red: 255,
+                  green: 0,
+                  blue: 0,
+                },
+                subtitle: "subtitle",
+                subtitleColor: {
+                  red: Math.random() * 255,
+                  green: Math.random() * 255,
+                  blue: Math.random() * 255,
+                },
+                primaryButtonBackgroundColor: {
+                  red: Math.random() * 255,
+                  green: Math.random() * 255,
+                  blue: Math.random() * 255,
+                },
+                primaryButtonLabelColor: {
+                  red: Math.random() * 255,
+                  green: Math.random() * 255,
+                  blue: Math.random() * 255,
+                },
+                secondaryButtonLabelColor: {
+                  red: Math.random() * 255,
+                  green: Math.random() * 255,
+                  blue: Math.random() * 255,
+                },
               },
-              subtitle: "subtitle",
-              subtitleColor: {
-                red: Math.random() * 1,
-                green: Math.random() * 1,
-                blue: Math.random() * 1,
+              {
+                primary: {
+                  type: "unblockAll",
+                  behavior: "defer",
+                },
+                secondary: {
+                  type: "dismiss",
+                  behavior: "close",
+                },
               },
-              primaryButtonBackgroundColor: {
-                red: Math.random() * 1,
-                green: Math.random() * 1,
-                blue: Math.random() * 1,
-              },
-              primaryButtonLabelColor: {
-                red: Math.random() * 1,
-                green: Math.random() * 1,
-                blue: Math.random() * 1,
-              },
-              secondaryButtonLabelColor: {
-                red: Math.random() * 1,
-                green: Math.random() * 1,
-                blue: Math.random() * 1,
-              },
-            })
+            )
           }
         />
 

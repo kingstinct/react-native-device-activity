@@ -147,13 +147,45 @@ export type ShieldActions = {
 
 export type Action =
   | {
-      type: "block";
+      type: "blockSelection";
       familyActivitySelection: string;
       shieldConfiguration: ShieldConfiguration;
       shieldActions: ShieldActions;
     }
   | {
-      type: "unblockAll";
+      type: "unblockAllApps";
+    }
+  | {
+      type: "blockAllApps";
+    }
+  | {
+      type: "sendNotification";
+      payload: {
+        title: string;
+        body: string;
+        sound?: "default" | "defaultCritical" | "defaultRingtone";
+        categoryIdentifier?: string;
+        badge?: number;
+        userInfo?: Record<string, any>;
+        interruptionLevel?: "active" | "critical" | "passive";
+        targetContentIdentifier?: string;
+        launchImageName?: string;
+        identifier?: string;
+        threadIdentifier?: string;
+        subtitle?: string;
+      };
+    }
+  | {
+      type: "openApp";
+    }
+  | {
+      type: "sendHttpRequest";
+      url: string;
+      options?: {
+        method?: "GET" | "POST" | "PUT" | "DELETE";
+        body?: Record<string, any>;
+        headers?: Record<string, string>;
+      };
     };
 
 export type DeviceActivityEventRaw = Omit<
@@ -187,9 +219,6 @@ export type ReactNativeDeviceActivityNativeModule = {
   doesSelectionHaveOverlap: (
     familyActivitySelections: FamilyActivitySelection[],
   ) => boolean;
-  updateShieldConfiguration: (
-    shieldConfiguration: ShieldConfiguration,
-  ) => PromiseLike<void> | void;
   getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
   activities: () => string[];
   authorizationStatus: () => AuthorizationStatus;

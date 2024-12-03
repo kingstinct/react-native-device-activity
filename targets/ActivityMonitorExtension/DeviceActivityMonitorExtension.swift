@@ -66,40 +66,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     if let actions = userDefaults?.array(forKey: key) {
       actions.forEach { actionRaw in
         if let action = actionRaw as? Dictionary<String, Any>{
-          let type = action["type"] as? String
-          
-          if(type == "block"){
-            logger.log("tring to get base64")
-            if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
-              let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
-              
-              if let shieldConfiguration = action["shieldConfiguration"] as? Dictionary<String, Any> {
-                // update default shield
-                userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
-              }
-              
-              if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
-                userDefaults?.set(shieldActions, forKey: "shieldActions")
-              }
-
-              store.shield.applications = activitySelection.applicationTokens
-              store.shield.webDomains = activitySelection.webDomainTokens
-              store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-              store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-            }
-          } else if(type == "unblock"){
-            unblockAllApps()
-          } else if(type == "sendNotification"){
-            if let notification = action["notification"] as? [String: Any] {
-              sendNotification(contents: notification, placeholders: placeholders)
-            }
-          } else if(type == "sendHttpRequest"){
-            if let url = action["url"] as? String {
-              let config = action["config"] as? [String: Any] ?? [:]
-              
-              sendHttpRequest(with: url, config: config, placeholders: placeholders)
-            }
-          }
+          executeAction(action: action, placeholders: placeholders)
         }
       }
     }
