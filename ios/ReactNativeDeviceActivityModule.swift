@@ -208,6 +208,7 @@ public class ReactNativeDeviceActivityModule: Module {
     let observer = NativeEventObserver(module: self)
       
     var watchActivitiesHandle: Cancellable? = nil
+      var  onDeviceActivityDetectedHandle: Cancellable? = nil
       // var watchStoreHandle: Cancellable? = nil
 
     Function("getAppGroupFileDirectory") {
@@ -259,6 +260,12 @@ public class ReactNativeDeviceActivityModule: Module {
     }
       
       OnStartObserving {
+          onDeviceActivityDetectedHandle = AuthorizationCenter.shared.$authorizationStatus.sink { status in
+              self.sendEvent("onAuthorizationStatusChange" as String, [
+                "authorizationStatus": status.rawValue,
+              ])
+          }
+          
           watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
               self.sendEvent("onDeviceActivityDetected" as String, [
                 "activityName": activity.rawValue,
@@ -268,6 +275,7 @@ public class ReactNativeDeviceActivityModule: Module {
       
       OnStopObserving {
           watchActivitiesHandle?.cancel()
+          onDeviceActivityDetectedHandle?.cancel()
       }
     
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
@@ -530,7 +538,8 @@ public class ReactNativeDeviceActivityModule: Module {
       "onSelectionChange",
       "onDeviceActivityMonitorEvent",
       // "onManagedStoreWillChange",
-      "onDeviceActivityDetected"
+      "onDeviceActivityDetected",
+      "onAuthorizationStatusChange"
     )
     
     // Enables the module to be used as a native view. Definition components that are accepted as part of the

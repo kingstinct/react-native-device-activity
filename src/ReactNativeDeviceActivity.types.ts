@@ -22,15 +22,17 @@ export type EventParsed = {
 
 export type EventsLookup = Record<string, number>;
 
+export type DeviceActivitySelectionEvent = {
+  familyActivitySelection: string;
+  applicationCount: number;
+  categoryCount: number;
+  webDomainCount: number;
+};
+
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
   onSelectionChange?: (
-    selection: NativeSyntheticEvent<{
-      familyActivitySelection: string;
-      applicationCount: number;
-      categoryCount: number;
-      webDomainCount: number;
-    }>,
+    selection: NativeSyntheticEvent<DeviceActivitySelectionEvent>,
   ) => void;
   familyActivitySelection?: string | null;
   headerText?: string | null;

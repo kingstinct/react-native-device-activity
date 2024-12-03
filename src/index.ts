@@ -6,6 +6,7 @@ import {
 
 // Import the native module. On web, it will be resolved to ReactNativeDeviceActivity.web.ts
 // and on native platforms to ReactNativeDeviceActivity.ts
+import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
@@ -170,7 +171,7 @@ export function getAppGroupFileDirectory(): string {
   return ReactNativeDeviceActivityModule.getAppGroupFileDirectory();
 }
 
-export function registerManagedStoreListener(
+export function onDeviceActivityDetected(
   listener: (event: { activityName: string }) => void,
 ) {
   const handler = emitter.addListener<{ activityName: string }>(
@@ -180,6 +181,24 @@ export function registerManagedStoreListener(
 
   return handler;
 }
+
+export const useDeviceActivities = () => {
+  const [activities, setActivities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const subscription = onDeviceActivityDetected((event) => {
+      setActivities(ReactNativeDeviceActivityModule.activities());
+    });
+
+    setActivities(ReactNativeDeviceActivityModule.activities());
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  return activities;
+};
 
 export function stopMonitoring(activityNames?: string[]): void {
   return ReactNativeDeviceActivityModule.stopMonitoring(activityNames);
@@ -244,7 +263,35 @@ const emitter = new EventEmitter(
     NativeModulesProxy.ReactNativeDeviceActivity,
 );
 
-export function addEventReceivedListener(
+export const useAuthorizationStatus = () => {
+  const [authorizationStatus, setAuthorizationStatus] =
+    useState<AuthorizationStatus>(AuthorizationStatus.notDetermined);
+
+  useEffect(() => {
+    const subscription = onAuthorizationStatusChange((event) => {
+      setAuthorizationStatus(event.authorizationStatus);
+    });
+
+    setAuthorizationStatus(getAuthorizationStatus());
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  return authorizationStatus;
+};
+
+export function onAuthorizationStatusChange(
+  listener: (event: { authorizationStatus: AuthorizationStatus }) => void,
+): Subscription {
+  return emitter.addListener<{ authorizationStatus: AuthorizationStatus }>(
+    "onAuthorizationStatusChange",
+    listener,
+  );
+}
+
+export function onDeviceActivityMonitorEvent(
   listener: (event: DeviceActivityMonitorEventPayload) => void,
 ): Subscription {
   return emitter.addListener<DeviceActivityMonitorEventPayload>(

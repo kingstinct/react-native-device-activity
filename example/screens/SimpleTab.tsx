@@ -18,19 +18,12 @@ const authorizationStatusMap = {
 };
 
 export function SimpleTab() {
-  const [authorizationStatus, setAuthorizationStatus] =
-    React.useState<AuthorizationStatus>(AuthorizationStatus.notDetermined);
-
-  useEffect(() => {
-    const status = ReactNativeDeviceActivity.getAuthorizationStatus();
-    console.log("authorization status", authorizationStatusMap[status]);
-    setAuthorizationStatus(status);
-  }, []);
+  const authorizationStatus =
+    ReactNativeDeviceActivity.useAuthorizationStatus();
 
   const requestAuthorization = useCallback(async () => {
     if (authorizationStatus === AuthorizationStatus.notDetermined) {
-      const status = await ReactNativeDeviceActivity.requestAuthorization();
-      setAuthorizationStatus(status);
+      await ReactNativeDeviceActivity.requestAuthorization();
     } else if (authorizationStatus === AuthorizationStatus.denied) {
       Alert.alert(
         "You didn't grant access",
@@ -47,8 +40,7 @@ export function SimpleTab() {
         ],
       );
     } else {
-      const status = await ReactNativeDeviceActivity.revokeAuthorization();
-      setAuthorizationStatus(status);
+      await ReactNativeDeviceActivity.revokeAuthorization();
     }
   }, [authorizationStatus]);
 
