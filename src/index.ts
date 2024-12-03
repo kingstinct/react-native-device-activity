@@ -21,6 +21,7 @@ import {
   DeviceActivitySelectionViewProps,
   EventParsed,
   FamilyActivitySelection,
+  ShieldActions,
   ShieldConfiguration,
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
@@ -257,9 +258,16 @@ export function addEventReceivedListener(
 
 export function updateShieldConfiguration(
   shieldConfiguration: ShieldConfiguration,
+  shieldActions: ShieldActions,
 ) {
-  return ReactNativeDeviceActivityModule.updateShieldConfiguration(
+  ReactNativeDeviceActivityModule.userDefaultsSet(
+    "shieldConfiguration",
     shieldConfiguration,
+  );
+
+  ReactNativeDeviceActivityModule.userDefaultsSet(
+    "shieldActions",
+    shieldActions,
   );
 }
 

@@ -447,13 +447,6 @@ public class ReactNativeDeviceActivityModule: Module {
       }))
     }
       
-      
-      
-      Function("updateShieldConfiguration") { (shieldConfiguration: [String:Any]) -> Void in
-          logger.log("\(shieldConfiguration)")
-        userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
-      }
-      
       Function("activities") {
         let activities = center.activities
           
