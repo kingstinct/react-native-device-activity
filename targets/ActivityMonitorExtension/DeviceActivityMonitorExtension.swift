@@ -72,46 +72,19 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
               let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
               
-              store.shield.applications = activitySelection.applicationTokens
-              store.shield.webDomains = activitySelection.webDomainTokens
-              store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-              store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-              
               if let shieldConfiguration = action["shieldConfiguration"] as? Dictionary<String, Any> {
                 // update default shield
                 userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
-                
-                /* ok so this does not work, tokens change across executions
-                activitySelection.applicationTokens.forEach { applicationToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_application_\(applicationToken.hashValue)")
-                }
-                
-                activitySelection.categoryTokens.forEach { categoryToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_category_\(categoryToken.hashValue)")
-                }
-                
-                activitySelection.webDomainTokens.forEach { webDomainToken in
-                  userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration_for_domain_\(webDomainToken.hashValue)")
-                }
-                */
               }
               
               if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
                 userDefaults?.set(shieldActions, forKey: "shieldActions")
-                /*
-                activitySelection.applicationTokens.forEach { applicationToken in
-                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_application_\(applicationToken.hashValue)")
-                }
-                
-                activitySelection.categoryTokens.forEach { categoryToken in
-                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_category_\(categoryToken.hashValue)")
-                }
-                
-                activitySelection.webDomainTokens.forEach { webDomainToken in
-                  userDefaults?.set(shieldActions, forKey: "shieldActions_for_domain_\(webDomainToken.hashValue)")
-                }
-                */
               }
+
+              store.shield.applications = activitySelection.applicationTokens
+              store.shield.webDomains = activitySelection.webDomainTokens
+              store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+              store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
             }
           }
           else if(type == "unblock"){
