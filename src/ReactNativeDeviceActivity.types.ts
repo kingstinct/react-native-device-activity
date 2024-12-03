@@ -248,7 +248,7 @@ export type ShieldConfiguration = {
    */
   title?: string;
   /**
-   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/titlecolor
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/label/color
    */
   titleColor?: UIColor;
   /**
@@ -277,7 +277,7 @@ export type ShieldConfiguration = {
    */
   primaryButtonLabel?: string;
   /**
-   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/primarybuttonlabelcolor
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/label/color
    */
   primaryButtonLabelColor?: UIColor;
   /**
@@ -289,26 +289,33 @@ export type ShieldConfiguration = {
    */
   secondaryButtonLabel?: string;
   /**
-   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/secondarybuttonlabelcolor
+   * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/label/color
    */
   secondaryButtonLabelColor?: UIColor;
 };
 
+/**
+ * @link https://developer.apple.com/documentation/uikit/uicolor
+ * @property {number} red (0-255)
+ * @property {number} green (0-255)
+ * @property {number} blue (0-255)
+ * @property {number} alpha (0-1)
+ */
 type UIColor = {
   /**
-   * Something between 0 and 255
+   * Red (0-255)
    */
   red: number;
   /**
-   * Something between 0 and 255
+   * Green (0-255)
    */
   green: number;
   /**
-   * Something between 0 and 255
+   * Blue (0-255)
    */
   blue: number;
   /**
-   * Something between 0 and 1
+   * Alpha (0-1)
    */
   alpha?: number;
 };
