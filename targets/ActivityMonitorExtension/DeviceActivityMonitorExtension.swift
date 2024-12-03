@@ -18,7 +18,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
   let store = ManagedSettingsStore()
   
-  func sendNotification(name: String){
+  func notifyAppWithName(name: String){
     let notificationName = CFNotificationName(name as CFString)
 
     CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
@@ -43,7 +43,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidStart")
     
-    self.sendNotification(name: "intervalDidStart")
+    self.notifyAppWithName(name: "intervalDidStart")
   }
   
   override func intervalDidEnd(for activity: DeviceActivityName) {
@@ -57,11 +57,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
 
-    self.sendNotification(name: "intervalDidEnd")
+    self.notifyAppWithName(name: "intervalDidEnd")
   }
   
   func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil){
     let key = eventName != nil ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)" : "actions_for_\(activityName)_\(callbackName)"
+    let placeholders = ["activityName": activityName, "callbackName": callbackName, "eventName": eventName]
     if let actions = userDefaults?.array(forKey: key) {
       actions.forEach { actionRaw in
         if let action = actionRaw as? Dictionary<String, Any>{
@@ -86,9 +87,18 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
               store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
               store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
             }
-          }
-          else if(type == "unblock"){
+          } else if(type == "unblock"){
             unblockAllApps()
+          } else if(type == "sendNotification"){
+            if let notification = action["notification"] as? [String: Any] {
+              sendNotification(contents: notification, placeholders: placeholders)
+            }
+          } else if(type == "sendHttpRequest"){
+            if let url = action["url"] as? String {
+              let config = action["config"] as? [String: Any] ?? [:]
+              
+              sendHttpRequest(with: url, config: config, placeholders: placeholders)
+            }
           }
         }
       }
@@ -107,7 +117,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventDidReachThreshold", eventName: event.rawValue)
 
-    self.sendNotification(name: "eventDidReachThreshold")
+    self.notifyAppWithName(name: "eventDidReachThreshold")
   }
   
   override func intervalWillStartWarning(for activity: DeviceActivityName) {
@@ -121,7 +131,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
 
-    self.sendNotification(name: "intervalWillStartWarning")
+    self.notifyAppWithName(name: "intervalWillStartWarning")
   }
   
   override func intervalWillEndWarning(for activity: DeviceActivityName) {
@@ -135,7 +145,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
 
-    self.sendNotification(name: "intervalWillEndWarning")
+    self.notifyAppWithName(name: "intervalWillEndWarning")
   }
   
   override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
@@ -150,7 +160,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning", eventName: event.rawValue)
 
-    self.sendNotification(name: "eventWillReachThresholdWarning")
+    self.notifyAppWithName(name: "eventWillReachThresholdWarning")
   }
   
 }

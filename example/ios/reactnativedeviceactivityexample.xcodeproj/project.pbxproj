@@ -19,6 +19,7 @@
 		7196272736B8369F7352BB3C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */; };
 		96905EF65AED1B983A6B3ABC /* libPods-reactnativedeviceactivityexample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */; };
 		984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */; };
+		A9A0307C2CFF148E00D9E7E8 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBE82CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBE92CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBEA2CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
@@ -39,6 +40,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B33B275DB45484EAECB1B1B;
 			remoteInfo = ShieldConfiguration;
+		};
+		A9A030752CFF142000D9E7E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = reactnativedeviceactivityexample;
 		};
 		B8AF53079E4145D686123C11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -91,6 +99,7 @@
 		84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../targets/ShieldConfiguration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		A9A030712CFF142000D9E7E8 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B2DBE72CECAE610001BBAF /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = "/Users/robertherber/code/react-native-device-activity/ios/Shared.swift"; sourceTree = "<absolute>"; };
 		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = "/Users/robertherber/code/react-native-device-activity/targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift"; sourceTree = "<absolute>"; };
 		A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = "/Users/robertherber/code/react-native-device-activity/targets/ShieldConfiguration/ShieldConfigurationExtension.swift"; sourceTree = "<absolute>"; };
@@ -106,6 +115,20 @@
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-reactnativedeviceactivityexample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A9A030722CFF142000D9E7E8 /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -120,6 +143,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4B3EB83B4EF427D8D8F7E6C /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A9A0306E2CFF142000D9E7E8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +224,7 @@
 				C6BB3FB112304AFCB4071189 /* expo:targets */,
 				13B07FAE1A68108700A75B9A /* reactnativedeviceactivityexample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				A9A030722CFF142000D9E7E8 /* Tests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -211,6 +242,7 @@
 				EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */,
 				55BEF032CC20441DA94ED74D /* ShieldAction.appex */,
 				84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */,
+				A9A030712CFF142000D9E7E8 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -344,6 +376,27 @@
 			productReference = EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		A9A030702CFF142000D9E7E8 /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9A030792CFF142000D9E7E8 /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				A9A0306D2CFF142000D9E7E8 /* Sources */,
+				A9A0306E2CFF142000D9E7E8 /* Frameworks */,
+				A9A0306F2CFF142000D9E7E8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A9A030762CFF142000D9E7E8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A9A030722CFF142000D9E7E8 /* Tests */,
+			);
+			name = Tests;
+			productName = Tests;
+			productReference = A9A030712CFF142000D9E7E8 /* Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B020639A1E02498DA97B7121 /* ActivityMonitorExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 70B6388B62644A0AB504262B /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */;
@@ -367,6 +420,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					09AF28B634D54463AF9E2548 = {
@@ -381,6 +435,10 @@
 						CreatedOnToolsVersion = 14.3;
 						DevelopmentTeam = 34SE8X7Q58;
 						ProvisioningStyle = Automatic;
+					};
+					A9A030702CFF142000D9E7E8 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					B020639A1E02498DA97B7121 = {
 						CreatedOnToolsVersion = 14.3;
@@ -406,6 +464,7 @@
 				1B33B275DB45484EAECB1B1B /* ShieldConfiguration */,
 				09AF28B634D54463AF9E2548 /* ShieldAction */,
 				B020639A1E02498DA97B7121 /* ActivityMonitorExtension */,
+				A9A030702CFF142000D9E7E8 /* Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -423,6 +482,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A59D4DCB354D450CB3EC7700 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A9A0306F2CFF142000D9E7E8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -572,6 +638,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A9A0306D2CFF142000D9E7E8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9A0307C2CFF148E00D9E7E8 /* Shared.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C5969BCCB0EE45DCB9BBF01A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -604,6 +678,11 @@
 			isa = PBXTargetDependency;
 			target = B020639A1E02498DA97B7121 /* ActivityMonitorExtension */;
 			targetProxy = C6D619B1FE3F43EEBE3A40C2 /* PBXContainerItemProxy */;
+		};
+		A9A030762CFF142000D9E7E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13B07F861A680F5B00A75B9A /* reactnativedeviceactivityexample */;
+			targetProxy = A9A030752CFF142000D9E7E8 /* PBXContainerItemProxy */;
 		};
 		E79F7418C95C4FDF86F2AC3A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1022,6 +1101,77 @@
 			};
 			name = Debug;
 		};
+		A9A030772CFF142000D9E7E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kingstinct.reactnativedeviceactivityexampleTests.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/reactnativedeviceactivityexample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/reactnativedeviceactivityexample";
+			};
+			name = Debug;
+		};
+		A9A030782CFF142000D9E7E8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 34SE8X7Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kingstinct.reactnativedeviceactivityexampleTests.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/reactnativedeviceactivityexample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/reactnativedeviceactivityexample";
+			};
+			name = Release;
+		};
 		AE37E16FFF5F42278976AF2A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1107,6 +1257,15 @@
 			buildConfigurations = (
 				984FD302E06E4F8585276CF2 /* Debug */,
 				19B3FBE53C124BD196F71B6D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9A030792CFF142000D9E7E8 /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A9A030772CFF142000D9E7E8 /* Debug */,
+				A9A030782CFF142000D9E7E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

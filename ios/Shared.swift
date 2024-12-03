@@ -17,10 +17,218 @@ var userDefaults = UserDefaults(suiteName: appGroup)
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
+
+func openUrl(urlString: String){
+  guard let url = URL(string: urlString) else {
+    return //be safe
+  }
+  
+  /*let context = NSExtensionContext()
+   context.open(url) { success in
+   
+   }*/
+  
+  let application = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
+  
+  if #available(iOS 10.0, *) {
+    application.open(url, options: [:], completionHandler: nil)
+  } else {
+    application.openURL(url)
+  }
+}
+
+func sendNotification(contents: [String: Any], placeholders: [String: String?]){
+  let content = UNMutableNotificationContent()
+  
+  if let title = contents["title"] as? String {
+    content.title = replacePlaceholders(title, with: placeholders)
+  }
+  
+  if let subtitle = contents["subtitle"] as? String {
+    content.subtitle = replacePlaceholders(subtitle, with: placeholders)
+  }
+  
+  if let body = contents["body"] as? String {
+    content.body = replacePlaceholders(body, with: placeholders)
+  }
+  
+  if let sound = contents["sound"] as? String {
+    if(sound == "default"){
+      content.sound = .default
+    }
+    if(sound == "defaultCritical"){
+      content.sound = .defaultCritical
+    }
+    if #available(iOS 15.2, *) {
+      if(sound == "defaultRingtone"){
+        content.sound = .defaultRingtone
+      }
+    }
+  }
+  
+  if let categoryIdentifier = contents["categoryIdentifier"] as? String {
+    content.categoryIdentifier = categoryIdentifier
+  }
+  
+  if let badge = contents["badge"] as? NSNumber {
+    content.badge = badge
+  }
+  
+  if let userInfo = contents["userInfo"] as? [String: Any] {
+    content.userInfo = userInfo
+  }
+  
+  if #available(iOS 15.0, *) {
+    if let interruptionLevel = contents["interruptionLevel"] as? String {
+      if(interruptionLevel == "active"){
+        content.interruptionLevel = .active
+      }
+      
+      if(interruptionLevel == "critical"){
+        content.interruptionLevel = .critical
+      }
+      
+      if(interruptionLevel == "passive"){
+        content.interruptionLevel = .passive
+      }
+      
+      if(interruptionLevel == "timeSensitive"){
+        content.interruptionLevel = .timeSensitive
+      }
+    }
+  }
+  
+  if let threadIdentifier = contents["threadIdentifier"] as? String {
+    content.threadIdentifier = threadIdentifier
+  }
+  
+  if let launchImageName = contents["launchImageName"] as? String {
+    content.launchImageName = launchImageName
+  }
+  
+  let identifier = contents["identifier"] as? String ?? UUID().uuidString
+  
+  let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+  
+  UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+}
+
+// dataRequest which sends request to given URL and convert to Decodable Object
+func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?]) {
+  // create the URL
+  let url = URL(string: url)! //change the URL
+  
+  // create the session object
+  let session = URLSession.shared
+  
+  //Now create the URLRequest object using the URL object
+  var request = URLRequest(url: url)
+  
+  if let httpMethod = config["httpMethod"] as? String {
+    request.httpMethod = httpMethod
+  }
+  
+  if let body = config["body"] as? [String: Any] {
+    let bodyWithPlaceholders = replacePlaceholdersInObject(body, with: placeholders)
+    request.httpBody = try? JSONSerialization.data(withJSONObject: bodyWithPlaceholders, options: .prettyPrinted)
+  }
+  
+  if let headers = config["headers"] as? [String: String] {
+    let headersWithPlaceholders = replacePlaceholdersInObject(headers, with: placeholders)
+    // merge with existing headers
+    request.allHTTPHeaderFields = request.allHTTPHeaderFields?.merging(headersWithPlaceholders, uniquingKeysWith: { $1 })
+  }
+  
+  // create dataTask using the session object to send data to the server
+  let task = session.dataTask(with: request, completionHandler: { data, response, error in
+    
+    guard error == nil else {
+      return
+    }
+    
+    guard let data = data else {
+      return
+    }
+    
+    do {
+      //create json object from data
+      if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
+        print(json)
+      }
+    } catch let error {
+      print(error.localizedDescription)
+    }
+  })
+  
+  task.resume()
+}
+
 @available(iOS 15.0, *)
 struct SelectionWithActivityName {
   var selection: FamilyActivitySelection
   var activityName: String
+}
+
+struct TextToReplaceWithOptionalSpecialTreatment {
+  var textToReplace: String
+  var specialTreatment: String?
+}
+
+func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) -> TextToReplaceWithOptionalSpecialTreatment {
+  if(stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}") && stringToReplace.contains(":")){
+    // remove prefix and suffix
+    let trimmed = String(stringToReplace.dropFirst().dropLast())
+    // split on : and return first part
+    let prefixAndPlaceholder = trimmed.split(separator: ":")
+    return TextToReplaceWithOptionalSpecialTreatment(textToReplace: String(prefixAndPlaceholder[1]), specialTreatment: String(prefixAndPlaceholder[0]))
+  }
+  return TextToReplaceWithOptionalSpecialTreatment(textToReplace: stringToReplace)
+}
+
+/* handles replacements in an entire dictionary as well as two special cases:
+// - userDefaults:any-key-in-user-defaults -> will replace an entire value with the value in userDefaults, could be used as
+    "headers": {
+      "authorization": "{userDefaults:AUTH_HEADER}"
+    }
+// asNumber:eventName -> will instead of a String parse it as a number:
+  "data": {
+    "minutes": "{asNumber:eventName}"
+  }
+*/
+func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholders: [String: String?]) -> [String: T] {
+  var retVal = object
+  
+  for (key, value) in object {
+    if let value = value as? String {
+      let textToReplaceWithOptionalSpecialTreatment = getTextToReplaceWithOptionalSpecialTreatment(value)
+      if let specialTreatment = textToReplaceWithOptionalSpecialTreatment.specialTreatment {
+        if specialTreatment == "asNumber" {
+          if let placeholderValue = placeholders[textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String {
+              if let numberValue = Double(placeholderValue) {
+                  retVal[key] = numberValue as? T
+              }
+          }
+        }
+        if specialTreatment == "userDefaults" {
+            if let value = userDefaults?.string(forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
+                retVal[key] = value as? T
+            }
+        }
+      } else {
+        retVal[key] = replacePlaceholders(value, with: placeholders) as? T
+      }
+    }
+  }
+  
+  return retVal
+}
+
+func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -> String {
+  let retVal = placeholders.reduce(text) { text, placeholder in
+    text.replacingOccurrences(of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
+  }
+  
+  return retVal
 }
 
 @available(iOS 15.0, *)
@@ -43,37 +251,37 @@ func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName
 
 @available(iOS 15.0, *)
 func getPossibleActivityName(
-    applicationToken: ApplicationToken?,
-    webDomainToken: WebDomainToken?,
-    categoryToken: ActivityCategoryToken?
+  applicationToken: ApplicationToken?,
+  webDomainToken: WebDomainToken?,
+  categoryToken: ActivityCategoryToken?
 ) -> String? {
-    let familyActivitySelectionToActivityNameMap = getFamilyActivitySelectionToActivityNameMap()
-    
-    let foundIt = familyActivitySelectionToActivityNameMap.first(where: { (mapping) in
-        if let mapping = mapping {
-            if let applicationToken = applicationToken {
-                if(mapping.selection.applicationTokens.contains(applicationToken)){
-                    return true
-                }
-            }
-            
-            if let webDomainToken = webDomainToken {
-                if(mapping.selection.webDomainTokens.contains(webDomainToken)){
-                    return true
-                }
-            }
-            
-            if let categoryToken = categoryToken {
-                if(mapping.selection.categoryTokens.contains(categoryToken)){
-                    return true
-                }
-            }
+  let familyActivitySelectionToActivityNameMap = getFamilyActivitySelectionToActivityNameMap()
+  
+  let foundIt = familyActivitySelectionToActivityNameMap.first(where: { (mapping) in
+    if let mapping = mapping {
+      if let applicationToken = applicationToken {
+        if(mapping.selection.applicationTokens.contains(applicationToken)){
+          return true
         }
-        
-        return false
-    })
+      }
+      
+      if let webDomainToken = webDomainToken {
+        if(mapping.selection.webDomainTokens.contains(webDomainToken)){
+          return true
+        }
+      }
+      
+      if let categoryToken = categoryToken {
+        if(mapping.selection.categoryTokens.contains(categoryToken)){
+          return true
+        }
+      }
+    }
     
-    return foundIt??.activityName
+    return false
+  })
+  
+  return foundIt??.activityName
 }
 
 @available(iOS 15.0, *)
@@ -97,81 +305,81 @@ func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyAc
 
 @available(iOS 15.0, *)
 func unblockAllApps(){
-    store.shield.applicationCategories = nil
-    store.shield.webDomainCategories = nil
-
-    store.shield.applications = nil
-    store.shield.webDomains = nil
+  store.shield.applicationCategories = nil
+  store.shield.webDomainCategories = nil
+  
+  store.shield.applications = nil
+  store.shield.webDomains = nil
 }
 
 @available(iOS 15.0, *)
 func blockAllApps(){
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
 }
 
 @available(iOS 15.0, *)
 func blockSelectedApps(activitySelection: FamilyActivitySelection){
-    store.shield.applications = activitySelection.applicationTokens
-    store.shield.webDomains = activitySelection.webDomainTokens
-    store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-    store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+  store.shield.applications = activitySelection.applicationTokens
+  store.shield.webDomains = activitySelection.webDomainTokens
+  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
 }
 
 @available(iOS 15.0, *)
 func parseShieldActionResponse(_ action: Any?) -> ShieldActionResponse{
-
-    if let actionResponseRaw = action as? Int {
-        let actionResponse = ShieldActionResponse(rawValue: actionResponseRaw)
-        return actionResponse ?? .none
-    }
-
-    return .none
+  
+  if let actionResponseRaw = action as? Int {
+    let actionResponse = ShieldActionResponse(rawValue: actionResponseRaw)
+    return actionResponse ?? .none
+  }
+  
+  return .none
 }
 
 func parseActions(_ actionsRaw: Any?) -> [Action]{
-    if let actions = actionsRaw as? [[String: Any]] {
-        return actions.map { action in
-            if let actionType = action["type"] as? String {
-                switch actionType {
-                /*case "unblockSelf":
-                    return Action.unblockSelf*/
-                case "unblockAll":
-                    return Action.unblockAll
-                default:
-                    return Action.unblockAll
-                }
-            }
-            return Action.unblockAll
+  if let actions = actionsRaw as? [[String: Any]] {
+    return actions.map { action in
+      if let actionType = action["type"] as? String {
+        switch actionType {
+          /*case "unblockSelf":
+           return Action.unblockSelf*/
+        case "unblockAll":
+          return Action.unblockAll
+        default:
+          return Action.unblockAll
         }
+      }
+      return Action.unblockAll
     }
-    return []
+  }
+  return []
 }
 
 enum Action {
-    case unblockAll
+  case unblockAll
 }
 
 @available(iOS 15.0, *)
 struct ShieldActionConfig {
-    var response: ShieldActionResponse
-    
-    var actions: [Action]
+  var response: ShieldActionResponse
+  
+  var actions: [Action]
 }
 
 @available(iOS 15.0, *)
 func getShieldActionConfig(shieldAction: ShieldAction) -> ShieldActionConfig{
-    let actionConfig = userDefaults?.dictionary(forKey: "shieldActionConfig")
-    
-    let shieldPrimaryActionResponse = parseShieldActionResponse(actionConfig?["primaryButtonActionResponse"])
-    let shieldSecondaryActionResponse = parseShieldActionResponse(actionConfig?["secondaryButtonActionResponse"])
-    let primaryActions = parseActions(actionConfig?["primaryButtonAction"])
-    let secondaryActions = parseActions(actionConfig?["secondaryButtonAction"])
-    
-    return ShieldActionConfig(
-        response: shieldAction == .primaryButtonPressed ? shieldPrimaryActionResponse : shieldSecondaryActionResponse,
-        actions: shieldAction == .primaryButtonPressed ? primaryActions : secondaryActions
-    )
+  let actionConfig = userDefaults?.dictionary(forKey: "shieldActionConfig")
+  
+  let shieldPrimaryActionResponse = parseShieldActionResponse(actionConfig?["primaryButtonActionResponse"])
+  let shieldSecondaryActionResponse = parseShieldActionResponse(actionConfig?["secondaryButtonActionResponse"])
+  let primaryActions = parseActions(actionConfig?["primaryButtonAction"])
+  let secondaryActions = parseActions(actionConfig?["secondaryButtonAction"])
+  
+  return ShieldActionConfig(
+    response: shieldAction == .primaryButtonPressed ? shieldPrimaryActionResponse : shieldSecondaryActionResponse,
+    actions: shieldAction == .primaryButtonPressed ? primaryActions : secondaryActions
+  )
 }
 
 
@@ -196,78 +404,78 @@ func getColor(color: [String: Double]?) -> UIColor? {
 
 @available(iOS 15.0, *)
 func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
-    userDefaults?.set([
-        "primaryButtonActionResponse": primary.response.rawValue,
-        "primaryButtonAction": primary.actions.map({ action in
-            return ["type": "unblockAll"]
-        }),
-        "secondaryButtonActionResponse": secondary.response.rawValue,
-        "secondaryButtonAction": secondary.actions.map({ action in
-            return ["type": "unblockAll"]
-        })
-    ], forKey: "shieldActionConfig")
+  userDefaults?.set([
+    "primaryButtonActionResponse": primary.response.rawValue,
+    "primaryButtonAction": primary.actions.map({ action in
+      return ["type": "unblockAll"]
+    }),
+    "secondaryButtonActionResponse": secondary.response.rawValue,
+    "secondaryButtonAction": secondary.actions.map({ action in
+      return ["type": "unblockAll"]
+    })
+  ], forKey: "shieldActionConfig")
 }
 
 func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil){
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName = eventName == nil
-    ? "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)"
-    : "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)#\(eventName!)"
+  ? "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)"
+  : "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)#\(eventName!)"
   userDefaults?.set(now, forKey: fullEventName)
 }
 
 func traverseDirectory(at path: String) {
-    do {
-        let files = try FileManager.default.contentsOfDirectory(atPath: path)
-        
-        for file in files {
-            let fullPath = path + "/" + file
-            var isDirectory: ObjCBool = false
-            
-            if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) {
-                if isDirectory.boolValue {
-                    print("\(fullPath) is a directory")
-                    // Recursively traverse subdirectory
-                    traverseDirectory(at: fullPath)
-                } else if(fullPath.hasSuffix("png")) {
-                    print("\(fullPath) is a file")
-                }
-            } else {
-                print("\(fullPath) does not exist")
-            }
+  do {
+    let files = try FileManager.default.contentsOfDirectory(atPath: path)
+    
+    for file in files {
+      let fullPath = path + "/" + file
+      var isDirectory: ObjCBool = false
+      
+      if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) {
+        if isDirectory.boolValue {
+          print("\(fullPath) is a directory")
+          // Recursively traverse subdirectory
+          traverseDirectory(at: fullPath)
+        } else if(fullPath.hasSuffix("png")) {
+          print("\(fullPath) is a file")
         }
-    } catch {
-        print("Error traversing directory at path \(path): \(error.localizedDescription)")
+      } else {
+        print("\(fullPath) does not exist")
+      }
     }
+  } catch {
+    print("Error traversing directory at path \(path): \(error.localizedDescription)")
+  }
 }
 
 func getAppGroupDirectory() -> URL? {
-    let fileManager = FileManager.default
-    let container = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
-    return container
+  let fileManager = FileManager.default
+  let container = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+  return container
 }
 
 func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {
-    let appGroupDirectory = getAppGroupDirectory()
-    
-    let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
-        
-    // Load the image data
-    guard let imageData = try? Data(contentsOf: fileURL) else {
-        print("Error: Could not load data from \(fileURL.path)")
-        return nil
-    }
-    
-    // Create and return the UIImage
-    return UIImage(data: imageData)
+  let appGroupDirectory = getAppGroupDirectory()
+  
+  let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
+  
+  // Load the image data
+  guard let imageData = try? Data(contentsOf: fileURL) else {
+    print("Error: Could not load data from \(fileURL.path)")
+    return nil
+  }
+  
+  // Create and return the UIImage
+  return UIImage(data: imageData)
 }
 
 func loadImageFromBundle(assetName: String) -> UIImage? {
-    // Get the main bundle
-    let bundle = Bundle.main
+  // Get the main bundle
+  let bundle = Bundle.main
   // Bundle.main.
-    guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else { return nil }
-
+  guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else { return nil }
+  
   logger.info("Found \(fURL.count) png files in bundle")
   
   traverseDirectory(at: Bundle.main.bundlePath)
@@ -275,97 +483,97 @@ func loadImageFromBundle(assetName: String) -> UIImage? {
   for url in fURL {
     logger.info("url: \(url.lastPathComponent)")
   }
-    
-    // Construct the file URL for the asset
-    guard let filePath = bundle.path(forResource: assetName, ofType: "png") else {
-        print("Error: Asset not found in bundle: \(assetName).png")
-        return nil
-    }
-    
-    // Load image data
-    guard let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
-        print("Error: Could not load data from \(filePath)")
-        return nil
-    }
-    
-    // Create UIImage from data
-    return UIImage(data: imageData)
+  
+  // Construct the file URL for the asset
+  guard let filePath = bundle.path(forResource: assetName, ofType: "png") else {
+    print("Error: Asset not found in bundle: \(assetName).png")
+    return nil
+  }
+  
+  // Load image data
+  guard let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
+    print("Error: Could not load data from \(filePath)")
+    return nil
+  }
+  
+  // Create UIImage from data
+  return UIImage(data: imageData)
 }
 
 func loadImageFromFileSystem(filePath: String) -> UIImage? {
-    let fileURL = URL(fileURLWithPath: filePath)
-    
-    // Load data from the file URL
-    guard let imageData = try? Data(contentsOf: fileURL) else {
-        print("Error: Could not load data from \(filePath)")
-        return nil
-    }
-    
-    // Create UIImage from the data
-    return UIImage(data: imageData)
+  let fileURL = URL(fileURLWithPath: filePath)
+  
+  // Load data from the file URL
+  guard let imageData = try? Data(contentsOf: fileURL) else {
+    print("Error: Could not load data from \(filePath)")
+    return nil
+  }
+  
+  // Create UIImage from the data
+  return UIImage(data: imageData)
 }
 
 func loadImageFromRemoteURL(urlString: String, completion: @escaping (UIImage?) -> Void) {
-    guard let url = URL(string: urlString) else {
-        print("Error: Invalid URL string")
-        completion(nil)
-        return
+  guard let url = URL(string: urlString) else {
+    print("Error: Invalid URL string")
+    completion(nil)
+    return
+  }
+  
+  let task = URLSession.shared.dataTask(with: url) { data, response, error in
+    // Handle errors
+    if let error = error {
+      print("Error fetching image from URL: \(error)")
+      completion(nil)
+      return
     }
     
-    let task = URLSession.shared.dataTask(with: url) { data, response, error in
-        // Handle errors
-        if let error = error {
-            print("Error fetching image from URL: \(error)")
-            completion(nil)
-            return
-        }
-        
-        // Validate data
-        guard let imageData = data, let image = UIImage(data: imageData) else {
-            print("Error: Invalid image data from \(urlString)")
-            completion(nil)
-            return
-        }
-        
-        completion(image)
+    // Validate data
+    guard let imageData = data, let image = UIImage(data: imageData) else {
+      print("Error: Invalid image data from \(urlString)")
+      completion(nil)
+      return
     }
     
-    task.resume()
+    completion(image)
+  }
+  
+  task.resume()
 }
 
 func loadImageFromRemoteURLSynchronously(urlString: String) -> UIImage? {
-    guard let url = URL(string: urlString) else {
-      logger.info("Error: Invalid URL string")
-        return nil
-    }
-    
-    var image: UIImage? = nil
-    let semaphore = DispatchSemaphore(value: 0)
+  guard let url = URL(string: urlString) else {
+    logger.info("Error: Invalid URL string")
+    return nil
+  }
+  
+  var image: UIImage? = nil
+  let semaphore = DispatchSemaphore(value: 0)
   
   logger.info("Getting image")
-    
-    let task = URLSession.shared.dataTask(with: url) { data, response, error in
-        // Handle errors
-        if let error = error {
-          logger.info("Error fetching image: \(error)")
-        }
-      
-        
-        
-        // Validate data
-        if let imageData = data {
-          logger.info("Got image")
-            image = UIImage(data: imageData)
-        }
-        
-        // Signal the semaphore to release the lock
-        semaphore.signal()
+  
+  let task = URLSession.shared.dataTask(with: url) { data, response, error in
+    // Handle errors
+    if let error = error {
+      logger.info("Error fetching image: \(error)")
     }
     
-    task.resume()
     
-    // Wait for the task to complete
-    semaphore.wait()
     
-    return image
+    // Validate data
+    if let imageData = data {
+      logger.info("Got image")
+      image = UIImage(data: imageData)
+    }
+    
+    // Signal the semaphore to release the lock
+    semaphore.signal()
+  }
+  
+  task.resume()
+  
+  // Wait for the task to complete
+  semaphore.wait()
+  
+  return image
 }

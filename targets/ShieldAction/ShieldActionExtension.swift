@@ -8,39 +8,6 @@
 import ManagedSettings
 import UIKit
 
-func openUrl(urlString: String){
-  guard let url = URL(string: urlString) else {
-    return //be safe
-  }
-  
-  /*let context = NSExtensionContext()
-  context.open(url) { success in
-    
-  }*/
-  
-  let application = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
-
-  if #available(iOS 10.0, *) {
-      application.open(url, options: [:], completionHandler: nil)
-  } else {
-      application.openURL(url)
-  }
-}
-
-func sendNotification(){
-  let content = UNMutableNotificationContent()
-
-  content.title = "Notification title"
-  content.subtitle = "Notification subtitle"
-  content.body = "Notification body"
-  content.sound = UNNotificationSound.default
-
-  // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-  let request = UNNotificationRequest(identifier: "timerDone", content: content, trigger: nil)
-
-  UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
-}
-
 func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {

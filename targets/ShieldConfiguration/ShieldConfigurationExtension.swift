@@ -21,14 +21,6 @@ func convertBase64StringToImage (imageBase64String: String?) -> UIImage? {
   return nil
 }
 
-func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -> String {
-    let retVal = placeholders.reduce(text) { text, placeholder in
-      text.replacingOccurrences(of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
-    }
-    
-    return retVal
-}
-
 func buildLabel(text: String?, with color: UIColor?, placeholders: [String: String?]) -> ShieldConfiguration.Label? {
   if let text = text {
     let color = color ?? UIColor.label
@@ -60,28 +52,28 @@ func resolveIcon(dict: [String:Any]) -> UIImage? {
   return image
 }
 
-func getShieldConfiguration(dict: [String:Any], placeholders: [String: String?]) -> ShieldConfiguration {
+func getShieldConfiguration(config: [String:Any], placeholders: [String: String?]) -> ShieldConfiguration {
   logger.log("Calling getShieldConfiguration")
   
-  let backgroundColor = getColor(color: dict["backgroundColor"] as? [String: Double])
+  let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
   
-  let title = dict["title"] as? String
-  let titleColor = getColor(color: dict["titleColor"] as? [String: Double])
+  let title = config["title"] as? String
+  let titleColor = getColor(color: config["titleColor"] as? [String: Double])
   
-  let subtitle = dict["subtitle"] as? String
-  let subtitleColor = getColor(color: dict["subtitleColor"] as? [String: Double])
+  let subtitle = config["subtitle"] as? String
+  let subtitleColor = getColor(color: config["subtitleColor"] as? [String: Double])
 
-  let primaryButtonLabel = dict["primaryButtonLabel"] as? String
-  let primaryButtonLabelColor = getColor(color: dict["primaryButtonLabelColor"] as? [String: Double])
-  let primaryButtonBackgroundColor = getColor(color: dict["primaryButtonBackgroundColor"] as? [String: Double])
+  let primaryButtonLabel = config["primaryButtonLabel"] as? String
+  let primaryButtonLabelColor = getColor(color: config["primaryButtonLabelColor"] as? [String: Double])
+  let primaryButtonBackgroundColor = getColor(color: config["primaryButtonBackgroundColor"] as? [String: Double])
   
-  let secondaryButtonLabel = dict["secondaryButtonLabel"] as? String
-  let secondaryButtonLabelColor = getColor(color: dict["secondaryButtonLabelColor"] as? [String: Double])
+  let secondaryButtonLabel = config["secondaryButtonLabel"] as? String
+  let secondaryButtonLabelColor = getColor(color: config["secondaryButtonLabelColor"] as? [String: Double])
   
   let shield = ShieldConfiguration(
-    backgroundBlurStyle: dict["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: dict["backgroundBlurStyle"] as! Int) : nil,
+    backgroundBlurStyle: config["backgroundBlurStyle"] != nil ? UIBlurEffect.Style.init(rawValue: config["backgroundBlurStyle"] as! Int) : nil,
     backgroundColor: backgroundColor,
-    icon: resolveIcon(dict: dict),
+    icon: resolveIcon(dict: config),
     title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
     subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
     primaryButtonLabel: buildLabel(text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),
@@ -111,8 +103,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         )
       ]
       
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(config: config, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -134,7 +126,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       ]
       
       if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+        return getShieldConfiguration(config: dict, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -155,8 +147,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       ]
       
       // Customize the shield as needed for web domains.
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(config: config, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
@@ -177,8 +169,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         )
       ]
       
-      if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-        return getShieldConfiguration(dict: dict, placeholders: placeholders)
+      if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+        return getShieldConfiguration(config: config, placeholders: placeholders)
       }
       
       return ShieldConfiguration()
