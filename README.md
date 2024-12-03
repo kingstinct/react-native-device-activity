@@ -57,7 +57,7 @@ const trackDeviceActivity = (activitySelection: string) => {
 }
 
 // you can listen to events (which I guess only works when the app is alive):
-const listener = ReactNativeDeviceActivity.addEventReceivedListener(
+const listener = ReactNativeDeviceActivity.onDeviceActivityMonitorEvent(
       (event) => {
         const name = event.nativeEvent.callbackName; // the name of the event
         /* callbackName is one of, corresponding to the events received from the native API:

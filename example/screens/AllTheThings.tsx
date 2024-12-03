@@ -101,186 +101,6 @@ downloadAndMoveIcon(
   "my-awesome-image.png",
 );
 
-// gets run on reload, so easy to play around with
-void ReactNativeDeviceActivity.updateShieldConfiguration(
-  {
-    backgroundBlurStyle: UIBlurEffectStyle.prominent,
-    title:
-      "{applicationOrDomainDisplayName} blocked by react-native-device-activity",
-    subtitle: "You have reached your limit! {activityName}",
-    primaryButtonLabel: "Give me 5 more minutes",
-    secondaryButtonLabel: "Close",
-    //icon: appGroupFileDirectory + "/kingstinct.png",
-    iconAppGroupRelativePath: "my-awesome-image.png",
-    titleColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-    subtitleColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-    primaryButtonBackgroundColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-  },
-  {
-    primary: {
-      type: "unblockAll",
-      behavior: "defer",
-    },
-    secondary: {
-      type: "dismiss",
-      behavior: "close",
-    },
-  },
-);
-
-const activityName = "Instagram3";
-
-const potentialMaxEvents = Math.floor((60 * 24) / trackEveryXMinutes);
-
-const startMonitoring = async (activitySelection: string) => {
-  await requestPermissionsAsync();
-
-  // ReactNativeDeviceActivity.updateFamilyActivitySelectionToActivityNameMap({
-  //   activityName,
-  //   familyActivitySelection: activitySelection,
-  // });
-
-  const events: DeviceActivityEvent[] = [
-    /*  {
-      eventName: `minutes_reached_${initialMinutes}`,
-      familyActivitySelection: activitySelection,
-      threshold: { minute: initialMinutes },
-    },
-    {
-      eventName: `minutes_reached_${initialMinutes}_override`,
-      familyActivitySelection: activitySelection,
-      threshold: { minute: initialMinutes, nanosecond: 1 },
-    },*/
-  ];
-
-  for (let i = 1; i < potentialMaxEvents; i++) {
-    const minutesReached = i * trackEveryXMinutes;
-    const eventName = `minutes_reached_${minutesReached}`;
-    const event: DeviceActivityEvent = {
-      eventName,
-      familyActivitySelection: activitySelection,
-      threshold: { minute: minutesReached },
-      includesPastActivity: false,
-    };
-
-    const overrideEventName = `minutes_reached_${minutesReached}_override`;
-    const overrideEvent: DeviceActivityEvent = {
-      eventName: overrideEventName,
-      familyActivitySelection: activitySelection,
-      threshold: { minute: minutesReached, nanosecond: 1 },
-    };
-
-    ReactNativeDeviceActivity.configureActions({
-      activityName,
-      callbackName: "eventDidReachThreshold",
-      eventName: overrideEventName,
-      actions: [
-        {
-          type: "sendNotification",
-          payload: {
-            title: "override!! {activityName}!",
-            body: "You have reached {eventName} minutes!",
-          },
-        },
-      ],
-    });
-
-    ReactNativeDeviceActivity.configureActions({
-      activityName,
-      callbackName: "eventDidReachThreshold",
-      eventName,
-      actions: [
-        /*{
-          type: "blockSelection",
-          familyActivitySelection: activitySelection,
-          shieldActions: {
-            primary: { type: "unblockAll", behavior: "defer" },
-            secondary: { type: "dismiss", behavior: "close" },
-          },
-          shieldConfiguration: {
-            backgroundBlurStyle: UIBlurEffectStyle.prominent,
-            title:
-              "{applicationOrDomainDisplayName} Blocked by react-native-device-activity",
-            subtitle: "You have reached your limit! {activityName}",
-            primaryButtonLabel: "Give me 5 more minutes",
-            secondaryButtonLabel: "Close",
-            titleColor: {
-              red: 255,
-              green: 0.329 * 255,
-              blue: 0,
-              alpha: 1,
-            },
-            subtitleColor: {
-              red: 255,
-              green: 0.329 * 255,
-              blue: 0,
-              alpha: 1,
-            },
-            primaryButtonBackgroundColor: {
-              red: 255,
-              green: 0.329 * 255,
-              blue: 0,
-              alpha: 1,
-            },
-          },
-        },*/
-        {
-          type: "sendHttpRequest",
-          url: "https://webhook.site/df7583bc-fba5-4080-8a04-7417bccb2030",
-          options: {
-            method: "POST",
-            body: {
-              activityName,
-              eventName,
-              minutesReached,
-            },
-          },
-        },
-        {
-          type: "sendNotification",
-          payload: {
-            title: "{activityName}!",
-            body: "You have reached {eventName} minutes!",
-          },
-        },
-        {
-          type: "openApp",
-        },
-      ],
-    });
-
-    events.push(overrideEvent);
-
-    events.push(event);
-  }
-
-  ReactNativeDeviceActivity.startMonitoring(
-    activityName,
-    {
-      // warningTime: { minute: 1 },
-      intervalStart: { hour: 0, minute: 0, second: 0 },
-      intervalEnd: { hour: 23, minute: 59, second: 59 },
-      repeats: false,
-    },
-    events,
-  );
-};
-
 const authorizationStatusMap = {
   [AuthorizationStatus.approved]: "approved",
   [AuthorizationStatus.denied]: "denied",
@@ -344,9 +164,9 @@ export function AllTheThings() {
   }, [authorizationStatus]);
 
   useEffect(() => {
-    const listener = ReactNativeDeviceActivity.addEventReceivedListener(
+    const listener = ReactNativeDeviceActivity.onDeviceActivityMonitorEvent(
       (event) => {
-        if (event.callbackName === "eventDidReachThreshold") refreshEvents();
+        refreshEvents();
       },
     );
     return () => {
@@ -370,15 +190,6 @@ export function AllTheThings() {
       setIsShieldActiveWithSelection(false);
     }
   }, [familyActivitySelection]);
-
-  useEffect(() => {
-    ReactNativeDeviceActivity.registerManagedStoreListener(
-      ({ activityName }) => {
-        console.log("activityName", activityName);
-      },
-    );
-    refreshIsShieldActive();
-  }, [familyActivitySelection, refreshIsShieldActive]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

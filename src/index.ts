@@ -6,7 +6,7 @@ import {
 
 // Import the native module. On web, it will be resolved to ReactNativeDeviceActivity.web.ts
 // and on native platforms to ReactNativeDeviceActivity.ts
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
@@ -149,6 +149,15 @@ export const configureActions = ({
   userDefaultsSet(key, actions);
 };
 
+export const cleanUpAfterActivity = (activityName: string) => {
+  ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(
+    `actions_for_${activityName}`,
+  );
+  ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(
+    `DeviceActivityMonitorExtension#${activityName}`,
+  );
+};
+
 export const updateFamilyActivitySelectionToActivityNameMap = ({
   activityName,
   familyActivitySelection,
@@ -186,6 +195,12 @@ export const useDeviceActivities = () => {
   const [activities, setActivities] = useState<string[]>([]);
 
   useEffect(() => {
+    // this one seems more stable
+    const sub = onDeviceActivityMonitorEvent((event) => {
+      if (event.callbackName === "intervalDidStart") {
+        setActivities(ReactNativeDeviceActivityModule.activities());
+      }
+    });
     const subscription = onDeviceActivityDetected((event) => {
       setActivities(ReactNativeDeviceActivityModule.activities());
     });
@@ -194,6 +209,7 @@ export const useDeviceActivities = () => {
 
     return () => {
       subscription.remove();
+      sub.remove();
     };
   }, []);
 
@@ -263,6 +279,28 @@ const emitter = new EventEmitter(
     NativeModulesProxy.ReactNativeDeviceActivity,
 );
 
+export const useActivities = () => {
+  const [activities, setActivities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const subscription = onDeviceActivityDetected(() => {
+      setActivities(ReactNativeDeviceActivityModule.activities());
+    });
+
+    setActivities(ReactNativeDeviceActivityModule.activities());
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const refresh = useCallback(() => {
+    setActivities(ReactNativeDeviceActivityModule.activities());
+  }, []);
+
+  return [activities, refresh] as const;
+};
+
 export const useAuthorizationStatus = () => {
   const [authorizationStatus, setAuthorizationStatus] =
     useState<AuthorizationStatus>(AuthorizationStatus.notDetermined);
@@ -305,7 +343,6 @@ export function updateShieldConfiguration(
   shieldActions: ShieldActions,
 ) {
   userDefaultsSet("shieldConfiguration", shieldConfiguration);
-
   userDefaultsSet("shieldActions", shieldActions);
 }
 

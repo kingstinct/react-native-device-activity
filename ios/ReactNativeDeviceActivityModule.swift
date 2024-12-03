@@ -140,9 +140,7 @@ class NativeEventObserver {
                                            userInfo: CFDictionary?
                                            ) in
          if let observer = observer, let name = name {
-
            let mySelf = Unmanaged<BaseModule>.fromOpaque(observer).takeUnretainedValue()
-                                             print("Notification name: \(name)")
            
            mySelf.sendEvent("onDeviceActivityMonitorEvent" as String, [
             "callbackName": name.rawValue
@@ -163,22 +161,6 @@ class NativeEventObserver {
     registerListener(name: "intervalWillEndWarning")
     registerListener(name: "eventWillReachThresholdWarning")
   }
-}
-
-func handleAction(dict: [String: Any]) -> Void {
-  if let type = dict["type"] as? String {
-    if(type == "unblockAll"){
-        logger.info("Should unblock all")
-    }
-  }
-  
-  if let behaviour = dict["behavior"] as? String {
-    if(behaviour == "defer"){
-        logger.info("Should defer!")
-    }
-  }
-  
-    logger.info("Should close!")
 }
 
 @available(iOS 15.0, *)
@@ -266,11 +248,11 @@ public class ReactNativeDeviceActivityModule: Module {
               ])
           }
           
-          watchActivitiesHandle = center.activities.publisher.sink(receiveValue: { activity in
+          watchActivitiesHandle = center.activities.publisher.sink { activity in
               self.sendEvent("onDeviceActivityDetected" as String, [
                 "activityName": activity.rawValue,
               ])
-          })
+          }
       }
       
       OnStopObserving {
@@ -319,9 +301,17 @@ public class ReactNativeDeviceActivityModule: Module {
           }
       }
       
+      Function("userDefaultsClearWithPrefix") { (prefix: String) in
+          let dictionary = userDefaults?.dictionaryRepresentation()
+          dictionary?.keys.forEach { key in
+              if(key.starts(with: prefix)){
+                userDefaults?.removeObject(forKey: key)
+              }
+          }
+      }
+      
       Function("userDefaultsAll") { () -> Any? in
           if let userDefaults = userDefaults {
-              // handleAction(dict: userDefaults.dictionary(forKey: "shieldActions_for_category_175566987801366043")!["primary"] as! [String : Any])
               return userDefaults.dictionaryRepresentation()
           }
           return nil

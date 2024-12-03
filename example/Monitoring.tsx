@@ -88,7 +88,7 @@ export default function App() {
 
   useEffect(() => {
     ReactNativeDeviceActivity.requestAuthorization();
-    const listener = ReactNativeDeviceActivity.addEventReceivedListener(
+    const listener = ReactNativeDeviceActivity.onDeviceActivityMonitorEvent(
       (event) => {
         refreshEvents();
       },

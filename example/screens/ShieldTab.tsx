@@ -51,12 +51,6 @@ export function ShieldTab() {
         webDomainCount: number;
       }>,
     ) => {
-      console.log(
-        "on client side, length of string:" +
-          event.nativeEvent.familyActivitySelection.length,
-        event.nativeEvent,
-      );
-
       if (
         event.nativeEvent.familyActivitySelection !==
         familyActivitySelectionResult?.familyActivitySelection
