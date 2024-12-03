@@ -145,7 +145,7 @@ export const configureActions = ({
     ? `actions_for_${activityName}_${callbackName}_${eventName}`
     : `actions_for_${activityName}_${callbackName}`;
 
-  ReactNativeDeviceActivityModule.userDefaultsSet(key, actions);
+  userDefaultsSet(key, actions);
 };
 
 export const updateFamilyActivitySelectionToActivityNameMap = ({
@@ -160,13 +160,10 @@ export const updateFamilyActivitySelectionToActivityNameMap = ({
       "familyActivitySelectionToActivityNameMap",
     ) as Record<string, string>) ?? {};
 
-  ReactNativeDeviceActivityModule.userDefaultsSet(
-    "familyActivitySelectionToActivityNameMap",
-    {
-      ...previousValue,
-      [activityName]: familyActivitySelection,
-    },
-  );
+  userDefaultsSet("familyActivitySelectionToActivityNameMap", {
+    ...previousValue,
+    [activityName]: familyActivitySelection,
+  });
 };
 
 export function getAppGroupFileDirectory(): string {
@@ -260,15 +257,9 @@ export function updateShieldConfiguration(
   shieldConfiguration: ShieldConfiguration,
   shieldActions: ShieldActions,
 ) {
-  ReactNativeDeviceActivityModule.userDefaultsSet(
-    "shieldConfiguration",
-    shieldConfiguration,
-  );
+  userDefaultsSet("shieldConfiguration", shieldConfiguration);
 
-  ReactNativeDeviceActivityModule.userDefaultsSet(
-    "shieldActions",
-    shieldActions,
-  );
+  userDefaultsSet("shieldActions", shieldActions);
 }
 
 export function isAvailable(): boolean {

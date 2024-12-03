@@ -17,8 +17,10 @@ var userDefaults = UserDefaults(suiteName: appGroup)
 @available(iOS 14.0, *)
 let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
+var task: URLSessionDataTask?
 
-func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<String, String?>){
+@available(iOS 15.0, *)
+func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<String, String?>) -> Void {
   let type = action["type"] as? String
   
   if(type == "blockSelection"){
@@ -41,6 +43,11 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
   } else if(type == "openApp"){
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
+
+    let delay = DispatchTimeInterval.seconds(2)
+    let group = DispatchGroup()
+    group.enter()
+    _ = group.wait(timeout: .now() + delay)
   } else if(type == "blockAllApps"){
     blockAllApps()
   } else if(type == "sendNotification"){
@@ -51,7 +58,12 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
     if let url = action["url"] as? String {
       let config = action["options"] as? [String: Any] ?? [:]
       
-      sendHttpRequest(with: url, config: config, placeholders: placeholders)
+      task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
+      
+      let delay = DispatchTimeInterval.seconds(2)
+      let group = DispatchGroup()
+      group.enter()
+      _ = group.wait(timeout: .now() + delay)
     }
   }
 }
@@ -152,7 +164,7 @@ func sendNotification(contents: [String: Any], placeholders: [String: String?]){
 }
 
 // dataRequest which sends request to given URL and convert to Decodable Object
-func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?]) {
+func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?]) -> URLSessionDataTask {
   // create the URL
   let url = URL(string: url)! //change the URL
   
@@ -199,6 +211,8 @@ func sendHttpRequest(with url: String, config: [String: Any], placeholders: [Str
   })
   
   task.resume()
+  
+  return task
 }
 
 @available(iOS 15.0, *)
@@ -326,13 +340,10 @@ func getPossibleActivityName(
 func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyActivitySelection {
   var activitySelection = FamilyActivitySelection()
   
-  logger.log("got base64")
   let decoder = JSONDecoder()
   let data = Data(base64Encoded: familyActivitySelectionStr)
   do {
-    logger.log("decoding base64..")
     activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-    logger.log("decoded base64!")
   }
   catch {
     logger.log("decode error \(error.localizedDescription)")
@@ -380,6 +391,17 @@ func getColor(color: [String: Double]?) -> UIColor? {
   }
   
   return nil
+}
+
+enum Action {
+    case unblockAll
+}
+
+@available(iOS 15.0, *)
+struct ShieldActionConfig {
+    var response: ShieldActionResponse
+    
+    var actions: [Action]
 }
 
 

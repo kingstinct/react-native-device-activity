@@ -90,7 +90,6 @@ export default function App() {
     ReactNativeDeviceActivity.requestAuthorization();
     const listener = ReactNativeDeviceActivity.addEventReceivedListener(
       (event) => {
-        console.log("got event, refreshing events!", event);
         refreshEvents();
       },
     );

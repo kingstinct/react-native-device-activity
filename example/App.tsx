@@ -1,4 +1,5 @@
 import * as FileSystem from "expo-file-system";
+import * as Notifications from "expo-notifications";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -20,10 +21,21 @@ import {
   UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 
-const initialMinutes = 1;
-const postponeMinutes = 60;
+// const initialMinutes = 1;
+// const postponeMinutes = 60;
+const trackEveryXMinutes = 1;
 
-console.log(
+export function requestPermissionsAsync() {
+  return Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: true,
+      allowSound: true,
+    },
+  });
+}
+
+/* console.log(
   JSON.stringify(
     ReactNativeDeviceActivity.userDefaultsGet(
       "familyActivitySelectionToActivityNameMap",
@@ -31,7 +43,7 @@ console.log(
     null,
     2,
   ),
-);
+);*/
 
 /*console.log("bundleDirectory", FileSystem.bundleDirectory);
 console.log("cacheDirectory", FileSystem.cacheDirectory);
@@ -90,49 +102,61 @@ downloadAndMoveIcon(
 );
 
 // gets run on reload, so easy to play around with
-void ReactNativeDeviceActivity.updateShieldConfiguration({
-  backgroundBlurStyle: UIBlurEffectStyle.prominent,
-  title:
-    "{applicationOrDomainDisplayName} blocked by react-native-device-activity",
-  subtitle: "You have reached your limit! {activityName}",
-  primaryButtonLabel: "Give me 5 more minutes",
-  secondaryButtonLabel: "Close",
-  //icon: appGroupFileDirectory + "/kingstinct.png",
-  iconAppGroupRelativePath: "my-awesome-image.png",
-  titleColor: {
-    red: 255,
-    green: 0.329 * 255,
-    blue: 0,
-    alpha: 1,
+void ReactNativeDeviceActivity.updateShieldConfiguration(
+  {
+    backgroundBlurStyle: UIBlurEffectStyle.prominent,
+    title:
+      "{applicationOrDomainDisplayName} blocked by react-native-device-activity",
+    subtitle: "You have reached your limit! {activityName}",
+    primaryButtonLabel: "Give me 5 more minutes",
+    secondaryButtonLabel: "Close",
+    //icon: appGroupFileDirectory + "/kingstinct.png",
+    iconAppGroupRelativePath: "my-awesome-image.png",
+    titleColor: {
+      red: 255,
+      green: 0.329 * 255,
+      blue: 0,
+      alpha: 1,
+    },
+    subtitleColor: {
+      red: 255,
+      green: 0.329 * 255,
+      blue: 0,
+      alpha: 1,
+    },
+    primaryButtonBackgroundColor: {
+      red: 255,
+      green: 0.329 * 255,
+      blue: 0,
+      alpha: 1,
+    },
   },
-  subtitleColor: {
-    red: 255,
-    green: 0.329 * 255,
-    blue: 0,
-    alpha: 1,
+  {
+    primary: {
+      type: "unblockAll",
+      behavior: "defer",
+    },
+    secondary: {
+      type: "dismiss",
+      behavior: "close",
+    },
   },
-  primaryButtonBackgroundColor: {
-    red: 255,
-    green: 0.329 * 255,
-    blue: 0,
-    alpha: 1,
-  },
-});
-
-const activityName = "Goal4";
-
-const potentialMaxEvents = Math.floor(
-  (60 * 24 - initialMinutes) / postponeMinutes,
 );
 
-const startMonitoring = (activitySelection: string) => {
-  ReactNativeDeviceActivity.updateFamilyActivitySelectionToActivityNameMap({
-    activityName,
-    familyActivitySelection: activitySelection,
-  });
+const activityName = "Instagram3";
+
+const potentialMaxEvents = Math.floor((60 * 24) / trackEveryXMinutes);
+
+const startMonitoring = async (activitySelection: string) => {
+  await requestPermissionsAsync();
+
+  // ReactNativeDeviceActivity.updateFamilyActivitySelectionToActivityNameMap({
+  //   activityName,
+  //   familyActivitySelection: activitySelection,
+  // });
 
   const events: DeviceActivityEvent[] = [
-    {
+    /*  {
       eventName: `minutes_reached_${initialMinutes}`,
       familyActivitySelection: activitySelection,
       threshold: { minute: initialMinutes },
@@ -140,64 +164,110 @@ const startMonitoring = (activitySelection: string) => {
     {
       eventName: `minutes_reached_${initialMinutes}_override`,
       familyActivitySelection: activitySelection,
-      threshold: { minute: initialMinutes, second: 1 },
-    },
+      threshold: { minute: initialMinutes, nanosecond: 1 },
+    },*/
   ];
 
   for (let i = 1; i < potentialMaxEvents; i++) {
-    const eventName = `minutes_reached_${initialMinutes + i * postponeMinutes}`;
+    const minutesReached = i * trackEveryXMinutes;
+    const eventName = `minutes_reached_${minutesReached}`;
     const event: DeviceActivityEvent = {
       eventName,
       familyActivitySelection: activitySelection,
-      threshold: { minute: initialMinutes + i * postponeMinutes },
+      threshold: { minute: minutesReached },
       includesPastActivity: false,
     };
+
+    const overrideEventName = `minutes_reached_${minutesReached}_override`;
+    const overrideEvent: DeviceActivityEvent = {
+      eventName: overrideEventName,
+      familyActivitySelection: activitySelection,
+      threshold: { minute: minutesReached, nanosecond: 1 },
+    };
+
+    ReactNativeDeviceActivity.configureActions({
+      activityName,
+      callbackName: "eventDidReachThreshold",
+      eventName: overrideEventName,
+      actions: [
+        {
+          type: "sendNotification",
+          payload: {
+            title: "override!! {activityName}!",
+            body: "You have reached {eventName} minutes!",
+          },
+        },
+      ],
+    });
+
+    ReactNativeDeviceActivity.configureActions({
+      activityName,
+      callbackName: "eventDidReachThreshold",
+      eventName,
+      actions: [
+        {
+          type: "blockSelection",
+          familyActivitySelection: activitySelection,
+          shieldActions: {
+            primary: { type: "unblockAll", behavior: "defer" },
+            secondary: { type: "dismiss", behavior: "close" },
+          },
+          shieldConfiguration: {
+            backgroundBlurStyle: UIBlurEffectStyle.prominent,
+            title:
+              "{applicationOrDomainDisplayName} Blocked by react-native-device-activity",
+            subtitle: "You have reached your limit! {activityName}",
+            primaryButtonLabel: "Give me 5 more minutes",
+            secondaryButtonLabel: "Close",
+            titleColor: {
+              red: 255,
+              green: 0.329 * 255,
+              blue: 0,
+              alpha: 1,
+            },
+            subtitleColor: {
+              red: 255,
+              green: 0.329 * 255,
+              blue: 0,
+              alpha: 1,
+            },
+            primaryButtonBackgroundColor: {
+              red: 255,
+              green: 0.329 * 255,
+              blue: 0,
+              alpha: 1,
+            },
+          },
+        },
+        {
+          type: "sendHttpRequest",
+          url: "https://webhook.site/df7583bc-fba5-4080-8a04-7417bccb2030",
+          options: {
+            method: "POST",
+            body: {
+              activityName,
+              eventName,
+              minutesReached,
+            },
+          },
+        },
+        {
+          type: "sendNotification",
+          payload: {
+            title: "{activityName}!",
+            body: "You have reached {eventName} minutes!",
+          },
+        },
+        {
+          type: "openApp",
+        },
+      ],
+    });
+
+    events.push(overrideEvent);
+
     events.push(event);
   }
-
-  console.log("events", events);
-
-  ReactNativeDeviceActivity.configureActions({
-    activityName,
-    callbackName: "eventDidReachThreshold",
-    eventName: "minutes_reached_1",
-    actions: [
-      {
-        type: "block",
-        familyActivitySelection: activitySelection,
-        shieldActions: {
-          primary: { type: "unblockAll", behavior: "defer" },
-          secondary: { type: "dismiss", behavior: "close" },
-        },
-        shieldConfiguration: {
-          backgroundBlurStyle: UIBlurEffectStyle.prominent,
-          title:
-            "{applicationOrDomainDisplayName} Blocked by react-native-device-activity",
-          subtitle: "You have reached your limit! {activityName}",
-          primaryButtonLabel: "Give me 5 more minutes",
-          secondaryButtonLabel: "Close",
-          titleColor: {
-            red: 255,
-            green: 0.329 * 255,
-            blue: 0,
-            alpha: 1,
-          },
-          subtitleColor: {
-            red: 255,
-            green: 0.329 * 255,
-            blue: 0,
-            alpha: 1,
-          },
-          primaryButtonBackgroundColor: {
-            red: 255,
-            green: 0.329 * 255,
-            blue: 0,
-            alpha: 1,
-          },
-        },
-      },
-    ],
-  });
 
   ReactNativeDeviceActivity.startMonitoring(
     activityName,
@@ -224,13 +294,13 @@ export default function App() {
   const [authorizationStatus, setAuthorizationStatus] =
     React.useState<AuthorizationStatus | null>(null);
 
-  console.log(
+  /*console.log(
     JSON.stringify(
       ReactNativeDeviceActivity.userDefaultsGet("shieldActions"),
       null,
       2,
     ),
-  );
+  );*/
 
   const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
     string | null
@@ -246,8 +316,6 @@ export default function App() {
     const eventsParsed = ReactNativeDeviceActivity.getEvents();
 
     setEvents(eventsParsed);
-
-    console.log("eventsParsed", eventsParsed);
   }, []);
 
   const requestAuthorization = useCallback(async () => {
@@ -278,8 +346,7 @@ export default function App() {
   useEffect(() => {
     const listener = ReactNativeDeviceActivity.addEventReceivedListener(
       (event) => {
-        console.log("got event, refreshing events!", event);
-        refreshEvents();
+        if (event.callbackName === "eventDidReachThreshold") refreshEvents();
       },
     );
     return () => {
@@ -445,7 +512,6 @@ export default function App() {
           onSelectionChange={(
             event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
           ) => {
-            console.log("event.nativeEvent", event.nativeEvent);
             if (
               event.nativeEvent.familyActivitySelection !==
               familyActivitySelection
@@ -453,10 +519,7 @@ export default function App() {
               setFamilyActivitySelection(
                 event.nativeEvent.familyActivitySelection,
               );
-
-              // alert(event.nativeEvent.familyActivitySelection);
             }
-            // console.log(event.nativeEvent.familyActivitySelection);
           }}
           familyActivitySelection={familyActivitySelection}
         >

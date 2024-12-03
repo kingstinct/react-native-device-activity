@@ -41,9 +41,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidStart"
     )
     
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidStart")
-    
     self.notifyAppWithName(name: "intervalDidStart")
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidStart")
   }
   
   override func intervalDidEnd(for activity: DeviceActivityName) {
@@ -55,9 +55,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidEnd"
     )
     
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
-
     self.notifyAppWithName(name: "intervalDidEnd")
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
   }
   
   func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil){
@@ -81,10 +81,10 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "eventDidReachThreshold",
       eventName: event.rawValue
     )
+    
+    self.notifyAppWithName(name: "eventDidReachThreshold")
 
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventDidReachThreshold", eventName: event.rawValue)
-
-    self.notifyAppWithName(name: "eventDidReachThreshold")
   }
   
   override func intervalWillStartWarning(for activity: DeviceActivityName) {
@@ -96,9 +96,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalWillStartWarning"
     )
     
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
-
     self.notifyAppWithName(name: "intervalWillStartWarning")
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
   }
   
   override func intervalWillEndWarning(for activity: DeviceActivityName) {
@@ -110,9 +110,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalWillEndWarning"
     )
     
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
-
     self.notifyAppWithName(name: "intervalWillEndWarning")
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
   }
   
   override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
@@ -125,9 +125,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       eventName: event.rawValue
     )
     
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning", eventName: event.rawValue)
-
     self.notifyAppWithName(name: "eventWillReachThresholdWarning")
+    
+    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning", eventName: event.rawValue)
   }
   
 }

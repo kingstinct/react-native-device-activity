@@ -210,6 +210,11 @@ export type CallbackName =
   | "eventWillReachThresholdWarning";
 
 export type ReactNativeDeviceActivityNativeModule = {
+  userDefaultsSet: (dict: any) => void;
+  userDefaultsGet: (key: string) => any;
+  userDefaultsRemove: (key: string) => void;
+  userDefaultsClear: () => void;
+  userDefaultsAll: () => any;
   requestAuthorization: () => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
   blockApps: (familyActivitySelectionStr?: string) => PromiseLike<void> | void;

@@ -313,7 +313,7 @@ public class ReactNativeDeviceActivityModule: Module {
       
       Function("userDefaultsAll") { () -> Any? in
           if let userDefaults = userDefaults {
-              handleAction(dict: userDefaults.dictionary(forKey: "shieldActions_for_category_175566987801366043")!["primary"] as! [String : Any])
+              // handleAction(dict: userDefaults.dictionary(forKey: "shieldActions_for_category_175566987801366043")!["primary"] as! [String : Any])
               return userDefaults.dictionaryRepresentation()
           }
           return nil
@@ -395,8 +395,6 @@ public class ReactNativeDeviceActivityModule: Module {
     let dictionary = Dictionary<DeviceActivityEvent.Name, DeviceActivityEvent>(uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
         let familyActivitySelection = decodedFamilyActivitySelections[eventRaw.familyActivitySelectionIndex]
           
-        /*userDefaults?.set(familyActivitySelections[eventRaw.familyActivitySelectionIndex], forKey: eventRaw.eventName + "_familyActivitySelection")*/
-            
         let threshold = convertToSwiftDateComponents(from: eventRaw.threshold)
           var event: DeviceActivityEvent
           
@@ -423,18 +421,16 @@ public class ReactNativeDeviceActivityModule: Module {
         )
       })
       
-      do {
-        let activityName = DeviceActivityName(activityName)
-          
-        try center.startMonitoring(
-          activityName,
-          during: schedule,
-          events: dictionary
-        )
-        logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
-      } catch {
-        logger.log("❌ Failed with Starting Monitor Activity: \(error.localizedDescription)")
-      }
+      
+    let activityName = DeviceActivityName(activityName)
+      
+    try center.startMonitoring(
+      activityName,
+      during: schedule,
+      events: dictionary
+    )
+    logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
+      
     }
     
     Function("stopMonitoring") { (activityNames: [String]?) in
@@ -463,7 +459,6 @@ public class ReactNativeDeviceActivityModule: Module {
       } else {
         logger.log("⚠️ iOS 16.0 or later is required to request authorization.")
       }
-      
     }
       
       Function("isShieldActive"){
@@ -565,3 +560,5 @@ public class ReactNativeDeviceActivityModule: Module {
     }
   }
 }
+
+

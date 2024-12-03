@@ -26,6 +26,11 @@ const warnFnBoolean = () => {
 const mockModule: ReactNativeDeviceActivityNativeModule & ProxyNativeModule = {
   isAvailable: () => false,
   requestAuthorization: warnFn,
+  userDefaultsAll: warnFn,
+  userDefaultsGet: warnFn,
+  userDefaultsRemove: warnFn,
+  userDefaultsSet: warnFn,
+  userDefaultsClear: warnFn,
   revokeAuthorization: warnFn,
   isShieldActive: warnFnBoolean,
   getAppGroupFileDirectory: warnFn,
