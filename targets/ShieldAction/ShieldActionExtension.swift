@@ -49,8 +49,8 @@ func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionRespons
     }
   }
   
-  if let behaviour = configForSelectedAction["behavior"] as? String {
-    if(behaviour == "defer"){
+  if let behavior = configForSelectedAction["behavior"] as? String {
+    if(behavior == "defer"){
       return .defer
     }
   }
