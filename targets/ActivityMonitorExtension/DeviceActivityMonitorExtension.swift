@@ -27,8 +27,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil){
     let now = (Date().timeIntervalSince1970 * 1000).rounded()
     let fullEventName = eventName == nil
-      ? "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)"
-      : "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)#\(eventName!)"
+      ? "events_\(activityName)#\(callbackName)"
+      : "events_\(activityName)#\(callbackName)#\(eventName!)"
     userDefaults?.set(now, forKey: fullEventName)
   }
   

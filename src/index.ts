@@ -154,7 +154,7 @@ export const cleanUpAfterActivity = (activityName: string) => {
     `actions_for_${activityName}`,
   );
   ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(
-    `DeviceActivityMonitorExtension#${activityName}`,
+    `events_${activityName}`,
   );
 };
 
@@ -338,12 +338,34 @@ export function onDeviceActivityMonitorEvent(
   );
 }
 
-export function updateShieldConfiguration(
+export function updateShield(
   shieldConfiguration: ShieldConfiguration,
   shieldActions: ShieldActions,
 ) {
-  userDefaultsSet("shieldConfiguration", shieldConfiguration);
-  userDefaultsSet("shieldActions", shieldActions);
+  userDefaultsSet(`shieldConfiguration`, shieldConfiguration);
+  userDefaultsSet(`shieldActions`, shieldActions);
+}
+
+export function useShieldWithId(shieldId: string = "default") {
+  const shieldConfiguration = userDefaultsGet(
+    `shieldConfiguration_${shieldId}`,
+  ) as ShieldConfiguration | undefined;
+  const shieldActions = userDefaultsGet(`shieldActions_${shieldId}`) as
+    | ShieldActions
+    | undefined;
+
+  if (shieldConfiguration && shieldActions) {
+    updateShield(shieldConfiguration, shieldActions);
+  }
+}
+
+export function updateShieldWithId(
+  shieldConfiguration: ShieldConfiguration,
+  shieldActions: ShieldActions,
+  shieldId: string = "default",
+) {
+  userDefaultsSet(`shieldConfiguration_${shieldId}`, shieldConfiguration);
+  userDefaultsSet(`shieldActions_${shieldId}`, shieldActions);
 }
 
 export function isAvailable(): boolean {

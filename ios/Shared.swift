@@ -26,13 +26,15 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
   if(type == "blockSelection"){
     if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
       let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let shieldId = action["shieldId"] ?? "default"
       
-      if let shieldConfiguration = action["shieldConfiguration"] as? Dictionary<String, Any> {
+      if let shieldConfiguration = action["shieldConfiguration_\(shieldId)"] as? Dictionary<String, Any> {
         // update default shield
         userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
       }
       
-      if let shieldActions = action["shieldActions"] as? Dictionary<String, Any> {
+      if let shieldActions = action["shieldActions_\(shieldId)"] as? Dictionary<String, Any> {
         userDefaults?.set(shieldActions, forKey: "shieldActions")
       }
       
@@ -60,6 +62,7 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
       
       task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
       
+      // hack to let the request finish
       let delay = DispatchTimeInterval.seconds(2)
       let group = DispatchGroup()
       group.enter()
@@ -422,8 +425,8 @@ func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldAction
 func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil){
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName = eventName == nil
-  ? "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)"
-  : "DeviceActivityMonitorExtension#\(activityName)#\(callbackName)#\(eventName!)"
+  ? "events_\(activityName)#\(callbackName)"
+  : "events_\(activityName)#\(callbackName)#\(eventName!)"
   userDefaults?.set(now, forKey: fullEventName)
 }
 

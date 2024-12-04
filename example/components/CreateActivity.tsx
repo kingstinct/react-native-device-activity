@@ -4,55 +4,11 @@ import { NativeSyntheticEvent, View } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
   DeviceActivityEvent,
-  DeviceActivityMonitorEventPayload,
   DeviceActivitySelectionEvent,
-  UIBlurEffectStyle,
 } from "react-native-device-activity/ReactNativeDeviceActivity.types";
 import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
 
 const trackEveryXMinutes = 10;
-
-// gets run on reload, so easy to play around with
-void ReactNativeDeviceActivity.updateShieldConfiguration(
-  {
-    backgroundBlurStyle: UIBlurEffectStyle.prominent,
-    title:
-      "{applicationOrDomainDisplayName} blocked by react-native-device-activity",
-    subtitle: "You have reached your limit! {activityName}",
-    primaryButtonLabel: "Give me 5 more minutes",
-    secondaryButtonLabel: "Close",
-    //icon: appGroupFileDirectory + "/kingstinct.png",
-    iconAppGroupRelativePath: "my-awesome-image.png",
-    titleColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-    subtitleColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-    primaryButtonBackgroundColor: {
-      red: 255,
-      green: 0.329 * 255,
-      blue: 0,
-      alpha: 1,
-    },
-  },
-  {
-    primary: {
-      type: "unblockAll",
-      behavior: "defer",
-    },
-    secondary: {
-      type: "dismiss",
-      behavior: "close",
-    },
-  },
-);
 
 const potentialMaxEvents = Math.floor((60 * 24) / trackEveryXMinutes);
 

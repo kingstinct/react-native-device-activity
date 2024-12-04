@@ -151,8 +151,7 @@ export type Action =
   | {
       type: "blockSelection";
       familyActivitySelection: string;
-      shieldConfiguration: ShieldConfiguration;
-      shieldActions: ShieldActions;
+      shieldId?: string;
     }
   | {
       type: "unblockAllApps";
