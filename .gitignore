@@ -3,7 +3,6 @@
 .DS_Store
 
 # VSCode
-.vscode/
 jsconfig.json
 
 # Xcode
