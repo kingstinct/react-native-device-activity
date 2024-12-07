@@ -27,7 +27,8 @@ func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionRespons
 
 func handleAction(action: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
   if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
-    if let configForSelectedAction = shieldActionConfig[action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
+    if let configForSelectedAction = shieldActionConfig[
+      action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
       let response = handleAction(configForSelectedAction: configForSelectedAction)
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         completionHandler(response)
@@ -44,17 +45,26 @@ func handleAction(action: ShieldAction, completionHandler: @escaping (ShieldActi
 // The system provides a default response for any functions that your subclass doesn't override.
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class ShieldActionExtension: ShieldActionDelegate {
-  override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+  override func handle(
+    action: ShieldAction, for application: ApplicationToken,
+    completionHandler: @escaping (ShieldActionResponse) -> Void
+  ) {
     logger.log("handle application")
     handleAction(action: action, completionHandler: completionHandler)
   }
 
-  override func handle(action: ShieldAction, for webDomain: WebDomainToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+  override func handle(
+    action: ShieldAction, for webDomain: WebDomainToken,
+    completionHandler: @escaping (ShieldActionResponse) -> Void
+  ) {
     logger.log("handle domain")
     handleAction(action: action, completionHandler: completionHandler)
   }
 
-  override func handle(action: ShieldAction, for category: ActivityCategoryToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+  override func handle(
+    action: ShieldAction, for category: ActivityCategoryToken,
+    completionHandler: @escaping (ShieldActionResponse) -> Void
+  ) {
     logger.log("handle category")
     handleAction(action: action, completionHandler: completionHandler)
   }

@@ -5,17 +5,18 @@
 //  Created by Robert Herber on 2024-11-07.
 //
 
+import FamilyControls
 import Foundation
 import ManagedSettings
 import UIKit
 import os
-import FamilyControls
 
 var appGroup = "group.ActivityMonitor"
 var userDefaults = UserDefaults(suiteName: appGroup)
 
 @available(iOS 14.0, *)
-let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
+let logger = Logger(
+  subsystem: Bundle.main.bundleIdentifier!, category: "react-native-device-activity")
 
 var task: URLSessionDataTask?
 
@@ -25,7 +26,8 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
   if type == "blockSelection" {
     if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
-      let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+      let activitySelection = getActivitySelectionFromStr(
+        familyActivitySelectionStr: familyActivitySelectionStr)
 
       let shieldId = action["shieldId"] ?? "default"
 
@@ -73,15 +75,16 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
 func openUrl(urlString: String) {
   guard let url = URL(string: urlString) else {
-    return // be safe
+    return  // be safe
   }
 
   /*let context = NSExtensionContext()
    context.open(url) { success in
-   
+
    }*/
 
-  let application = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
+  let application =
+    UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
 
   if #available(iOS 10.0, *) {
     application.open(url, options: [:], completionHandler: nil)
@@ -167,9 +170,10 @@ func sendNotification(contents: [String: Any], placeholders: [String: String?]) 
 }
 
 // dataRequest which sends request to given URL and convert to Decodable Object
-func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?]) -> URLSessionDataTask {
+func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?])
+  -> URLSessionDataTask {
   // create the URL
-  let url = URL(string: url)! // change the URL
+  let url = URL(string: url)!  // change the URL
 
   // create the session object
   let session = URLSession.shared
@@ -183,35 +187,40 @@ func sendHttpRequest(with url: String, config: [String: Any], placeholders: [Str
 
   if let body = config["body"] as? [String: Any] {
     let bodyWithPlaceholders = replacePlaceholdersInObject(body, with: placeholders)
-    request.httpBody = try? JSONSerialization.data(withJSONObject: bodyWithPlaceholders, options: .prettyPrinted)
+    request.httpBody = try? JSONSerialization.data(
+      withJSONObject: bodyWithPlaceholders, options: .prettyPrinted)
   }
 
   if let headers = config["headers"] as? [String: String] {
     let headersWithPlaceholders = replacePlaceholdersInObject(headers, with: placeholders)
     // merge with existing headers
-    request.allHTTPHeaderFields = request.allHTTPHeaderFields?.merging(headersWithPlaceholders, uniquingKeysWith: { $1 })
+    request.allHTTPHeaderFields = request.allHTTPHeaderFields?.merging(
+      headersWithPlaceholders, uniquingKeysWith: { $1 })
   }
 
   // create dataTask using the session object to send data to the server
-  let task = session.dataTask(with: request, completionHandler: { data, _, error in
+  let task = session.dataTask(
+    with: request,
+    completionHandler: { data, _, error in
 
-    guard error == nil else {
-      return
-    }
-
-    guard let data = data else {
-      return
-    }
-
-    do {
-      // create json object from data
-      if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
-        print(json)
+      guard error == nil else {
+        return
       }
-    } catch let error {
-      print(error.localizedDescription)
-    }
-  })
+
+      guard let data = data else {
+        return
+      }
+
+      do {
+        // create json object from data
+        if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+          as? [String: Any] {
+          print(json)
+        }
+      } catch let error {
+        print(error.localizedDescription)
+      }
+    })
 
   task.resume()
 
@@ -229,13 +238,17 @@ struct TextToReplaceWithOptionalSpecialTreatment {
   var specialTreatment: String?
 }
 
-func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) -> TextToReplaceWithOptionalSpecialTreatment {
-  if stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}") && stringToReplace.contains(":") {
+func getTextToReplaceWithOptionalSpecialTreatment(_ stringToReplace: String)
+  -> TextToReplaceWithOptionalSpecialTreatment {
+  if stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}")
+    && stringToReplace.contains(":") {
     // remove prefix and suffix
     let trimmed = String(stringToReplace.dropFirst().dropLast())
     // split on : and return first part
     let prefixAndPlaceholder = trimmed.split(separator: ":")
-    return TextToReplaceWithOptionalSpecialTreatment(textToReplace: String(prefixAndPlaceholder[1]), specialTreatment: String(prefixAndPlaceholder[0]))
+    return TextToReplaceWithOptionalSpecialTreatment(
+      textToReplace: String(prefixAndPlaceholder[1]),
+      specialTreatment: String(prefixAndPlaceholder[0]))
   }
   return TextToReplaceWithOptionalSpecialTreatment(textToReplace: stringToReplace)
 }
@@ -250,22 +263,27 @@ func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) ->
  "minutes": "{asNumber:eventName}"
  }
  */
-func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholders: [String: String?]) -> [String: T] {
+func replacePlaceholdersInObject<T: Any>(
+  _ object: [String: T], with placeholders: [String: String?]
+) -> [String: T] {
   var retVal = object
 
   for (key, value) in object {
     if let value = value as? String {
-      let textToReplaceWithOptionalSpecialTreatment = getTextToReplaceWithOptionalSpecialTreatment(value)
+      let textToReplaceWithOptionalSpecialTreatment = getTextToReplaceWithOptionalSpecialTreatment(
+        value)
       if let specialTreatment = textToReplaceWithOptionalSpecialTreatment.specialTreatment {
         if specialTreatment == "asNumber" {
-          if let placeholderValue = placeholders[textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String {
+          if let placeholderValue = placeholders[
+            textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String {
             if let numberValue = Double(placeholderValue) {
               retVal[key] = numberValue as? T
             }
           }
         }
         if specialTreatment == "userDefaults" {
-          if let value = userDefaults?.string(forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
+          if let value = userDefaults?.string(
+            forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
             retVal[key] = value as? T
           }
         }
@@ -280,7 +298,8 @@ func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholder
 
 func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -> String {
   let retVal = placeholders.reduce(text) { text, placeholder in
-    text.replacingOccurrences(of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
+    text.replacingOccurrences(
+      of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
   }
 
   return retVal
@@ -291,10 +310,12 @@ let store = ManagedSettingsStore()
 
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?] {
-  if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(forKey: "familyActivitySelectionToActivityNameMap") {
+  if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(
+    forKey: "familyActivitySelectionToActivityNameMap") {
     return familyActivitySelectionToActivityNameMap.map { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
-        let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+        let activitySelection = getActivitySelectionFromStr(
+          familyActivitySelectionStr: familyActivitySelectionStr)
 
         return SelectionWithActivityName(selection: activitySelection, activityName: key)
       }
@@ -373,8 +394,10 @@ func blockAllApps() {
 func blockSelectedApps(activitySelection: FamilyActivitySelection) {
   store.shield.applications = activitySelection.applicationTokens
   store.shield.webDomains = activitySelection.webDomainTokens
-  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
-  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
+  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(
+    activitySelection.categoryTokens, except: Set())
+  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(
+    activitySelection.categoryTokens, except: Set())
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {
@@ -396,35 +419,37 @@ func getColor(color: [String: Double]?) -> UIColor? {
 }
 
 enum Action {
-    case unblockAll
+  case unblockAll
 }
 
 @available(iOS 15.0, *)
 struct ShieldActionConfig {
-    var response: ShieldActionResponse
+  var response: ShieldActionResponse
 
-    var actions: [Action]
+  var actions: [Action]
 }
 
 @available(iOS 15.0, *)
 func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
-  userDefaults?.set([
-    "primaryButtonActionResponse": primary.response.rawValue,
-    "primaryButtonAction": primary.actions.map({ _ in
-      return ["type": "unblockAll"]
-    }),
-    "secondaryButtonActionResponse": secondary.response.rawValue,
-    "secondaryButtonAction": secondary.actions.map({ _ in
-      return ["type": "unblockAll"]
-    })
-  ], forKey: "shieldActionConfig")
+  userDefaults?.set(
+    [
+      "primaryButtonActionResponse": primary.response.rawValue,
+      "primaryButtonAction": primary.actions.map({ _ in
+        return ["type": "unblockAll"]
+      }),
+      "secondaryButtonActionResponse": secondary.response.rawValue,
+      "secondaryButtonAction": secondary.actions.map({ _ in
+        return ["type": "unblockAll"]
+      })
+    ], forKey: "shieldActionConfig")
 }
 
 func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
-  let fullEventName = eventName == nil
-  ? "events_\(activityName)#\(callbackName)"
-  : "events_\(activityName)#\(callbackName)#\(eventName!)"
+  let fullEventName =
+    eventName == nil
+    ? "events_\(activityName)#\(callbackName)"
+    : "events_\(activityName)#\(callbackName)#\(eventName!)"
   userDefaults?.set(now, forKey: fullEventName)
 }
 
@@ -478,7 +503,9 @@ func loadImageFromBundle(assetName: String) -> UIImage? {
   // Get the main bundle
   let bundle = Bundle.main
   // Bundle.main.
-  guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else { return nil }
+  guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else {
+    return nil
+  }
 
   logger.info("Found \(fURL.count) png files in bundle")
 

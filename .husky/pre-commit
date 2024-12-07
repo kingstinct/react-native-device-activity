@@ -1,1 +1,3 @@
+swift format -i -p -r ./targets ./ios ./example/ios
 example/ios/Pods/SwiftLint/swiftlint lint --fix
+
