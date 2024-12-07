@@ -1229,6 +1229,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.0)
+  - SwiftLint (0.57.1)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1299,11 +1300,13 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDeviceActivity (from `../../ios`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SwiftLint
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - SocketRocket
+    - SwiftLint
 
 EXTERNAL SOURCES:
   boost:
@@ -1507,8 +1510,9 @@ SPEC CHECKSUMS:
   ReactNativeDeviceActivity: 7bf925fc08d5925e32d94bbfbd84901f4e1ebc24
   RNVectorIcons: 845eda5c7819bd29699cafd0fc98c9d4afe28c96
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
+  SwiftLint: 92196976e597b9afec5dbe374810103e6c1d9d7c
+  Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
 
-PODFILE CHECKSUM: 058e061fe2fc88e03b7aa4cc9fcbc4630a5d257d
+PODFILE CHECKSUM: 315a3cca8f47501d09f2a9f1879b847a076183f2
 
 COCOAPODS: 1.16.2
