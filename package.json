@@ -11,7 +11,7 @@
     "pre-push": "npm run typecheck && npm run lint",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
-    "prepare": "expo-module prepare",
+    "prepare": "expo-module prepare && husky",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
@@ -43,6 +43,7 @@
     "expo": "^51.0.38",
     "expo-module-scripts": "^3.5.2",
     "expo-modules-core": "^1.12.24",
+    "husky": "^9.1.7",
     "prettier": "^3.3.3",
     "react": "18.2.0",
     "react-native": "0.74.5"
