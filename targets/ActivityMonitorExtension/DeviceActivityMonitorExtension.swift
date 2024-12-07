@@ -6,10 +6,10 @@
 //
 
 import DeviceActivity
-import ManagedSettings
-import Foundation
-import os
 import FamilyControls
+import Foundation
+import ManagedSettings
+import os
 
 // Optionally override any of the functions below.
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
@@ -26,7 +26,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
   func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
     let now = (Date().timeIntervalSince1970 * 1000).rounded()
-    let fullEventName = eventName == nil
+    let fullEventName =
+      eventName == nil
       ? "events_\(activityName)#\(callbackName)"
       : "events_\(activityName)#\(callbackName)#\(eventName!)"
     userDefaults?.set(now, forKey: fullEventName)
@@ -61,8 +62,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   }
 
   func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil) {
-    let key = eventName != nil ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)" : "actions_for_\(activityName)_\(callbackName)"
-    let placeholders = ["activityName": activityName, "callbackName": callbackName, "eventName": eventName]
+    let key =
+      eventName != nil
+      ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)"
+      : "actions_for_\(activityName)_\(callbackName)"
+    let placeholders = [
+      "activityName": activityName, "callbackName": callbackName, "eventName": eventName
+    ]
     if let actions = userDefaults?.array(forKey: key) {
       actions.forEach { actionRaw in
         if let action = actionRaw as? [String: Any] {
@@ -72,7 +78,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
 
-  override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
+  override func eventDidReachThreshold(
+    _ event: DeviceActivityEvent.Name, activity: DeviceActivityName
+  ) {
     super.eventDidReachThreshold(event, activity: activity)
     logger.log("eventDidReachThreshold: \(event.rawValue, privacy: .public)")
 
@@ -84,7 +92,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     self.notifyAppWithName(name: "eventDidReachThreshold")
 
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventDidReachThreshold", eventName: event.rawValue)
+    self.executeActionsForEvent(
+      activityName: activity.rawValue, callbackName: "eventDidReachThreshold",
+      eventName: event.rawValue)
   }
 
   override func intervalWillStartWarning(for activity: DeviceActivityName) {
@@ -98,7 +108,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     self.notifyAppWithName(name: "intervalWillStartWarning")
 
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
+    self.executeActionsForEvent(
+      activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
   }
 
   override func intervalWillEndWarning(for activity: DeviceActivityName) {
@@ -112,10 +123,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     self.notifyAppWithName(name: "intervalWillEndWarning")
 
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
+    self.executeActionsForEvent(
+      activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
   }
 
-  override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
+  override func eventWillReachThresholdWarning(
+    _ event: DeviceActivityEvent.Name, activity: DeviceActivityName
+  ) {
     super.eventWillReachThresholdWarning(event, activity: activity)
     logger.log("eventWillReachThresholdWarning: \(event.rawValue, privacy: .public)")
 
@@ -127,7 +141,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     self.notifyAppWithName(name: "eventWillReachThresholdWarning")
 
-    self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning", eventName: event.rawValue)
+    self.executeActionsForEvent(
+      activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning",
+      eventName: event.rawValue)
   }
 
 }

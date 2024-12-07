@@ -1,11 +1,11 @@
-import ExpoModulesCore
 import Combine
-import ManagedSettingsUI
 import DeviceActivity
+import ExpoModulesCore
 import FamilyControls
-import ManagedSettings
-import os
 import Foundation
+import ManagedSettings
+import ManagedSettingsUI
+import os
 
 struct DateComponentsFromJS: ExpoModulesCore.Record {
   @Field
@@ -130,26 +130,30 @@ class NativeEventObserver {
 
   func registerListener(name: String) {
     let notificationName = name as CFString
-       CFNotificationCenterAddObserver(notificationCenter,
-                                       observer,
-                                       { (
-                                           _: CFNotificationCenter?,
-                                           observer: UnsafeMutableRawPointer?,
-                                           name: CFNotificationName?,
-                                           _: UnsafeRawPointer?,
-                                           _: CFDictionary?
-                                           ) in
-         if let observer = observer, let name = name {
-           let mySelf = Unmanaged<BaseModule>.fromOpaque(observer).takeUnretainedValue()
+    CFNotificationCenterAddObserver(
+      notificationCenter,
+      observer,
+      {
+        (
+          _: CFNotificationCenter?,
+          observer: UnsafeMutableRawPointer?,
+          name: CFNotificationName?,
+          _: UnsafeRawPointer?,
+          _: CFDictionary?
+        ) in
+        if let observer = observer, let name = name {
+          let mySelf = Unmanaged<BaseModule>.fromOpaque(observer).takeUnretainedValue()
 
-           mySelf.sendEvent("onDeviceActivityMonitorEvent" as String, [
-            "callbackName": name.rawValue
-           ])
-         }
-       },
-       notificationName,
-       nil,
-       CFNotificationSuspensionBehavior.deliverImmediately)
+          mySelf.sendEvent(
+            "onDeviceActivityMonitorEvent" as String,
+            [
+              "callbackName": name.rawValue
+            ])
+        }
+      },
+      notificationName,
+      nil,
+      CFNotificationSuspensionBehavior.deliverImmediately)
   }
 
   init(module: BaseModule) {
@@ -166,7 +170,7 @@ class NativeEventObserver {
 @available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
 
-    let store = ManagedSettingsStore()
+  let store = ManagedSettingsStore()
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -181,15 +185,15 @@ public class ReactNativeDeviceActivityModule: Module {
 
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants([
-     "PI": Double.pi
+      "PI": Double.pi
     ])
-      let fileManager = FileManager.default
+    let fileManager = FileManager.default
 
     let observer = NativeEventObserver(module: self)
 
     var watchActivitiesHandle: Cancellable?
-      var  onDeviceActivityDetectedHandle: Cancellable?
-      // var watchStoreHandle: Cancellable? = nil
+    var onDeviceActivityDetectedHandle: Cancellable?
+    // var watchStoreHandle: Cancellable? = nil
 
     Function("getAppGroupFileDirectory") {
 
@@ -198,180 +202,127 @@ public class ReactNativeDeviceActivityModule: Module {
       return container?.absoluteString
     }
 
-      Function("moveFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
-        let from = URL(string: fromUrl)!
-        let to = URL(string: toUrl)!
+    Function("moveFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
+      let from = URL(string: fromUrl)!
+      let to = URL(string: toUrl)!
 
-        if overwrite == true {
-            do {
-                try fileManager.removeItem(at: to)
-            } catch {
-                logger.info("Error removing file: \(error)")
-            }
+      if overwrite == true {
+        do {
+          try fileManager.removeItem(at: to)
+        } catch {
+          logger.info("Error removing file: \(error)")
         }
-        try fileManager.moveItem(at: from, to: to)
-
-        return to.absoluteString
       }
+      try fileManager.moveItem(at: from, to: to)
 
-      Function("copyFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
-        let from = URL(string: fromUrl)!
-        let to = URL(string: toUrl)!
-
-        if overwrite == true {
-            do {
-                try fileManager.removeItem(at: to)
-            } catch {
-                logger.info("Error removing file: \(error)")
-            }
-        }
-        try fileManager.copyItem(at: from, to: to)
-
-        return to.absoluteString
-      }
-
-    Function("setAppGroup") { (appGroupIn: String) in
-        appGroup = appGroupIn
-        userDefaults = UserDefaults(suiteName: appGroup)
+      return to.absoluteString
     }
 
-      OnStartObserving {
-          onDeviceActivityDetectedHandle = AuthorizationCenter.shared.$authorizationStatus.sink { status in
-              self.sendEvent("onAuthorizationStatusChange" as String, [
-                "authorizationStatus": status.rawValue
-              ])
-          }
+    Function("copyFile") { (fromUrl: String, toUrl: String, overwrite: Bool?) in
+      let from = URL(string: fromUrl)!
+      let to = URL(string: toUrl)!
 
-          watchActivitiesHandle = center.activities.publisher.sink { activity in
-              self.sendEvent("onDeviceActivityDetected" as String, [
-                "activityName": activity.rawValue
-              ])
-          }
+      if overwrite == true {
+        do {
+          try fileManager.removeItem(at: to)
+        } catch {
+          logger.info("Error removing file: \(error)")
+        }
+      }
+      try fileManager.copyItem(at: from, to: to)
+
+      return to.absoluteString
+    }
+
+    Function("setAppGroup") { (appGroupIn: String) in
+      appGroup = appGroupIn
+      userDefaults = UserDefaults(suiteName: appGroup)
+    }
+
+    OnStartObserving {
+      onDeviceActivityDetectedHandle = AuthorizationCenter.shared.$authorizationStatus.sink {
+        status in
+        self.sendEvent(
+          "onAuthorizationStatusChange" as String,
+          [
+            "authorizationStatus": status.rawValue
+          ])
       }
 
-      OnStopObserving {
-          watchActivitiesHandle?.cancel()
-          onDeviceActivityDetectedHandle?.cancel()
+      watchActivitiesHandle = center.activities.publisher.sink { activity in
+        self.sendEvent(
+          "onDeviceActivityDetected" as String,
+          [
+            "activityName": activity.rawValue
+          ])
       }
+    }
+
+    OnStopObserving {
+      watchActivitiesHandle?.cancel()
+      onDeviceActivityDetectedHandle?.cancel()
+    }
 
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
 
       let dict = userDefaults?.dictionaryRepresentation()
 
       guard let actualDict = dict else {
-        return [:] // Return an empty dictionary instead of an empty array
+        return [:]  // Return an empty dictionary instead of an empty array
       }
 
       let filteredDict = actualDict.filter({ (key: String, _: Any) in
         return key.starts(with: activityName == nil ? "events_" : "events_\(activityName!)#")
       }).reduce(into: [:]) { (result, element) in
         let (key, value) = element
-        result[key] = value as? NSNumber // Add key-value pair to the result dictionary
+        result[key] = value as? NSNumber  // Add key-value pair to the result dictionary
       }
 
       return filteredDict
     }
 
-      Function("userDefaultsSet") { (params: [String: Any]) in
-          guard let key = params["key"] as? String,
-                let value = params["value"] else {
-              return
-          }
-          userDefaults?.set(value, forKey: key)
+    Function("userDefaultsSet") { (params: [String: Any]) in
+      guard let key = params["key"] as? String,
+        let value = params["value"]
+      else {
+        return
       }
+      userDefaults?.set(value, forKey: key)
+    }
 
-      Function("userDefaultsGet") { (forKey: String) -> Any? in
-        return userDefaults?.object(forKey: forKey)
+    Function("userDefaultsGet") { (forKey: String) -> Any? in
+      return userDefaults?.object(forKey: forKey)
+    }
+
+    Function("userDefaultsRemove") { (forKey: String) -> Any? in
+      return userDefaults?.removeObject(forKey: forKey)
+    }
+
+    Function("userDefaultsClear") { () in
+      let dictionary = userDefaults?.dictionaryRepresentation()
+      dictionary?.keys.forEach { key in
+        userDefaults?.removeObject(forKey: key)
       }
+    }
 
-      Function("userDefaultsRemove") { (forKey: String) -> Any? in
-          return userDefaults?.removeObject(forKey: forKey)
+    Function("userDefaultsClearWithPrefix") { (prefix: String) in
+      let dictionary = userDefaults?.dictionaryRepresentation()
+      dictionary?.keys.forEach { key in
+        if key.starts(with: prefix) {
+          userDefaults?.removeObject(forKey: key)
+        }
       }
+    }
 
-      Function("userDefaultsClear") { () in
-          let dictionary = userDefaults?.dictionaryRepresentation()
-          dictionary?.keys.forEach { key in
-              userDefaults?.removeObject(forKey: key)
-          }
+    Function("userDefaultsAll") { () -> Any? in
+      if let userDefaults = userDefaults {
+        return userDefaults.dictionaryRepresentation()
       }
+      return nil
+    }
 
-      Function("userDefaultsClearWithPrefix") { (prefix: String) in
-          let dictionary = userDefaults?.dictionaryRepresentation()
-          dictionary?.keys.forEach { key in
-              if key.starts(with: prefix) {
-                userDefaults?.removeObject(forKey: key)
-              }
-          }
-      }
-
-      Function("userDefaultsAll") { () -> Any? in
-          if let userDefaults = userDefaults {
-              return userDefaults.dictionaryRepresentation()
-          }
-          return nil
-      }
-
-      Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
-          let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
-            let decoder = JSONDecoder()
-            let data = Data(base64Encoded: familyActivitySelection)
-            do {
-              let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-              return activitySelection
-            } catch {
-              return FamilyActivitySelection()
-            }
-          }
-
-          let hasOverlap = decodedFamilyActivitySelections.contains { selection in
-              return decodedFamilyActivitySelections.contains { compareWith in
-                  // if it's the same instance - skip comparison
-                  if compareWith == selection {
-                      return false
-                  }
-
-                  if compareWith.applicationTokens.contains(where: { token in
-                      return selection.applicationTokens.contains(token)
-                  }) {
-                      return true
-                  }
-
-                  if compareWith.categoryTokens.contains(where: { token in
-                      return selection.categoryTokens.contains(token)
-                  }) {
-                      return true
-                  }
-
-                  if compareWith.webDomainTokens.contains(where: { token in
-                      return selection.webDomainTokens.contains(token)
-                  }) {
-                      return true
-                  }
-
-                  return false
-              }
-          }
-
-          return hasOverlap
-      }
-
-      Function("authorizationStatus") {
-          let currentStatus = AuthorizationCenter.shared.authorizationStatus
-
-          return currentStatus.rawValue
-      }
-
-    AsyncFunction("startMonitoring") { (activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS], familyActivitySelections: [String]) in
-      let schedule = DeviceActivitySchedule(
-        intervalStart: convertToSwiftDateComponents(from: schedule.intervalStart),
-        intervalEnd: convertToSwiftDateComponents(from: schedule.intervalEnd),
-        repeats: schedule.repeats ?? false,
-        warningTime: schedule.warningTime != nil
-        ? convertToSwiftDateComponents(from: schedule.warningTime!)
-        : nil
-      )
-
-      let decodedFamilyActivitySelections = familyActivitySelections.map { familyActivitySelection in
+    Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
+      let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
         let decoder = JSONDecoder()
         let data = Data(base64Encoded: familyActivitySelection)
         do {
@@ -382,43 +333,109 @@ public class ReactNativeDeviceActivityModule: Module {
         }
       }
 
-    let dictionary = [DeviceActivityEvent.Name: DeviceActivityEvent](uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
-        let familyActivitySelection = decodedFamilyActivitySelections[eventRaw.familyActivitySelectionIndex]
+      let hasOverlap = decodedFamilyActivitySelections.contains { selection in
+        return decodedFamilyActivitySelections.contains { compareWith in
+          // if it's the same instance - skip comparison
+          if compareWith == selection {
+            return false
+          }
 
-        let threshold = convertToSwiftDateComponents(from: eventRaw.threshold)
+          if compareWith.applicationTokens.contains(where: { token in
+            return selection.applicationTokens.contains(token)
+          }) {
+            return true
+          }
+
+          if compareWith.categoryTokens.contains(where: { token in
+            return selection.categoryTokens.contains(token)
+          }) {
+            return true
+          }
+
+          if compareWith.webDomainTokens.contains(where: { token in
+            return selection.webDomainTokens.contains(token)
+          }) {
+            return true
+          }
+
+          return false
+        }
+      }
+
+      return hasOverlap
+    }
+
+    Function("authorizationStatus") {
+      let currentStatus = AuthorizationCenter.shared.authorizationStatus
+
+      return currentStatus.rawValue
+    }
+
+    AsyncFunction("startMonitoring") {
+      (
+        activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS],
+        familyActivitySelections: [String]
+      ) in
+      let schedule = DeviceActivitySchedule(
+        intervalStart: convertToSwiftDateComponents(from: schedule.intervalStart),
+        intervalEnd: convertToSwiftDateComponents(from: schedule.intervalEnd),
+        repeats: schedule.repeats ?? false,
+        warningTime: schedule.warningTime != nil
+          ? convertToSwiftDateComponents(from: schedule.warningTime!)
+          : nil
+      )
+
+      let decodedFamilyActivitySelections = familyActivitySelections.map {
+        familyActivitySelection in
+        let decoder = JSONDecoder()
+        let data = Data(base64Encoded: familyActivitySelection)
+        do {
+          let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
+          return activitySelection
+        } catch {
+          return FamilyActivitySelection()
+        }
+      }
+
+      let dictionary = [DeviceActivityEvent.Name: DeviceActivityEvent](
+        uniqueKeysWithValues: events.map { (eventRaw: DeviceActivityEventFromJS) in
+          let familyActivitySelection = decodedFamilyActivitySelections[
+            eventRaw.familyActivitySelectionIndex]
+
+          let threshold = convertToSwiftDateComponents(from: eventRaw.threshold)
           var event: DeviceActivityEvent
 
           if #available(iOS 17.4, *) {
-              event = DeviceActivityEvent(
-                applications: familyActivitySelection.applicationTokens,
-                categories: familyActivitySelection.categoryTokens,
-                webDomains: familyActivitySelection.webDomainTokens,
-                threshold: threshold,
-                includesPastActivity: eventRaw.includesPastActivity ?? false
-              )
+            event = DeviceActivityEvent(
+              applications: familyActivitySelection.applicationTokens,
+              categories: familyActivitySelection.categoryTokens,
+              webDomains: familyActivitySelection.webDomainTokens,
+              threshold: threshold,
+              includesPastActivity: eventRaw.includesPastActivity ?? false
+            )
           } else {
-              event = DeviceActivityEvent(
-                applications: familyActivitySelection.applicationTokens,
-                categories: familyActivitySelection.categoryTokens,
-                webDomains: familyActivitySelection.webDomainTokens,
-                threshold: threshold
-              )
+            event = DeviceActivityEvent(
+              applications: familyActivitySelection.applicationTokens,
+              categories: familyActivitySelection.categoryTokens,
+              webDomains: familyActivitySelection.webDomainTokens,
+              threshold: threshold
+            )
           }
 
-        return (
-          DeviceActivityEvent.Name(eventRaw.eventName),
-          event
-        )
-      })
+          return (
+            DeviceActivityEvent.Name(eventRaw.eventName),
+            event
+          )
+        })
 
-    let activityName = DeviceActivityName(activityName)
+      let activityName = DeviceActivityName(activityName)
 
-    try center.startMonitoring(
-      activityName,
-      during: schedule,
-      events: dictionary
-    )
-    logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
+      try center.startMonitoring(
+        activityName,
+        during: schedule,
+        events: dictionary
+      )
+      logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
 
     }
 
@@ -427,18 +444,19 @@ public class ReactNativeDeviceActivityModule: Module {
         center.stopMonitoring()
         return
       }
-      center.stopMonitoring(activityNames!.map({ activityName in
-        return DeviceActivityName(activityName)
-      }))
+      center.stopMonitoring(
+        activityNames!.map({ activityName in
+          return DeviceActivityName(activityName)
+        }))
     }
 
-      Function("activities") {
-        let activities = center.activities
+    Function("activities") {
+      let activities = center.activities
 
-        return activities.map { activity in
-          return activity.rawValue
-        }
+      return activities.map { activity in
+        return activity.rawValue
       }
+    }
 
     AsyncFunction("requestAuthorization") {
       let ac = AuthorizationCenter.shared
@@ -450,70 +468,88 @@ public class ReactNativeDeviceActivityModule: Module {
       }
     }
 
-      Function("isShieldActive") {
-          let areAnyApplicationsShielded = store.shield.applications != nil && store.shield.applications!.count > 0
-          let areAnyWebDomainsShielded = store.shield.webDomains != nil && store.shield.webDomains!.count > 0
-          let areAnyApplicationCategoriesShielded = store.shield.applicationCategories != nil && store.shield.applicationCategories != ShieldSettings.ActivityCategoryPolicy<Application>.none
-          let areAnyWebDomainCategoriesShielded = store.shield.webDomainCategories != nil && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+    Function("isShieldActive") {
+      let areAnyApplicationsShielded =
+        store.shield.applications != nil && store.shield.applications!.count > 0
+      let areAnyWebDomainsShielded =
+        store.shield.webDomains != nil && store.shield.webDomains!.count > 0
+      let areAnyApplicationCategoriesShielded =
+        store.shield.applicationCategories != nil
+        && store.shield.applicationCategories
+          != ShieldSettings.ActivityCategoryPolicy<Application>.none
+      let areAnyWebDomainCategoriesShielded =
+        store.shield.webDomainCategories != nil
+        && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
 
-          return areAnyApplicationsShielded || areAnyWebDomainsShielded || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
+      return areAnyApplicationsShielded || areAnyWebDomainsShielded
+        || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
+    }
+
+    Function("isShieldActiveWithSelection") { (familyActivitySelectionStr: String) -> Bool in
+      let selection = getActivitySelectionFromStr(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let areAnyApplicationsEqual =
+        store.shield.applications?.map({ token in
+          token
+        })
+        == selection.applicationTokens.map({ token in
+          token
+        })
+      let areAnyWebDomainsEqual =
+        store.shield.webDomains?.map({ token in
+          token
+        })
+        == selection.webDomainTokens.map({ token in
+          token
+        })
+
+      let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(
+        selection.categoryTokens, except: Set())
+
+      let areAnyApplicationCategoriesEqual = store.shield.applicationCategories == appCategoryPolicy
+
+      let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(
+        selection.categoryTokens, except: Set())
+
+      let areAnyWebDomainCategoriesEqual =
+        webDomainCategoryPolicy == store.shield.webDomainCategories
+
+      return areAnyApplicationsEqual && areAnyWebDomainsEqual && areAnyApplicationCategoriesEqual
+        && areAnyWebDomainCategoriesEqual
+    }
+
+    Function("blockApps") { (familyActivitySelectionStr: String?) in
+      if let familyActivitySelectionStr {
+        let selection = getActivitySelectionFromStr(
+          familyActivitySelectionStr: familyActivitySelectionStr)
+
+        blockSelectedApps(activitySelection: selection)
+      } else {
+        // block all apps
+        blockAllApps()
       }
+    }
 
-      Function("isShieldActiveWithSelection") { (familyActivitySelectionStr: String) -> Bool in
-          let selection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
+    Function("unblockApps") {
+      unblockAllApps()
+    }
 
-          let areAnyApplicationsEqual = store.shield.applications?.map({ token in
-              token
-          }) == selection.applicationTokens.map({ token in
-              token
-          })
-          let areAnyWebDomainsEqual = store.shield.webDomains?.map({ token in
-              token
-          }) == selection.webDomainTokens.map({ token in
-              token
-          })
+    AsyncFunction("revokeAuthorization") { () async throws in
+      let ac = AuthorizationCenter.shared
 
-          let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(selection.categoryTokens, except: Set())
-
-          let areAnyApplicationCategoriesEqual = store.shield.applicationCategories == appCategoryPolicy
-
-          let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(selection.categoryTokens, except: Set())
-
-          let areAnyWebDomainCategoriesEqual = webDomainCategoryPolicy == store.shield.webDomainCategories
-
-          return areAnyApplicationsEqual && areAnyWebDomainsEqual && areAnyApplicationCategoriesEqual && areAnyWebDomainCategoriesEqual
-      }
-
-      Function("blockApps") { (familyActivitySelectionStr: String?) in
-          if let familyActivitySelectionStr {
-              let selection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
-
-              blockSelectedApps(activitySelection: selection)
-          } else {
-              // block all apps
-              blockAllApps()
-          }
-      }
-
-      Function("unblockApps") {
-          unblockAllApps()
-      }
-
-      AsyncFunction("revokeAuthorization") { () async throws in
-        let ac = AuthorizationCenter.shared
-
-        return try await withCheckedThrowingContinuation { continuation in
-          ac.revokeAuthorization { result in
-            switch result {
-            case .success:
-              continuation.resume()
-            case .failure(let error):
-              logger.log("❌ Failed to revoke authorization: \(error.localizedDescription)")
-              continuation.resume(throwing: error)
-            }
+      return try await withCheckedThrowingContinuation { continuation in
+        ac.revokeAuthorization { result in
+          switch result {
+          case .success:
+            continuation.resume()
+          case .failure(let error):
+            logger.log("❌ Failed to revoke authorization: \(error.localizedDescription)")
+            continuation.resume(throwing: error)
           }
         }
       }
+    }
 
     Events(
       "onSelectionChange",
@@ -536,17 +572,17 @@ public class ReactNativeDeviceActivityModule: Module {
         view.model.activitySelection = selection
       }
 
-        Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
+      Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
 
-            view.model.footerText = prop
+        view.model.footerText = prop
 
-        }
+      }
 
-        Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
+      Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
 
-            view.model.headerText = prop
+        view.model.headerText = prop
 
-        }
+      }
     }
   }
 }
