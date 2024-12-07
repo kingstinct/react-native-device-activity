@@ -1,2 +1,2 @@
-example/ios/Pods/SwiftLint/swiftlint lint ios --fix
-example/ios/Pods/SwiftLint/swiftlint lint example/ios --fix
+example/ios/Pods/SwiftLint/swiftlint lint ios --fix --strict
+example/ios/Pods/SwiftLint/swiftlint lint example/ios --fix --strict

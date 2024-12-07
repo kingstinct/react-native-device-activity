@@ -11,17 +11,17 @@ import UIKit
 func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
-    if(type == "unblockAll"){
+    if type == "unblockAll" {
       unblockAllApps()
     }
   }
-  
+
   if let behavior = configForSelectedAction["behavior"] as? String {
-    if(behavior == "defer"){
+    if behavior == "defer" {
       return .defer
     }
   }
-  
+
   return .close
 }
 
@@ -30,7 +30,7 @@ func handleAction(action: ShieldAction, completionHandler: @escaping (ShieldActi
     if let configForSelectedAction = shieldActionConfig[action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
       let response = handleAction(configForSelectedAction: configForSelectedAction)
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        completionHandler(response);
+        completionHandler(response)
       }
     } else {
       completionHandler(.close)
@@ -48,12 +48,12 @@ class ShieldActionExtension: ShieldActionDelegate {
     logger.log("handle application")
     handleAction(action: action, completionHandler: completionHandler)
   }
-  
+
   override func handle(action: ShieldAction, for webDomain: WebDomainToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
     logger.log("handle domain")
     handleAction(action: action, completionHandler: completionHandler)
   }
-  
+
   override func handle(action: ShieldAction, for category: ActivityCategoryToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
     logger.log("handle category")
     handleAction(action: action, completionHandler: completionHandler)
