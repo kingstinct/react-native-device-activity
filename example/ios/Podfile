@@ -76,4 +76,6 @@ target 'reactnativedeviceactivityexample' do
       Pod::UI.warn e
     end
   end
+
+  pod 'SwiftLint'
 end
