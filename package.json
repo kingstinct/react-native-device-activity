@@ -8,7 +8,7 @@
     "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "expo-module lint",
-    "pre-push": "npm run typecheck && npm run lint",
+    "pre-push": "npm run typecheck && npm run lint && example/ios/Pods/SwiftLint/swiftlint lint --strict",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
     "prepare": "expo-module prepare && husky",

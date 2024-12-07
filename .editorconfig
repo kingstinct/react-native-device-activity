@@ -1,0 +1,22 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Indentation override for all JS/TS/JSX/TSX files
+[**/*.js,**/*.ts,**/*.jsx,**/*.tsx]
+indent_style = space
+indent_size = 2
+
+# Indentation override for all Swift under example/ios directory
+[*.swift]
+indent_style = space
+indent_size = 2
+
+# Matches the exact files either package.json
+[{package.json}]
+indent_style = space
+indent_size = 2

@@ -12,3 +12,4 @@ disabled_rules:
 included:
 - ios
 - example/ios
+- targets
