@@ -20,29 +20,29 @@ let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "react-n
 var task: URLSessionDataTask?
 
 @available(iOS 15.0, *)
-func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<String, String?>) -> Void {
+func executeAction(action: [String: Any], placeholders: [String: String?]) {
   let type = action["type"] as? String
-  
-  if(type == "blockSelection"){
+
+  if type == "blockSelection" {
     if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
       let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
 
       let shieldId = action["shieldId"] ?? "default"
-      
-      if let shieldConfiguration = action["shieldConfiguration_\(shieldId)"] as? Dictionary<String, Any> {
+
+      if let shieldConfiguration = action["shieldConfiguration_\(shieldId)"] as? [String: Any] {
         // update default shield
         userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
       }
-      
-      if let shieldActions = action["shieldActions_\(shieldId)"] as? Dictionary<String, Any> {
+
+      if let shieldActions = action["shieldActions_\(shieldId)"] as? [String: Any] {
         userDefaults?.set(shieldActions, forKey: "shieldActions")
       }
-      
+
       blockSelectedApps(activitySelection: activitySelection)
     }
-  } else if(type == "unblockAllApps"){
+  } else if type == "unblockAllApps" {
     unblockAllApps()
-  } else if(type == "openApp"){
+  } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
 
@@ -50,18 +50,18 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
     let group = DispatchGroup()
     group.enter()
     _ = group.wait(timeout: .now() + delay)
-  } else if(type == "blockAllApps"){
+  } else if type == "blockAllApps" {
     blockAllApps()
-  } else if(type == "sendNotification"){
+  } else if type == "sendNotification" {
     if let notification = action["payload"] as? [String: Any] {
       sendNotification(contents: notification, placeholders: placeholders)
     }
-  } else if(type == "sendHttpRequest"){
+  } else if type == "sendHttpRequest" {
     if let url = action["url"] as? String {
       let config = action["options"] as? [String: Any] ?? [:]
-      
+
       task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
-      
+
       // hack to let the request finish
       let delay = DispatchTimeInterval.seconds(2)
       let group = DispatchGroup()
@@ -71,18 +71,18 @@ func executeAction(action: Dictionary<String, Any>, placeholders: Dictionary<Str
   }
 }
 
-func openUrl(urlString: String){
+func openUrl(urlString: String) {
   guard let url = URL(string: urlString) else {
-    return //be safe
+    return // be safe
   }
-  
+
   /*let context = NSExtensionContext()
    context.open(url) { success in
    
    }*/
-  
+
   let application = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
-  
+
   if #available(iOS 10.0, *) {
     application.open(url, options: [:], completionHandler: nil)
   } else {
@@ -90,121 +90,121 @@ func openUrl(urlString: String){
   }
 }
 
-func sendNotification(contents: [String: Any], placeholders: [String: String?]){
+func sendNotification(contents: [String: Any], placeholders: [String: String?]) {
   let content = UNMutableNotificationContent()
-  
+
   if let title = contents["title"] as? String {
     content.title = replacePlaceholders(title, with: placeholders)
   }
-  
+
   if let subtitle = contents["subtitle"] as? String {
     content.subtitle = replacePlaceholders(subtitle, with: placeholders)
   }
-  
+
   if let body = contents["body"] as? String {
     content.body = replacePlaceholders(body, with: placeholders)
   }
-  
+
   if let sound = contents["sound"] as? String {
-    if(sound == "default"){
+    if sound == "default" {
       content.sound = .default
     }
-    if(sound == "defaultCritical"){
+    if sound == "defaultCritical" {
       content.sound = .defaultCritical
     }
     if #available(iOS 15.2, *) {
-      if(sound == "defaultRingtone"){
+      if sound == "defaultRingtone" {
         content.sound = .defaultRingtone
       }
     }
   }
-  
+
   if let categoryIdentifier = contents["categoryIdentifier"] as? String {
     content.categoryIdentifier = categoryIdentifier
   }
-  
+
   if let badge = contents["badge"] as? NSNumber {
     content.badge = badge
   }
-  
+
   if let userInfo = contents["userInfo"] as? [String: Any] {
     content.userInfo = userInfo
   }
-  
+
   if #available(iOS 15.0, *) {
     if let interruptionLevel = contents["interruptionLevel"] as? String {
-      if(interruptionLevel == "active"){
+      if interruptionLevel == "active" {
         content.interruptionLevel = .active
       }
-      
-      if(interruptionLevel == "critical"){
+
+      if interruptionLevel == "critical" {
         content.interruptionLevel = .critical
       }
-      
-      if(interruptionLevel == "passive"){
+
+      if interruptionLevel == "passive" {
         content.interruptionLevel = .passive
       }
-      
-      if(interruptionLevel == "timeSensitive"){
+
+      if interruptionLevel == "timeSensitive" {
         content.interruptionLevel = .timeSensitive
       }
     }
   }
-  
+
   if let threadIdentifier = contents["threadIdentifier"] as? String {
     content.threadIdentifier = threadIdentifier
   }
-  
+
   if let launchImageName = contents["launchImageName"] as? String {
     content.launchImageName = launchImageName
   }
-  
+
   let identifier = contents["identifier"] as? String ?? UUID().uuidString
-  
+
   let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
-  
+
   UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
 }
 
 // dataRequest which sends request to given URL and convert to Decodable Object
 func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?]) -> URLSessionDataTask {
   // create the URL
-  let url = URL(string: url)! //change the URL
-  
+  let url = URL(string: url)! // change the URL
+
   // create the session object
   let session = URLSession.shared
-  
-  //Now create the URLRequest object using the URL object
+
+  // Now create the URLRequest object using the URL object
   var request = URLRequest(url: url)
-  
+
   if let httpMethod = config["httpMethod"] as? String {
     request.httpMethod = httpMethod
   }
-  
+
   if let body = config["body"] as? [String: Any] {
     let bodyWithPlaceholders = replacePlaceholdersInObject(body, with: placeholders)
     request.httpBody = try? JSONSerialization.data(withJSONObject: bodyWithPlaceholders, options: .prettyPrinted)
   }
-  
+
   if let headers = config["headers"] as? [String: String] {
     let headersWithPlaceholders = replacePlaceholdersInObject(headers, with: placeholders)
     // merge with existing headers
     request.allHTTPHeaderFields = request.allHTTPHeaderFields?.merging(headersWithPlaceholders, uniquingKeysWith: { $1 })
   }
-  
+
   // create dataTask using the session object to send data to the server
-  let task = session.dataTask(with: request, completionHandler: { data, response, error in
-    
+  let task = session.dataTask(with: request, completionHandler: { data, _, error in
+
     guard error == nil else {
       return
     }
-    
+
     guard let data = data else {
       return
     }
-    
+
     do {
-      //create json object from data
+      // create json object from data
       if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
         print(json)
       }
@@ -212,9 +212,9 @@ func sendHttpRequest(with url: String, config: [String: Any], placeholders: [Str
       print(error.localizedDescription)
     }
   })
-  
+
   task.resume()
-  
+
   return task
 }
 
@@ -230,7 +230,7 @@ struct TextToReplaceWithOptionalSpecialTreatment {
 }
 
 func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) -> TextToReplaceWithOptionalSpecialTreatment {
-  if(stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}") && stringToReplace.contains(":")){
+  if stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}") && stringToReplace.contains(":") {
     // remove prefix and suffix
     let trimmed = String(stringToReplace.dropFirst().dropLast())
     // split on : and return first part
@@ -252,7 +252,7 @@ func getTextToReplaceWithOptionalSpecialTreatment (_ stringToReplace: String) ->
  */
 func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholders: [String: String?]) -> [String: T] {
   var retVal = object
-  
+
   for (key, value) in object {
     if let value = value as? String {
       let textToReplaceWithOptionalSpecialTreatment = getTextToReplaceWithOptionalSpecialTreatment(value)
@@ -274,7 +274,7 @@ func replacePlaceholdersInObject<T: Any>(_ object: [String: T], with placeholder
       }
     }
   }
-  
+
   return retVal
 }
 
@@ -282,7 +282,7 @@ func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -
   let retVal = placeholders.reduce(text) { text, placeholder in
     text.replacingOccurrences(of: "{" + placeholder.key + "}", with: placeholder.value ?? placeholder.key)
   }
-  
+
   return retVal
 }
 
@@ -290,12 +290,12 @@ func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -
 let store = ManagedSettingsStore()
 
 @available(iOS 15.0, *)
-func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?]{
+func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?] {
   if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(forKey: "familyActivitySelectionToActivityNameMap") {
     return familyActivitySelectionToActivityNameMap.map { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
         let activitySelection = getActivitySelectionFromStr(familyActivitySelectionStr: familyActivitySelectionStr)
-        
+
         return SelectionWithActivityName(selection: activitySelection, activityName: key)
       }
       return nil
@@ -311,67 +311,66 @@ func getPossibleActivityName(
   categoryToken: ActivityCategoryToken?
 ) -> String? {
   let familyActivitySelectionToActivityNameMap = getFamilyActivitySelectionToActivityNameMap()
-  
+
   let foundIt = familyActivitySelectionToActivityNameMap.first(where: { (mapping) in
     if let mapping = mapping {
       if let applicationToken = applicationToken {
-        if(mapping.selection.applicationTokens.contains(applicationToken)){
+        if mapping.selection.applicationTokens.contains(applicationToken) {
           return true
         }
       }
-      
+
       if let webDomainToken = webDomainToken {
-        if(mapping.selection.webDomainTokens.contains(webDomainToken)){
+        if mapping.selection.webDomainTokens.contains(webDomainToken) {
           return true
         }
       }
-      
+
       if let categoryToken = categoryToken {
-        if(mapping.selection.categoryTokens.contains(categoryToken)){
+        if mapping.selection.categoryTokens.contains(categoryToken) {
           return true
         }
       }
     }
-    
+
     return false
   })
-  
+
   return foundIt??.activityName
 }
 
 @available(iOS 15.0, *)
 func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyActivitySelection {
   var activitySelection = FamilyActivitySelection()
-  
+
   let decoder = JSONDecoder()
   let data = Data(base64Encoded: familyActivitySelectionStr)
   do {
     activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-  }
-  catch {
+  } catch {
     logger.log("decode error \(error.localizedDescription)")
   }
-  
+
   return activitySelection
 }
 
 @available(iOS 15.0, *)
-func unblockAllApps(){
+func unblockAllApps() {
   store.shield.applicationCategories = nil
   store.shield.webDomainCategories = nil
-  
+
   store.shield.applications = nil
   store.shield.webDomains = nil
 }
 
 @available(iOS 15.0, *)
-func blockAllApps(){
+func blockAllApps() {
   store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
   store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
 }
 
 @available(iOS 15.0, *)
-func blockSelectedApps(activitySelection: FamilyActivitySelection){
+func blockSelectedApps(activitySelection: FamilyActivitySelection) {
   store.shield.applications = activitySelection.applicationTokens
   store.shield.webDomains = activitySelection.webDomainTokens
   store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(activitySelection.categoryTokens, except: Set())
@@ -384,7 +383,7 @@ func getColor(color: [String: Double]?) -> UIColor? {
     let green = color["green"] ?? 0
     let blue = color["blue"] ?? 0
     let alpha = color["alpha"] ?? 1
-    
+
     return UIColor(
       red: red / 255,
       green: green / 255,
@@ -392,7 +391,7 @@ func getColor(color: [String: Double]?) -> UIColor? {
       alpha: alpha
     )
   }
-  
+
   return nil
 }
 
@@ -403,26 +402,25 @@ enum Action {
 @available(iOS 15.0, *)
 struct ShieldActionConfig {
     var response: ShieldActionResponse
-    
+
     var actions: [Action]
 }
-
 
 @available(iOS 15.0, *)
 func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
   userDefaults?.set([
     "primaryButtonActionResponse": primary.response.rawValue,
-    "primaryButtonAction": primary.actions.map({ action in
+    "primaryButtonAction": primary.actions.map({ _ in
       return ["type": "unblockAll"]
     }),
     "secondaryButtonActionResponse": secondary.response.rawValue,
-    "secondaryButtonAction": secondary.actions.map({ action in
+    "secondaryButtonAction": secondary.actions.map({ _ in
       return ["type": "unblockAll"]
     })
   ], forKey: "shieldActionConfig")
 }
 
-func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil){
+func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName = eventName == nil
   ? "events_\(activityName)#\(callbackName)"
@@ -433,17 +431,17 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
 func traverseDirectory(at path: String) {
   do {
     let files = try FileManager.default.contentsOfDirectory(atPath: path)
-    
+
     for file in files {
       let fullPath = path + "/" + file
       var isDirectory: ObjCBool = false
-      
+
       if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) {
         if isDirectory.boolValue {
           print("\(fullPath) is a directory")
           // Recursively traverse subdirectory
           traverseDirectory(at: fullPath)
-        } else if(fullPath.hasSuffix("png")) {
+        } else if fullPath.hasSuffix("png") {
           print("\(fullPath) is a file")
         }
       } else {
@@ -463,15 +461,15 @@ func getAppGroupDirectory() -> URL? {
 
 func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {
   let appGroupDirectory = getAppGroupDirectory()
-  
+
   let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
-  
+
   // Load the image data
   guard let imageData = try? Data(contentsOf: fileURL) else {
     print("Error: Could not load data from \(fileURL.path)")
     return nil
   }
-  
+
   // Create and return the UIImage
   return UIImage(data: imageData)
 }
@@ -481,40 +479,40 @@ func loadImageFromBundle(assetName: String) -> UIImage? {
   let bundle = Bundle.main
   // Bundle.main.
   guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else { return nil }
-  
+
   logger.info("Found \(fURL.count) png files in bundle")
-  
+
   traverseDirectory(at: Bundle.main.bundlePath)
-  
+
   for url in fURL {
     logger.info("url: \(url.lastPathComponent)")
   }
-  
+
   // Construct the file URL for the asset
   guard let filePath = bundle.path(forResource: assetName, ofType: "png") else {
     print("Error: Asset not found in bundle: \(assetName).png")
     return nil
   }
-  
+
   // Load image data
   guard let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
     print("Error: Could not load data from \(filePath)")
     return nil
   }
-  
+
   // Create UIImage from data
   return UIImage(data: imageData)
 }
 
 func loadImageFromFileSystem(filePath: String) -> UIImage? {
   let fileURL = URL(fileURLWithPath: filePath)
-  
+
   // Load data from the file URL
   guard let imageData = try? Data(contentsOf: fileURL) else {
     print("Error: Could not load data from \(filePath)")
     return nil
   }
-  
+
   // Create UIImage from the data
   return UIImage(data: imageData)
 }
@@ -525,25 +523,25 @@ func loadImageFromRemoteURL(urlString: String, completion: @escaping (UIImage?) 
     completion(nil)
     return
   }
-  
-  let task = URLSession.shared.dataTask(with: url) { data, response, error in
+
+  let task = URLSession.shared.dataTask(with: url) { data, _, error in
     // Handle errors
     if let error = error {
       print("Error fetching image from URL: \(error)")
       completion(nil)
       return
     }
-    
+
     // Validate data
     guard let imageData = data, let image = UIImage(data: imageData) else {
       print("Error: Invalid image data from \(urlString)")
       completion(nil)
       return
     }
-    
+
     completion(image)
   }
-  
+
   task.resume()
 }
 
@@ -552,34 +550,32 @@ func loadImageFromRemoteURLSynchronously(urlString: String) -> UIImage? {
     logger.info("Error: Invalid URL string")
     return nil
   }
-  
-  var image: UIImage? = nil
+
+  var image: UIImage?
   let semaphore = DispatchSemaphore(value: 0)
-  
+
   logger.info("Getting image")
-  
-  let task = URLSession.shared.dataTask(with: url) { data, response, error in
+
+  let task = URLSession.shared.dataTask(with: url) { data, _, error in
     // Handle errors
     if let error = error {
       logger.info("Error fetching image: \(error)")
     }
-    
-    
-    
+
     // Validate data
     if let imageData = data {
       logger.info("Got image")
       image = UIImage(data: imageData)
     }
-    
+
     // Signal the semaphore to release the lock
     semaphore.signal()
   }
-  
+
   task.resume()
-  
+
   // Wait for the task to complete
   semaphore.wait()
-  
+
   return image
 }

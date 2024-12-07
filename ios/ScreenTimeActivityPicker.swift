@@ -12,11 +12,11 @@ import SwiftUI
 @available(iOS 15.0, *)
 class ScreenTimeSelectAppsModel: ObservableObject {
     @Published var activitySelection = FamilyActivitySelection()
-    
+
     @Published public var footerText: String?
-    
+
     @Published public var headerText: String?
-    
+
     init() { }
 }
 
@@ -28,12 +28,11 @@ struct InnerView: View {
     }
 }
 
-
 @available(iOS 15.0, *)
 struct ScreenTimeSelectAppsContentView: View {
     @State private var pickerIsPresented = false
     @ObservedObject var model: ScreenTimeSelectAppsModel
-    
+
     var body: some View {
         if #available(iOS 16.0, *) {
             InnerView()
@@ -46,8 +45,7 @@ struct ScreenTimeSelectAppsContentView: View {
                     isPresented: $pickerIsPresented,
                     selection: $model.activitySelection
                 )
-        }
-        else {
+        } else {
             InnerView()
                 .onTapGesture {
                     pickerIsPresented = true
