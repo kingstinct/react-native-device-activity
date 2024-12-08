@@ -450,8 +450,8 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName =
     eventName == nil
-    ? "events_\(activityName)#\(callbackName)"
-    : "events_\(activityName)#\(callbackName)#\(eventName!)"
+    ? "events_\(activityName)_\(callbackName)"
+    : "events_\(activityName)_\(callbackName)_\(eventName!)"
   userDefaults?.set(now, forKey: fullEventName)
 }
 

@@ -24,15 +24,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
   }
 
-  func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
-    let now = (Date().timeIntervalSince1970 * 1000).rounded()
-    let fullEventName =
-      eventName == nil
-      ? "events_\(activityName)#\(callbackName)"
-      : "events_\(activityName)#\(callbackName)#\(eventName!)"
-    userDefaults?.set(now, forKey: fullEventName)
-  }
-
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     logger.log("intervalDidStart")
