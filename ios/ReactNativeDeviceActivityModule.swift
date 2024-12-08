@@ -308,9 +308,9 @@ public class ReactNativeDeviceActivityModule: Module {
     Function("userDefaultsClearWithPrefix") { (prefix: String) in
       let dictionary = userDefaults?.dictionaryRepresentation()
       dictionary?.keys.forEach { key in
-          if key.starts(with: prefix) {
+        if key.starts(with: prefix) {
           userDefaults?.removeObject(forKey: key)
-            
+
         }
       }
     }
