@@ -61,6 +61,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - run: yarn install
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
