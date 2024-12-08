@@ -88,7 +88,7 @@ jobs:
       - run: pod install
         working-directory: example/ios
       
-      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme reactnativedeviceactivityexample -allowProvisioningUpdates
+      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 16"
         working-directory: example/ios
 
 
