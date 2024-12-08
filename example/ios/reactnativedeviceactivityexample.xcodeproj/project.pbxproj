@@ -334,7 +334,7 @@
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				2630F72D7A63C7E314D5BAC4 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
-				A9B0421B2D04CD5F00AB6328 /* SwiftLint */,
+				A9BF3BE12D05210500611B0F /* SwiftLint */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
@@ -359,6 +359,7 @@
 			buildConfigurationList = 8A17866BF9A04A8CA2A49157 /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */;
 			buildPhases = (
 				E87B628F0597447DB98AACE3 /* Sources */,
+				A9BF3BE22D0521A900611B0F /* SwiftLint */,
 				C16C057284E44BB4A80B1F4A /* Frameworks */,
 				B7A47D5A75F34E79911489AE /* Resources */,
 			);
@@ -584,7 +585,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A9B0421B2D04CD5F00AB6328 /* SwiftLint */ = {
+		A9BF3BE12D05210500611B0F /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -600,7 +601,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Pods/swiftlint\n";
+			shellScript = "./Pods/SwiftLint/swiftlint\n";
+		};
+		A9BF3BE22D0521A900611B0F /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Pods/SwiftLint/swiftlint\n";
 		};
 		DC6C57584D7EC65201A20BD6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
