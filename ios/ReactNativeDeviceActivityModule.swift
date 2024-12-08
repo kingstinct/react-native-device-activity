@@ -272,7 +272,7 @@ public class ReactNativeDeviceActivityModule: Module {
       }
 
       let filteredDict = actualDict.filter({ (key: String, _: Any) in
-        return key.starts(with: activityName == nil ? "events_" : "events_\(activityName!)#")
+        return key.starts(with: activityName == nil ? "events_" : "events_\(activityName!)_")
       }).reduce(into: [:]) { (result, element) in
         let (key, value) = element
         result[key] = value as? NSNumber  // Add key-value pair to the result dictionary
@@ -308,9 +308,9 @@ public class ReactNativeDeviceActivityModule: Module {
     Function("userDefaultsClearWithPrefix") { (prefix: String) in
       let dictionary = userDefaults?.dictionaryRepresentation()
       dictionary?.keys.forEach { key in
-          if key.starts(with: prefix) {
+        if key.starts(with: prefix) {
           userDefaults?.removeObject(forKey: key)
-            
+
         }
       }
     }

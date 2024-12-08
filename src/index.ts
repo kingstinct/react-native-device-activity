@@ -50,7 +50,7 @@ export function getEvents(
   );
 
   const eventsParsed = Object.keys(events).map((key) => {
-    const [, activityName, callbackName, eventName] = key.split("#");
+    const [, activityName, callbackName, eventName] = key.split("_");
     return {
       activityName,
       callbackName: callbackName as CallbackEventName,

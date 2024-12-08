@@ -23,7 +23,9 @@
     "react-native-device-activity",
     "ReactNativeDeviceActivity"
   ],
-  "repository": "https://github.com/kingstinct/react-native-device-activity",
+  "repository": {
+    "url": "https://github.com/kingstinct/react-native-device-activity"
+  },
   "bugs": {
     "url": "https://github.com/kingstinct/react-native-device-activity/issues"
   },
@@ -38,12 +40,13 @@
     "expo-constants": "^16.0.2"
   },
   "devDependencies": {
-    "@types/react": "^18.0.25",
+    "@types/react": "~18.2.79",
     "eslint": "8",
-    "expo": "^51.0.38",
+    "expo": "~51.0.39",
     "expo-module-scripts": "^3.5.2",
     "expo-modules-core": "^1.12.24",
     "husky": "^9.1.7",
+    "pkg-pr-new": "^0.0.35",
     "prettier": "^3.3.3",
     "react": "18.2.0",
     "react-native": "0.74.5"

@@ -31,12 +31,14 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
       let shieldId = action["shieldId"] ?? "default"
 
-      if let shieldConfiguration = action["shieldConfiguration_\(shieldId)"] as? [String: Any] {
+      if let shieldConfiguration = userDefaults?.dictionary(
+        forKey: "shieldConfiguration_\(shieldId)") {
         // update default shield
         userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
       }
 
-      if let shieldActions = action["shieldActions_\(shieldId)"] as? [String: Any] {
+      if let shieldActions = userDefaults?.dictionary(
+        forKey: "shieldActions_\(shieldId)") {
         userDefaults?.set(shieldActions, forKey: "shieldActions")
       }
 
@@ -448,8 +450,8 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName =
     eventName == nil
-    ? "events_\(activityName)#\(callbackName)"
-    : "events_\(activityName)#\(callbackName)#\(eventName!)"
+    ? "events_\(activityName)_\(callbackName)"
+    : "events_\(activityName)_\(callbackName)_\(eventName!)"
   userDefaults?.set(now, forKey: fullEventName)
 }
 

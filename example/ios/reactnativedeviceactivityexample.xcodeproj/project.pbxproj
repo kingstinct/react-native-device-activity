@@ -100,10 +100,10 @@
 		86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../targets/ShieldConfiguration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
 		A9A030712CFF142000D9E7E8 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A9B2DBE72CECAE610001BBAF /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = "../../ios/Shared.swift"; sourceTree = "<absolute>"; };
-		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = "../../targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift"; sourceTree = "<absolute>"; };
-		A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = "../../targets/ShieldConfiguration/ShieldConfigurationExtension.swift"; sourceTree = "<absolute>"; };
-		A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = "../../targets/ShieldAction/ShieldActionExtension.swift"; sourceTree = "<absolute>"; };
+		A9B2DBE72CECAE610001BBAF /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = ../../ios/Shared.swift; sourceTree = "<absolute>"; };
+		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = ../../targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift; sourceTree = "<absolute>"; };
+		A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = ../../targets/ShieldConfiguration/ShieldConfigurationExtension.swift; sourceTree = "<absolute>"; };
+		A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = ../../targets/ShieldAction/ShieldActionExtension.swift; sourceTree = "<absolute>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = reactnativedeviceactivityexample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEB321985C804DE4AB33EC69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA3FB2A82413462F881AEB5A /* reactnativedeviceactivityexample-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "reactnativedeviceactivityexample-Bridging-Header.h"; path = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -118,6 +118,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A9A030722CFF142000D9E7E8 /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Tests;
 			sourceTree = "<group>";
 		};
@@ -969,7 +971,10 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -1028,7 +1033,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

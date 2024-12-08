@@ -24,15 +24,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
   }
 
-  func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
-    let now = (Date().timeIntervalSince1970 * 1000).rounded()
-    let fullEventName =
-      eventName == nil
-      ? "events_\(activityName)#\(callbackName)"
-      : "events_\(activityName)#\(callbackName)#\(eventName!)"
-    userDefaults?.set(now, forKey: fullEventName)
-  }
-
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     logger.log("intervalDidStart")
@@ -61,12 +52,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
   }
 
-  func  executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil) {
+  func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil) {
     let key =
       eventName != nil
       ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)"
-      :  "actions_for_\(activityName)_\(callbackName)"
-    
+      : "actions_for_\(activityName)_\(callbackName)"
+
     let placeholders = [
       "activityName": activityName, "callbackName": callbackName, "eventName": eventName
     ]
