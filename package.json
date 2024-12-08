@@ -23,7 +23,9 @@
     "react-native-device-activity",
     "ReactNativeDeviceActivity"
   ],
-  "repository": "https://github.com/kingstinct/react-native-device-activity",
+  "repository": {
+    "url": "https://github.com/kingstinct/react-native-device-activity"
+  },
   "bugs": {
     "url": "https://github.com/kingstinct/react-native-device-activity/issues"
   },
