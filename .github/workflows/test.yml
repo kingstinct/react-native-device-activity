@@ -41,6 +41,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: example/package-lock.json
 
       - uses: actions/cache@v4
         with:
@@ -50,7 +51,7 @@ jobs:
             ${{ runner.os }}-pods-
       
       - run: npm install
-        working-directory: example/ios
+        working-directory: example
       
       - run: pod install
         working-directory: example/ios
@@ -73,6 +74,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: example/package-lock.json
 
       - uses: actions/cache@v4
         with:
@@ -91,7 +93,7 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
       
       - run: npm install
-        working-directory: example/ios
+        working-directory: example
       
       - run: pod install
         working-directory: example/ios
