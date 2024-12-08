@@ -89,6 +89,11 @@ jobs:
       - name: Show current version of Xcode
         run: xcodebuild -version
 
+      - uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+
       - name: Set up Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
       
