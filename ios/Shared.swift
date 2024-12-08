@@ -31,12 +31,14 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
       let shieldId = action["shieldId"] ?? "default"
 
-      if let shieldConfiguration = action["shieldConfiguration_\(shieldId)"] as? [String: Any] {
+      if let shieldConfiguration = userDefaults?.dictionary(
+        forKey: "shieldConfiguration_\(shieldId)") {
         // update default shield
         userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
       }
 
-      if let shieldActions = action["shieldActions_\(shieldId)"] as? [String: Any] {
+      if let shieldActions = userDefaults?.dictionary(
+        forKey: "shieldActions_\(shieldId)") {
         userDefaults?.set(shieldActions, forKey: "shieldActions")
       }
 
