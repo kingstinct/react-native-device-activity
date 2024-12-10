@@ -487,6 +487,11 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("isShieldActiveWithSelection") { (familyActivitySelectionStr: String) -> Bool in
+      let isShieldActive = isShieldActive()
+      if !isShieldActive {
+        return false
+      }
+
       let selection = getActivitySelectionFromStr(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
