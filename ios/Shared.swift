@@ -85,6 +85,24 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   }
 }
 
+@available(iOS 15.0, *)
+func isShieldActive() -> Bool {
+  let areAnyApplicationsShielded =
+    store.shield.applications != nil && store.shield.applications!.count > 0
+  let areAnyWebDomainsShielded =
+    store.shield.webDomains != nil && store.shield.webDomains!.count > 0
+  let areAnyApplicationCategoriesShielded =
+    store.shield.applicationCategories != nil
+    && store.shield.applicationCategories
+      != ShieldSettings.ActivityCategoryPolicy<Application>.none
+  let areAnyWebDomainCategoriesShielded =
+    store.shield.webDomainCategories != nil
+    && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+
+  return areAnyApplicationsShielded || areAnyWebDomainsShielded
+    || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
+}
+
 func openUrl(urlString: String) {
   guard let url = URL(string: urlString) else {
     return  // be safe

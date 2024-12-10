@@ -470,25 +470,12 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("isShieldActive") {
-      let areAnyApplicationsShielded =
-        store.shield.applications != nil && store.shield.applications!.count > 0
-      let areAnyWebDomainsShielded =
-        store.shield.webDomains != nil && store.shield.webDomains!.count > 0
-      let areAnyApplicationCategoriesShielded =
-        store.shield.applicationCategories != nil
-        && store.shield.applicationCategories
-          != ShieldSettings.ActivityCategoryPolicy<Application>.none
-      let areAnyWebDomainCategoriesShielded =
-        store.shield.webDomainCategories != nil
-        && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
-
-      return areAnyApplicationsShielded || areAnyWebDomainsShielded
-        || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
+      return isShieldActive()
     }
 
     Function("isShieldActiveWithSelection") { (familyActivitySelectionStr: String) -> Bool in
-      let isShieldActive = isShieldActive()
-      if !isShieldActive {
+      let _isShieldActive = isShieldActive()
+      if !_isShieldActive {
         return false
       }
 
