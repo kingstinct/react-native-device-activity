@@ -158,6 +158,7 @@ export type Action =
     }
   | {
       type: "blockAllApps";
+      shieldId?: string;
     }
   | {
       type: "sendNotification";

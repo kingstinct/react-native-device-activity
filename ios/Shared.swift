@@ -20,6 +20,28 @@ let logger = Logger(
 
 var task: URLSessionDataTask?
 
+func updateShield(shieldId: String?) {
+  let shieldId = shieldId ?? "default"
+
+  if let shieldConfiguration = userDefaults?.dictionary(
+    forKey: "shieldConfiguration_\(shieldId)") {
+    // update default shield
+    userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+  }
+
+  if let shieldActions = userDefaults?.dictionary(
+    forKey: "shieldActions_\(shieldId)") {
+    userDefaults?.set(shieldActions, forKey: "shieldActions")
+  }
+}
+
+func sleep(ms: Int) {
+  let delay = DispatchTimeInterval.milliseconds(ms)
+  let group = DispatchGroup()
+  group.enter()
+  _ = group.wait(timeout: .now() + delay)
+}
+
 @available(iOS 15.0, *)
 func executeAction(action: [String: Any], placeholders: [String: String?]) {
   let type = action["type"] as? String
@@ -29,18 +51,9 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
       let activitySelection = getActivitySelectionFromStr(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
-      let shieldId = action["shieldId"] ?? "default"
+      updateShield(shieldId: action["shieldId"] as? String)
 
-      if let shieldConfiguration = userDefaults?.dictionary(
-        forKey: "shieldConfiguration_\(shieldId)") {
-        // update default shield
-        userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
-      }
-
-      if let shieldActions = userDefaults?.dictionary(
-        forKey: "shieldActions_\(shieldId)") {
-        userDefaults?.set(shieldActions, forKey: "shieldActions")
-      }
+      sleep(ms: 50)
 
       blockSelectedApps(activitySelection: activitySelection)
     }
@@ -50,11 +63,12 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
 
-    let delay = DispatchTimeInterval.seconds(2)
-    let group = DispatchGroup()
-    group.enter()
-    _ = group.wait(timeout: .now() + delay)
+    sleep(ms: 1000)
   } else if type == "blockAllApps" {
+    updateShield(shieldId: action["shieldId"] as? String)
+
+    sleep(ms: 50)
+
     blockAllApps()
   } else if type == "sendNotification" {
     if let notification = action["payload"] as? [String: Any] {
@@ -66,11 +80,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
       task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
 
-      // hack to let the request finish
-      let delay = DispatchTimeInterval.seconds(2)
-      let group = DispatchGroup()
-      group.enter()
-      _ = group.wait(timeout: .now() + delay)
+      sleep(ms: 1000)
     }
   }
 }
