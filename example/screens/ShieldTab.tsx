@@ -67,7 +67,7 @@ export function ShieldTab() {
 
   const onSubmitEditing = useCallback(
     () =>
-      ReactNativeDeviceActivity.updateShieldConfiguration(
+      ReactNativeDeviceActivity.updateShield(
         {
           title: shieldTitle,
           backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,

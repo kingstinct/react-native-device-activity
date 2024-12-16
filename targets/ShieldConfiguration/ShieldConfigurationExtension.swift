@@ -104,7 +104,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": application.localizedDisplayName,
       "token": "\(application.token!.hashValue)",
       "tokenType": "application",
-      "activityName": getPossibleActivityName(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
         applicationToken: application.token,
         webDomainToken: nil,
         categoryToken: nil
@@ -127,7 +127,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": application.localizedDisplayName,
       "token": "\(category.token!.hashValue)",
       "tokenType": "application_category",
-      "activityName": getPossibleActivityName(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
         applicationToken: application.token,
         webDomainToken: nil,
         categoryToken: category.token
@@ -148,7 +148,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": webDomain.domain,
       "token": "\(webDomain.token!.hashValue)",
       "tokenType": "web_domain",
-      "activityName": getPossibleActivityName(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
         applicationToken: nil,
         webDomainToken: webDomain.token,
         categoryToken: nil
@@ -172,7 +172,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": webDomain.domain,
       "token": "\(category.token!.hashValue)",
       "tokenType": "web_domain_category",
-      "activityName": getPossibleActivityName(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
         applicationToken: nil,
         webDomainToken: webDomain.token,
         categoryToken: category.token

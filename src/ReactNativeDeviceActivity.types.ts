@@ -150,7 +150,7 @@ export type ShieldActions = {
 export type Action =
   | {
       type: "blockSelection";
-      familyActivitySelection: string;
+      familyActivitySelectionId: string;
       shieldId?: string;
     }
   | {
