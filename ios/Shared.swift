@@ -54,6 +54,8 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
         sleep(ms: 50)
 
         blockSelectedApps(activitySelection: activitySelection)
+      } else {
+        logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
     }
   } else if type == "unblockAllApps" {
@@ -66,6 +68,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   } else if type == "blockAllApps" {
     updateShield(shieldId: action["shieldId"] as? String)
 
+    // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
 
     blockAllApps()
@@ -342,7 +345,7 @@ let store = ManagedSettingsStore()
 func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
   if let familyActivitySelectionIds = userDefaults?.dictionary(
     forKey: "familyActivitySelectionIds") {
-    return familyActivitySelectionIds.map { (key: String, value: Any) in
+    return familyActivitySelectionIds.compactMap { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
         let activitySelection = getActivitySelectionFromStr(
           familyActivitySelectionStr: familyActivitySelectionStr)
@@ -358,17 +361,11 @@ func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
   if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds") {
-    if let pair =
-      familyActivitySelectionIds
-      .first(where: { (key: String, _: Any) in
-        return key == id
-      }) {
-      if let familyActivitySelectionStr = pair.value as? String {
-        let activitySelection = getActivitySelectionFromStr(
-          familyActivitySelectionStr: familyActivitySelectionStr
-        )
-        return activitySelection
-      }
+    if let familyActivitySelectionStr = familyActivitySelectionIds[id] as? String {
+      let activitySelection = getActivitySelectionFromStr(
+        familyActivitySelectionStr: familyActivitySelectionStr
+      )
+      return activitySelection
     }
   }
   return nil
