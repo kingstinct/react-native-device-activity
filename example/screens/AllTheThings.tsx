@@ -38,7 +38,7 @@ export function requestPermissionsAsync() {
 /* console.log(
   JSON.stringify(
     ReactNativeDeviceActivity.userDefaultsGet(
-      "familyActivitySelectionToActivityNameMap",
+      "familyActivitySelectionIds",
     ),
     null,
     2,
@@ -223,7 +223,7 @@ export function AllTheThings() {
         <Button
           title="Start monitoring"
           disabled={!familyActivitySelection}
-          onPress={() => startMonitoring(familyActivitySelection!)}
+          // onPress={() => startMonitoring(familyActivitySelection!)}
         />
 
         <Button
@@ -263,7 +263,7 @@ export function AllTheThings() {
           onChangeText={(text) => setShieldTitle(text)}
           value={shieldTitle}
           onSubmitEditing={() =>
-            ReactNativeDeviceActivity.updateShieldConfiguration(
+            ReactNativeDeviceActivity.updateShield(
               {
                 title: shieldTitle,
                 backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
@@ -320,9 +320,7 @@ export function AllTheThings() {
           }}
           headerText="a header text!"
           footerText="a footer text!"
-          onSelectionChange={(
-            event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
-          ) => {
+          onSelectionChange={(event) => {
             if (
               event.nativeEvent.familyActivitySelection !==
               familyActivitySelection

@@ -158,21 +158,21 @@ export const cleanUpAfterActivity = (activityName: string) => {
   );
 };
 
-export const updateFamilyActivitySelectionToActivityNameMap = ({
-  activityName,
+export const setFamilyActivitySelectionId = ({
+  id,
   familyActivitySelection,
 }: {
-  activityName: string;
+  id: string;
   familyActivitySelection: string;
 }) => {
   const previousValue =
     (ReactNativeDeviceActivityModule.userDefaultsGet(
-      "familyActivitySelectionToActivityNameMap",
+      "familyActivitySelectionIds",
     ) as Record<string, string>) ?? {};
 
-  userDefaultsSet("familyActivitySelectionToActivityNameMap", {
+  userDefaultsSet("familyActivitySelectionIds", {
     ...previousValue,
-    [activityName]: familyActivitySelection,
+    [id]: familyActivitySelection,
   });
 };
 
