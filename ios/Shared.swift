@@ -47,15 +47,14 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   let type = action["type"] as? String
 
   if type == "blockSelection" {
-    if let familyActivitySelectionStr = action["familyActivitySelection"] as? String {
-      let activitySelection = getActivitySelectionFromStr(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
+      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
+        updateShield(shieldId: action["shieldId"] as? String)
 
-      updateShield(shieldId: action["shieldId"] as? String)
+        sleep(ms: 50)
 
-      sleep(ms: 50)
-
-      blockSelectedApps(activitySelection: activitySelection)
+        blockSelectedApps(activitySelection: activitySelection)
+      }
     }
   } else if type == "unblockAllApps" {
     unblockAllApps()
@@ -80,6 +79,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
       task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
 
+      // required for it to have time to trigger before process/callback ends
       sleep(ms: 1000)
     }
   }
@@ -258,9 +258,9 @@ func sendHttpRequest(with url: String, config: [String: Any], placeholders: [Str
 }
 
 @available(iOS 15.0, *)
-struct SelectionWithActivityName {
+struct FamilyActivitySelectionWithId {
   var selection: FamilyActivitySelection
-  var activityName: String
+  var id: String
 }
 
 struct TextToReplaceWithOptionalSpecialTreatment {
@@ -339,15 +339,15 @@ func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -
 let store = ManagedSettingsStore()
 
 @available(iOS 15.0, *)
-func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName?] {
-  if let familyActivitySelectionToActivityNameMap = userDefaults?.dictionary(
-    forKey: "familyActivitySelectionToActivityNameMap") {
-    return familyActivitySelectionToActivityNameMap.map { (key: String, value: Any) in
+func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
+  if let familyActivitySelectionIds = userDefaults?.dictionary(
+    forKey: "familyActivitySelectionIds") {
+    return familyActivitySelectionIds.map { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
         let activitySelection = getActivitySelectionFromStr(
           familyActivitySelectionStr: familyActivitySelectionStr)
 
-        return SelectionWithActivityName(selection: activitySelection, activityName: key)
+        return FamilyActivitySelectionWithId(selection: activitySelection, id: key)
       }
       return nil
     }
@@ -356,14 +356,33 @@ func getFamilyActivitySelectionToActivityNameMap() -> [SelectionWithActivityName
 }
 
 @available(iOS 15.0, *)
-func getPossibleActivityName(
+func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
+  if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds") {
+    if let pair =
+      familyActivitySelectionIds
+      .first(where: { (key: String, _: Any) in
+        return key == id
+      }) {
+      if let familyActivitySelectionStr = pair.value as? String {
+        let activitySelection = getActivitySelectionFromStr(
+          familyActivitySelectionStr: familyActivitySelectionStr
+        )
+        return activitySelection
+      }
+    }
+  }
+  return nil
+}
+
+@available(iOS 15.0, *)
+func getPossibleFamilyActivitySelectionId(
   applicationToken: ApplicationToken?,
   webDomainToken: WebDomainToken?,
   categoryToken: ActivityCategoryToken?
 ) -> String? {
-  let familyActivitySelectionToActivityNameMap = getFamilyActivitySelectionToActivityNameMap()
+  let familyActivitySelectionIds = getFamilyActivitySelectionIds()
 
-  let foundIt = familyActivitySelectionToActivityNameMap.first(where: { (mapping) in
+  let foundIt = familyActivitySelectionIds.first(where: { (mapping) in
     if let mapping = mapping {
       if let applicationToken = applicationToken {
         if mapping.selection.applicationTokens.contains(applicationToken) {
@@ -387,7 +406,7 @@ func getPossibleActivityName(
     return false
   })
 
-  return foundIt??.activityName
+  return foundIt??.id
 }
 
 @available(iOS 15.0, *)

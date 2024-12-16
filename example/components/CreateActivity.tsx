@@ -18,7 +18,7 @@ const startMonitoring = async (
 ) => {
   await requestPermissionsAsync();
 
-  // ReactNativeDeviceActivity.updateFamilyActivitySelectionToActivityNameMap({
+  // ReactNativeDeviceActivity.setFamilyActivitySelectionId({
   //   activityName,
   //   familyActivitySelection: activitySelection,
   // });
