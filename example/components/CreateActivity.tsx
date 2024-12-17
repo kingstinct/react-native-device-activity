@@ -68,6 +68,13 @@ const startMonitoring = async (
       ],
     });
 
+    /*
+    ReactNativeDeviceActivity.setFamilyActivitySelectionId({
+      id: activityName,
+      familyActivitySelection: activitySelection,
+    });
+    */
+
     ReactNativeDeviceActivity.configureActions({
       activityName,
       callbackName: "eventDidReachThreshold",
@@ -75,7 +82,7 @@ const startMonitoring = async (
       actions: [
         /*{
           type: "blockSelection",
-          familyActivitySelection: activitySelection,
+          familyActivitySelectionId: activityName,
           shieldActions: {
             primary: { type: "unblockAll", behavior: "defer" },
             secondary: { type: "dismiss", behavior: "close" },
