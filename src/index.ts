@@ -51,12 +51,13 @@ export function getEvents(
 
   const eventsParsed = Object.keys(events).map((key) => {
     const [, activityName, callbackName, eventName] = key.split("_");
+    const lastCalledAtVal = events[key] ?? 0;
     return {
       activityName,
       callbackName: callbackName as CallbackEventName,
       eventName,
-      lastCalledAt: new Date(events[key]),
-    };
+      lastCalledAt: new Date(lastCalledAtVal),
+    } as EventParsed;
   });
 
   return eventsParsed.sort(
@@ -174,6 +175,15 @@ export const setFamilyActivitySelectionId = ({
     ...previousValue,
     [id]: familyActivitySelection,
   });
+};
+
+export const getFamilyActivitySelectionId = (id: string) => {
+  const previousValue =
+    (ReactNativeDeviceActivityModule.userDefaultsGet(
+      "familyActivitySelectionIds",
+    ) as Record<string, string>) ?? {};
+
+  return previousValue[id];
 };
 
 export function getAppGroupFileDirectory(): string {

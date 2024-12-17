@@ -16,7 +16,7 @@ export type DeviceActivityMonitorEventPayload = {
 export type EventParsed = {
   activityName: string;
   callbackName: CallbackEventName;
-  eventName: string;
+  eventName?: string;
   lastCalledAt: Date;
 };
 
