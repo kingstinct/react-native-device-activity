@@ -30,7 +30,11 @@ func handleAction(action: ShieldAction, completionHandler: @escaping (ShieldActi
     if let configForSelectedAction = shieldActionConfig[
       action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
       let response = handleAction(configForSelectedAction: configForSelectedAction)
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      if let delay = configForSelectedAction["delay"] as? Double {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+          completionHandler(response)
+        }
+      } else {
         completionHandler(response)
       }
     } else {

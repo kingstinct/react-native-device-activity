@@ -139,6 +139,7 @@ export type ShieldActionType = "unblockAll" | "dismiss";
 
 export type ShieldAction = {
   type: ShieldActionType;
+  delay?: number;
   behavior: "close" | "defer";
 };
 
