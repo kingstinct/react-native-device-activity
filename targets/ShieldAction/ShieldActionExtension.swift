@@ -21,11 +21,11 @@ func handleAction(
     }
 
     if type == "unblockCurrentApp" {
-      let activeWhitelist = userDefaults?.string(forKey: "unblockedSelection")
+      let unblockedSelectionStr = userDefaults?.string(forKey: "unblockedSelection")
 
       var selection =
-        activeWhitelist != nil
-        ? deserializeFamilyActivitySelection(familyActivitySelectionStr: activeWhitelist!)
+        unblockedSelectionStr != nil
+        ? deserializeFamilyActivitySelection(familyActivitySelectionStr: unblockedSelectionStr!)
         : FamilyActivitySelection()
 
       if let applicationToken = applicationToken {

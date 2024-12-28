@@ -59,7 +59,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
         blockSelectedApps(
           blockSelection: activitySelection,
-          whitelistSelection: nil
+          unblockedSelection: nil
         )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
@@ -471,24 +471,24 @@ func blockAllApps() {
 @available(iOS 15.0, *)
 func blockSelectedApps(
   blockSelection: FamilyActivitySelection?,
-  whitelistSelection: FamilyActivitySelection?
+  unblockedSelection: FamilyActivitySelection?
 ) {
   store.shield.applications = blockSelection?.applicationTokens.filter({ token in
-    if let match = whitelistSelection?.applicationTokens.first(where: { $0 == token }) {
+    if let match = unblockedSelection?.applicationTokens.first(where: { $0 == token }) {
       return match == nil
     }
     return true
   })
 
   store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
-    if let match = whitelistSelection?.webDomainTokens.first(where: { $0 == token }) {
+    if let match = unblockedSelection?.webDomainTokens.first(where: { $0 == token }) {
       return match == nil
     }
     return true
   })
 
-  let applications = whitelistSelection?.applicationTokens ?? Set()
-  let webDomains = whitelistSelection?.webDomainTokens ?? Set()
+  let applications = unblockedSelection?.applicationTokens ?? Set()
+  let webDomains = unblockedSelection?.webDomainTokens ?? Set()
 
   if let blockSelection = blockSelection {
     store.shield.applicationCategories = .specific(
