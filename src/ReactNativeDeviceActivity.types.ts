@@ -135,7 +135,7 @@ export type DeviceActivityEvent = {
   includesPastActivity?: boolean;
 };
 
-export type ShieldActionType = "unblockAll" | "dismiss";
+export type ShieldActionType = "unblockAll" | "dismiss" | "unblockCurrentApp";
 
 export type ShieldAction = {
   type: ShieldActionType;

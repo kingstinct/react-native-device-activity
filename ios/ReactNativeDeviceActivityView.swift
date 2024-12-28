@@ -47,27 +47,15 @@ class ReactNativeDeviceActivityView: ExpoView {
   var previousSelection: FamilyActivitySelection?
 
   func updateSelection(selection: FamilyActivitySelection) {
-    let encoder = JSONEncoder()
-    do {
-      let json = try encoder.encode(selection)
-      let jsonString = json.base64EncodedString()
+    let familyActivitySelectionString = serializeFamilyActivitySelection(
+      selection: selection
+    )
 
-      let noneSeleted =
-        selection.applicationTokens.isEmpty && selection.categoryTokens.isEmpty
-        && selection.webDomainTokens.isEmpty
-
-      let familyActivitySelectionString = noneSeleted ? nil : jsonString
-
-      onSelectionChange([
-        "familyActivitySelection": familyActivitySelectionString as Any,
-        "applicationCount": selection.applicationTokens.count,
-        "categoryCount": selection.categoryTokens.count,
-        "webDomainCount": selection.webDomainTokens.count
-      ])
-    } catch {
-
-    }
-
-    // model.saveSelection(selection: selection)
+    onSelectionChange([
+      "familyActivitySelection": familyActivitySelectionString as Any,
+      "applicationCount": selection.applicationTokens.count,
+      "categoryCount": selection.categoryTokens.count,
+      "webDomainCount": selection.webDomainTokens.count
+    ])
   }
 }

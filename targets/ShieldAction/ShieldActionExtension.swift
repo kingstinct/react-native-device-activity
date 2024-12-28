@@ -5,14 +5,40 @@
 //  Created by Robert Herber on 2024-10-25.
 //
 
+import FamilyControls
 import ManagedSettings
 import UIKit
 
-func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionResponse {
+func handleAction(
+  configForSelectedAction: [String: Any],
+  applicationToken: ApplicationToken?,
+  webdomainToken: WebDomainToken?
+) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
     if type == "unblockAll" {
       unblockAllApps()
+    }
+
+    if type == "unblockCurrentApp" {
+      let activeWhitelist = userDefaults?.string(forKey: "activeWhitelist")
+
+      var selection =
+        activeWhitelist != nil
+        ? deserializeFamilyActivitySelection(familyActivitySelectionStr: activeWhitelist!)
+        : FamilyActivitySelection()
+
+      if let applicationToken = applicationToken {
+        selection.applicationTokens.insert(applicationToken)
+      }
+
+      if let webdomainToken = webdomainToken {
+        selection.webDomainTokens.insert(webdomainToken)
+      }
+
+      let serialized = serializeFamilyActivitySelection(selection: selection)
+
+      userDefaults?.set(serialized, forKey: "activeWhitelist")
     }
   }
 
@@ -25,11 +51,20 @@ func handleAction(configForSelectedAction: [String: Any]) -> ShieldActionRespons
   return .close
 }
 
-func handleAction(action: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+func handleAction(
+  action: ShieldAction,
+  completionHandler: @escaping (ShieldActionResponse) -> Void,
+  applicationToken: ApplicationToken?,
+  webdomainToken: WebDomainToken?
+) {
   if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
     if let configForSelectedAction = shieldActionConfig[
       action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
-      let response = handleAction(configForSelectedAction: configForSelectedAction)
+      let response = handleAction(
+        configForSelectedAction: configForSelectedAction,
+        applicationToken: applicationToken,
+        webdomainToken: webdomainToken
+      )
       if let delay = configForSelectedAction["delay"] as? Double {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
           completionHandler(response)
@@ -54,7 +89,12 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle application")
-    handleAction(action: action, completionHandler: completionHandler)
+    handleAction(
+      action: action,
+      completionHandler: completionHandler,
+      applicationToken: application,
+      webdomainToken: nil
+    )
   }
 
   override func handle(
@@ -62,7 +102,12 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle domain")
-    handleAction(action: action, completionHandler: completionHandler)
+    handleAction(
+      action: action,
+      completionHandler: completionHandler,
+      applicationToken: nil,
+      webdomainToken: webDomain
+    )
   }
 
   override func handle(
@@ -70,6 +115,11 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle category")
-    handleAction(action: action, completionHandler: completionHandler)
+    handleAction(
+      action: action,
+      completionHandler: completionHandler,
+      applicationToken: nil,
+      webdomainToken: nil
+    )
   }
 }

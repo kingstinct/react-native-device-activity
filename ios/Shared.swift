@@ -46,6 +46,10 @@ func sleep(ms: Int) {
 func executeAction(action: [String: Any], placeholders: [String: String?]) {
   let type = action["type"] as? String
 
+  if let sleepBefore = action["sleepBefore"] as? Int {
+    sleep(ms: sleepBefore)
+  }
+
   if type == "blockSelection" {
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
@@ -53,7 +57,10 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
         sleep(ms: 50)
 
-        blockSelectedApps(activitySelection: activitySelection)
+        blockSelectedApps(
+          blockSelection: activitySelection,
+          whitelistSelection: nil
+        )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
@@ -85,6 +92,10 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
       // required for it to have time to trigger before process/callback ends
       sleep(ms: 1000)
     }
+  }
+
+  if let sleepAfter = action["sleepAfter"] as? Int {
+    sleep(ms: sleepAfter)
   }
 }
 
@@ -347,7 +358,7 @@ func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
     forKey: "familyActivitySelectionIds") {
     return familyActivitySelectionIds.compactMap { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
-        let activitySelection = getActivitySelectionFromStr(
+        let activitySelection = deserializeFamilyActivitySelection(
           familyActivitySelectionStr: familyActivitySelectionStr)
 
         return FamilyActivitySelectionWithId(selection: activitySelection, id: key)
@@ -362,7 +373,7 @@ func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
 func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
   if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds") {
     if let familyActivitySelectionStr = familyActivitySelectionIds[id] as? String {
-      let activitySelection = getActivitySelectionFromStr(
+      let activitySelection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr
       )
       return activitySelection
@@ -407,7 +418,8 @@ func getPossibleFamilyActivitySelectionId(
 }
 
 @available(iOS 15.0, *)
-func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyActivitySelection {
+func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
+  -> FamilyActivitySelection {
   var activitySelection = FamilyActivitySelection()
 
   let decoder = JSONDecoder()
@@ -421,13 +433,31 @@ func getActivitySelectionFromStr(familyActivitySelectionStr: String) -> FamilyAc
   return activitySelection
 }
 
+func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> String? {
+  let encoder = JSONEncoder()
+  do {
+    let json = try encoder.encode(selection)
+    let jsonString = json.base64EncodedString()
+
+    let noneSeleted =
+      selection.applicationTokens.isEmpty && selection.categoryTokens.isEmpty
+      && selection.webDomainTokens.isEmpty
+
+    let familyActivitySelectionString = noneSeleted ? nil : jsonString
+
+    return familyActivitySelectionString
+  } catch {
+    return nil
+  }
+}
+
 @available(iOS 15.0, *)
 func unblockAllApps() {
   store.shield.applicationCategories = nil
   store.shield.webDomainCategories = nil
 
-  store.shield.applications = nil
-  store.shield.webDomains = nil
+  store.shield.applications = .none
+  store.shield.webDomains = .none
 }
 
 @available(iOS 15.0, *)
@@ -437,13 +467,44 @@ func blockAllApps() {
 }
 
 @available(iOS 15.0, *)
-func blockSelectedApps(activitySelection: FamilyActivitySelection) {
-  store.shield.applications = activitySelection.applicationTokens
-  store.shield.webDomains = activitySelection.webDomainTokens
-  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(
-    activitySelection.categoryTokens, except: Set())
-  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.specific(
-    activitySelection.categoryTokens, except: Set())
+func blockSelectedApps(
+  blockSelection: FamilyActivitySelection?,
+  whitelistSelection: FamilyActivitySelection?
+) {
+  store.shield.applications = blockSelection?.applicationTokens.filter({ token in
+    if let match = whitelistSelection?.applicationTokens.first(where: { $0 == token }) {
+      return match == nil
+    }
+    return true
+  })
+
+  store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
+    if let match = whitelistSelection?.webDomainTokens.first(where: { $0 == token }) {
+      return match == nil
+    }
+    return true
+  })
+
+  let applications = whitelistSelection?.applicationTokens ?? Set()
+  let webDomains = whitelistSelection?.webDomainTokens ?? Set()
+
+  if let blockSelection = blockSelection {
+    store.shield.applicationCategories = .specific(
+      blockSelection.categoryTokens,
+      except: applications
+    )
+    store.shield.webDomainCategories = .specific(
+      blockSelection.categoryTokens,
+      except: webDomains
+    )
+  } else {
+    store.shield.applicationCategories = .all(
+      except: applications
+    )
+    store.shield.webDomainCategories = .all(
+      except: webDomains
+    )
+  }
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {
