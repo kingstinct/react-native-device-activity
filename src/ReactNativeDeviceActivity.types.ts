@@ -153,16 +153,24 @@ export type Action =
       type: "blockSelection";
       familyActivitySelectionId: string;
       shieldId?: string;
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "unblockAllApps";
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "resetUnblockedSelection";
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "blockAllApps";
       shieldId?: string;
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "sendNotification";
@@ -180,9 +188,13 @@ export type Action =
         threadIdentifier?: string;
         subtitle?: string;
       };
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "openApp";
+      sleepBefore?: number;
+      sleepAfter?: number;
     }
   | {
       type: "sendHttpRequest";
@@ -192,6 +204,8 @@ export type Action =
         body?: Record<string, any>;
         headers?: Record<string, string>;
       };
+      sleepBefore?: number;
+      sleepAfter?: number;
     };
 
 export type DeviceActivityEventRaw = Omit<
