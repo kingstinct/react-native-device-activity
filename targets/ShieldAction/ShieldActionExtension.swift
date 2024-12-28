@@ -21,7 +21,7 @@ func handleAction(
     }
 
     if type == "unblockCurrentApp" {
-      let activeWhitelist = userDefaults?.string(forKey: "activeWhitelist")
+      let activeWhitelist = userDefaults?.string(forKey: "unblockedSelection")
 
       var selection =
         activeWhitelist != nil
@@ -38,7 +38,7 @@ func handleAction(
 
       let serialized = serializeFamilyActivitySelection(selection: selection)
 
-      userDefaults?.set(serialized, forKey: "activeWhitelist")
+      userDefaults?.set(serialized, forKey: "unblockedSelection")
     }
   }
 

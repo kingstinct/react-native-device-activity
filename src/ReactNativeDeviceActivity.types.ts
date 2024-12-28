@@ -158,6 +158,9 @@ export type Action =
       type: "unblockAllApps";
     }
   | {
+      type: "resetUnblockedSelection";
+    }
+  | {
       type: "blockAllApps";
       shieldId?: string;
     }

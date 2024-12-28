@@ -65,6 +65,8 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
     }
+  } else if type == "resetUnblockedSelection" {
+    userDefaults?.removeObject(forKey: "unblockedSelection")
   } else if type == "unblockAllApps" {
     unblockAllApps()
   } else if type == "openApp" {
