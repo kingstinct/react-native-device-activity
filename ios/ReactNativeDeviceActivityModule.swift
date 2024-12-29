@@ -479,7 +479,7 @@ public class ReactNativeDeviceActivityModule: Module {
         return false
       }
 
-      let selection = getActivitySelectionFromStr(
+      let selection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
       let areAnyApplicationsEqual =
@@ -514,10 +514,10 @@ public class ReactNativeDeviceActivityModule: Module {
 
     Function("blockApps") { (familyActivitySelectionStr: String?) in
       if let familyActivitySelectionStr {
-        let selection = getActivitySelectionFromStr(
+        let selection = deserializeFamilyActivitySelection(
           familyActivitySelectionStr: familyActivitySelectionStr)
 
-        blockSelectedApps(activitySelection: selection)
+        blockSelectedApps(blockSelection: selection, unblockedSelection: nil)
       } else {
         // block all apps
         blockAllApps()
@@ -560,7 +560,7 @@ public class ReactNativeDeviceActivityModule: Module {
       )
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelection") { (view: ReactNativeDeviceActivityView, prop: String) in
-        let selection = getActivitySelectionFromStr(familyActivitySelectionStr: prop)
+        let selection = deserializeFamilyActivitySelection(familyActivitySelectionStr: prop)
 
         view.model.activitySelection = selection
       }
