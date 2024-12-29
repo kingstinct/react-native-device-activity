@@ -435,6 +435,7 @@ func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
   return activitySelection
 }
 
+@available(iOS 15.0, *)
 func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> String? {
   let encoder = JSONEncoder()
   do {
