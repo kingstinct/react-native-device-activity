@@ -59,7 +59,8 @@ func handleAction(
 ) {
   if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
     if let configForSelectedAction = shieldActionConfig[
-      action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
+      action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any]
+    {
       let response = handleAction(
         configForSelectedAction: configForSelectedAction,
         applicationToken: applicationToken,

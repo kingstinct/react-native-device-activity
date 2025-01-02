@@ -33,9 +33,9 @@
   "license": "MIT",
   "homepage": "https://github.com/kingstinct/react-native-device-activity#readme",
   "dependencies": {
-    "@bacons/xcode": "^1.0.0-alpha.5",
+    "@bacons/xcode": "^1.0.0-alpha.24",
     "@expo/plist": "^0.1.3",
-    "@kingstinct/expo-apple-targets": "^0.0.5",
+    "@kingstinct/expo-apple-targets": "0",
     "@react-native/normalize-color": "^2.1.0",
     "expo-constants": "^16.0.2"
   },
