@@ -1,6 +1,5 @@
-/** @type {import('@kingstinct/expo-apple-targets/target-plugin/config').Config} */
-const withTargetPlugin =
-  require("@kingstinct/expo-apple-targets/target-plugin/build").default;
+/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
+const withTargetsDir = require("@kingstinct/expo-apple-targets/build/config-plugin");
 const { createRunOncePlugin } = require("expo/config-plugins");
 
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
@@ -15,7 +14,7 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
     );
   }
 
-  return withTargetPlugin(
+  return withTargetsDir(
     withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
     props,
   );
