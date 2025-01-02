@@ -1,4 +1,4 @@
-/** @type {import('expo-apple-targets/target-plugin/config').Config} */
+/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
 const config = {
   type: "device-activity-monitor",
 };
