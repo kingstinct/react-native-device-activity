@@ -7187,10 +7187,10 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
-pkg-pr-new@^0.0.35:
-  version "0.0.35"
-  resolved "https://registry.yarnpkg.com/pkg-pr-new/-/pkg-pr-new-0.0.35.tgz#478617ace8340d68a2eb96956206b32ee46243cf"
-  integrity sha512-ljR1Axx1Vb4uY8NZ+QItj1PpuBtLDJcgEbWsdscDdif1I3YJUpfSRWmdULPkTbNxhfbG8TnPmheAZSmqh2QzcQ==
+pkg-pr-new@0:
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/pkg-pr-new/-/pkg-pr-new-0.0.39.tgz#ee97ec46990f104591ce46be6b6fb65042abe381"
+  integrity sha512-ItcsHK+4uO0qmjK4RNs6vTWv3xFhbPZd5U6RoYbxRURWNZfH7KvpyqRzaw4GR7de/IjkdHVZHCzQkjnp3VOVdg==
   dependencies:
     "@jsdevtools/ez-spawn" "^3.0.4"
     "@octokit/action" "^6.1.0"
