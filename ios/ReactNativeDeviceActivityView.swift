@@ -26,7 +26,26 @@ class ReactNativeDeviceActivityView: ExpoView {
 
     clipsToBounds = true
 
-    self.addSubview(contentView.view)
+    // Configure the hosting controller
+    contentView.view.backgroundColor = .clear
+    contentView.view.translatesAutoresizingMaskIntoConstraints = false
+
+    // Add the view directly
+    addSubview(contentView.view)
+
+    // Setup constraints
+    NSLayoutConstraint.activate([
+      contentView.view.topAnchor.constraint(equalTo: topAnchor),
+      contentView.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+      contentView.view.trailingAnchor.constraint(equalTo: trailingAnchor),
+      contentView.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+    ])
+
+    // Find root view controller and add content view controller as child
+    if let rootViewController = UIApplication.shared.windows.first?.rootViewController {
+      rootViewController.addChild(contentView)
+      contentView.didMove(toParent: rootViewController)
+    }
 
     model.$activitySelection.debounce(for: .seconds(0.1), scheduler: RunLoop.main).sink {
       selection in
@@ -36,10 +55,6 @@ class ReactNativeDeviceActivityView: ExpoView {
       }
     }
     .store(in: &cancellables)
-  }
-
-  override func layoutSubviews() {
-    contentView.view.frame = bounds
   }
 
   let onSelectionChange = EventDispatcher()
