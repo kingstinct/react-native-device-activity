@@ -1803,9 +1803,9 @@
     type-detect "^4.0.8"
 
 "@kingstinct/expo-apple-targets@0":
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/@kingstinct/expo-apple-targets/-/expo-apple-targets-0.1.16.tgz#e1a24ddf2bb1a53f864e1dce7ce25077c9ae01d3"
-  integrity sha512-GtqtodvglbsfJIWZNWCA5fVeYSL8VoEB54eXb4AvtxsVwhWD+Ra4mqr6L0zdcLJ+a8T3rx/7RIY8dz/TYehoeA==
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/@kingstinct/expo-apple-targets/-/expo-apple-targets-0.1.19.tgz#54564e1b0f33a9996e2ee2aeca230c6963304e80"
+  integrity sha512-Hnz4DhDhywFFJJ4ZoGwzOPGW5MT7A01IwWFcUw/VKcdMFC5yVNJ2Ec2nD1J0GTPgh+ZBs9Atji//gDHXA143eQ==
   dependencies:
     "@bacons/xcode" "1.0.0-alpha.24"
     "@react-native/normalize-colors" "^0.76.1"
