@@ -461,11 +461,12 @@ public class ReactNativeDeviceActivityModule: Module {
       }
     }
 
-    AsyncFunction("requestAuthorization") {
+    AsyncFunction("requestAuthorization") { (forIndividualOrChild: String?) in
       let ac = AuthorizationCenter.shared
 
       if #available(iOS 16.0, *) {
-        try await ac.requestAuthorization(for: .individual)
+        try await ac.requestAuthorization(
+          for: forIndividualOrChild == "child" ? .child : .individual)
       } else {
         logger.log("⚠️ iOS 16.0 or later is required to request authorization.")
       }
@@ -517,7 +518,8 @@ public class ReactNativeDeviceActivityModule: Module {
     Function("blockApps") { (familyActivitySelectionStr: String?) in
       if let familyActivitySelectionStr {
         let selection = deserializeFamilyActivitySelection(
-          familyActivitySelectionStr: familyActivitySelectionStr)
+          familyActivitySelectionStr: familyActivitySelectionStr
+        )
 
         blockSelectedApps(blockSelection: selection, unblockedSelection: nil)
       } else {
