@@ -24,13 +24,15 @@ func updateShield(shieldId: String?) {
   let shieldId = shieldId ?? "default"
 
   if let shieldConfiguration = userDefaults?.dictionary(
-    forKey: "shieldConfiguration_\(shieldId)") {
+    forKey: "shieldConfiguration_\(shieldId)")
+  {
     // update default shield
     userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
   }
 
   if let shieldActions = userDefaults?.dictionary(
-    forKey: "shieldActions_\(shieldId)") {
+    forKey: "shieldActions_\(shieldId)")
+  {
     userDefaults?.set(shieldActions, forKey: "shieldActions")
   }
 }
@@ -217,7 +219,8 @@ func sendNotification(contents: [String: Any], placeholders: [String: String?]) 
 
 // dataRequest which sends request to given URL and convert to Decodable Object
 func sendHttpRequest(with url: String, config: [String: Any], placeholders: [String: String?])
-  -> URLSessionDataTask {
+  -> URLSessionDataTask
+{
   // create the URL
   let url = URL(string: url)!  // change the URL
 
@@ -260,7 +263,8 @@ func sendHttpRequest(with url: String, config: [String: Any], placeholders: [Str
       do {
         // create json object from data
         if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-          as? [String: Any] {
+          as? [String: Any]
+        {
           print(json)
         }
       } catch let error {
@@ -285,9 +289,11 @@ struct TextToReplaceWithOptionalSpecialTreatment {
 }
 
 func getTextToReplaceWithOptionalSpecialTreatment(_ stringToReplace: String)
-  -> TextToReplaceWithOptionalSpecialTreatment {
+  -> TextToReplaceWithOptionalSpecialTreatment
+{
   if stringToReplace.starts(with: "{") && stringToReplace.hasSuffix("}")
-    && stringToReplace.contains(":") {
+    && stringToReplace.contains(":")
+  {
     // remove prefix and suffix
     let trimmed = String(stringToReplace.dropFirst().dropLast())
     // split on : and return first part
@@ -321,7 +327,8 @@ func replacePlaceholdersInObject<T: Any>(
       if let specialTreatment = textToReplaceWithOptionalSpecialTreatment.specialTreatment {
         if specialTreatment == "asNumber" {
           if let placeholderValue = placeholders[
-            textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String {
+            textToReplaceWithOptionalSpecialTreatment.textToReplace] as? String
+          {
             if let numberValue = Double(placeholderValue) {
               retVal[key] = numberValue as? T
             }
@@ -329,7 +336,8 @@ func replacePlaceholdersInObject<T: Any>(
         }
         if specialTreatment == "userDefaults" {
           if let value = userDefaults?.string(
-            forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace) {
+            forKey: textToReplaceWithOptionalSpecialTreatment.textToReplace)
+          {
             retVal[key] = value as? T
           }
         }
@@ -357,7 +365,8 @@ let store = ManagedSettingsStore()
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
   if let familyActivitySelectionIds = userDefaults?.dictionary(
-    forKey: "familyActivitySelectionIds") {
+    forKey: "familyActivitySelectionIds")
+  {
     return familyActivitySelectionIds.compactMap { (key: String, value: Any) in
       if let familyActivitySelectionStr = value as? String {
         let activitySelection = deserializeFamilyActivitySelection(
@@ -373,7 +382,8 @@ func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
 
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
-  if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds") {
+  if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds")
+  {
     if let familyActivitySelectionStr = familyActivitySelectionIds[id] as? String {
       let activitySelection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr
@@ -421,7 +431,8 @@ func getPossibleFamilyActivitySelectionId(
 
 @available(iOS 15.0, *)
 func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
-  -> FamilyActivitySelection {
+  -> FamilyActivitySelection
+{
   var activitySelection = FamilyActivitySelection()
 
   let decoder = JSONDecoder()
@@ -550,7 +561,7 @@ func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldAction
       "secondaryButtonActionResponse": secondary.response.rawValue,
       "secondaryButtonAction": secondary.actions.map({ _ in
         return ["type": "unblockAll"]
-      })
+      }),
     ], forKey: "shieldActionConfig")
 }
 

@@ -22,7 +22,8 @@ func convertBase64StringToImage(imageBase64String: String?) -> UIImage? {
 }
 
 func buildLabel(text: String?, with color: UIColor?, placeholders: [String: String?])
-  -> ShieldConfiguration.Label? {
+  -> ShieldConfiguration.Label?
+{
   if let text = text {
     let color = color ?? UIColor.label
     return .init(text: replacePlaceholders(text, with: placeholders), color: color)
@@ -53,7 +54,8 @@ func resolveIcon(dict: [String: Any]) -> UIImage? {
 }
 
 func getShieldConfiguration(config: [String: Any], placeholders: [String: String?])
-  -> ShieldConfiguration {
+  -> ShieldConfiguration
+{
   logger.log("Calling getShieldConfiguration")
 
   let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
@@ -108,7 +110,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         applicationToken: application.token,
         webDomainToken: nil,
         categoryToken: nil
-      )
+      ),
     ]
 
     if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
@@ -119,7 +121,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   }
 
   override func configuration(shielding application: Application, in category: ActivityCategory)
-    -> ShieldConfiguration {
+    -> ShieldConfiguration
+  {
 
     logger.log("shielding application category")
 
@@ -131,7 +134,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         applicationToken: application.token,
         webDomainToken: nil,
         categoryToken: category.token
-      )
+      ),
     ]
 
     if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
@@ -152,7 +155,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         applicationToken: nil,
         webDomainToken: webDomain.token,
         categoryToken: nil
-      )
+      ),
     ]
 
     // Customize the shield as needed for web domains.
@@ -164,7 +167,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   }
 
   override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory)
-    -> ShieldConfiguration {
+    -> ShieldConfiguration
+  {
 
     logger.log("shielding web domain category")
 
@@ -176,7 +180,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         applicationToken: nil,
         webDomainToken: webDomain.token,
         categoryToken: category.token
-      )
+      ),
     ]
 
     if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {

@@ -66,7 +66,8 @@ struct DeviceActivityEventFromJS: ExpoModulesCore.Record {
   var includesPastActivity: Bool?
 }
 
-func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJS) -> DateComponents {
+func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJS) -> DateComponents
+{
   var swiftDateComponents = DateComponents()
 
   if let era = dateComponentsFromJS.era {
@@ -323,7 +324,8 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
-      let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
+      let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map
+      { familyActivitySelection in
         let decoder = JSONDecoder()
         let data = Data(base64Encoded: familyActivitySelection)
         do {
