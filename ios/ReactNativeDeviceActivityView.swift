@@ -38,7 +38,7 @@ class ReactNativeDeviceActivityView: ExpoView {
       contentView.view.topAnchor.constraint(equalTo: topAnchor),
       contentView.view.leadingAnchor.constraint(equalTo: leadingAnchor),
       contentView.view.trailingAnchor.constraint(equalTo: trailingAnchor),
-      contentView.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+      contentView.view.bottomAnchor.constraint(equalTo: bottomAnchor)
     ])
 
     // Find root view controller and add content view controller as child
@@ -70,7 +70,7 @@ class ReactNativeDeviceActivityView: ExpoView {
       "familyActivitySelection": familyActivitySelectionString as Any,
       "applicationCount": selection.applicationTokens.count,
       "categoryCount": selection.categoryTokens.count,
-      "webDomainCount": selection.webDomainTokens.count,
+      "webDomainCount": selection.webDomainTokens.count
     ])
   }
 }

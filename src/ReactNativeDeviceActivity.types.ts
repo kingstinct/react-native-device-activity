@@ -235,7 +235,9 @@ export type ReactNativeDeviceActivityNativeModule = {
   userDefaultsRemove: (key: string) => void;
   userDefaultsClear: () => void;
   userDefaultsAll: () => any;
-  requestAuthorization: () => PromiseLike<void> | void;
+  requestAuthorization: (
+    forIndividualOrChild: "individual" | "child",
+  ) => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
   blockApps: (familyActivitySelectionStr?: string) => PromiseLike<void> | void;
   unblockApps: () => PromiseLike<void> | void;

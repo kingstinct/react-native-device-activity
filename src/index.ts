@@ -27,9 +27,13 @@ import {
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
-export async function requestAuthorization(): Promise<AuthorizationStatus> {
+export async function requestAuthorization(
+  forIndividualOrChild: "individual" | "child" = "individual",
+): Promise<AuthorizationStatus> {
   try {
-    await ReactNativeDeviceActivityModule.requestAuthorization();
+    await ReactNativeDeviceActivityModule.requestAuthorization(
+      forIndividualOrChild,
+    );
   } catch (error) {
     // seems like we get a promise rejection if the user denies the authorization, but we can still request again
     console.error(error);
