@@ -52,15 +52,14 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
   }
 
-  func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil)
-  {
+  func executeActionsForEvent(activityName: String, callbackName: String, eventName: String? = nil) {
     let key =
       eventName != nil
       ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)"
       : "actions_for_\(activityName)_\(callbackName)"
 
     let placeholders = [
-      "activityName": activityName, "callbackName": callbackName, "eventName": eventName,
+      "activityName": activityName, "callbackName": callbackName, "eventName": eventName
     ]
     if let actions = userDefaults?.array(forKey: key) {
       actions.forEach { actionRaw in
