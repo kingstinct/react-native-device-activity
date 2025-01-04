@@ -37,10 +37,7 @@ struct ScreenTimeSelectAppsContentView: View {
     if #available(iOS 16.0, *) {
       InnerView()
         .onTapGesture {
-          Task { @MainActor in
-            try? await AuthorizationCenter.shared.requestAuthorization(for: .individual)
-            pickerIsPresented = true
-          }
+          pickerIsPresented = true
         }
         .familyActivityPicker(
           headerText: $model.headerText.wrappedValue,
@@ -51,12 +48,7 @@ struct ScreenTimeSelectAppsContentView: View {
     } else {
       InnerView()
         .onTapGesture {
-          Task { @MainActor in
-            if #available(iOS 16.0, *) {
-              try? await AuthorizationCenter.shared.requestAuthorization(for: .individual)
-            }
-            pickerIsPresented = true
-          }
+          pickerIsPresented = true
         }
         .familyActivityPicker(
           isPresented: $pickerIsPresented,
