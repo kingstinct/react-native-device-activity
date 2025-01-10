@@ -47,6 +47,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidEnd"
     )
 
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
     self.notifyAppWithName(name: "intervalDidEnd")
 
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
