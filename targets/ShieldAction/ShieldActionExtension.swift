@@ -57,6 +57,8 @@ func handleAction(
   applicationToken: ApplicationToken?,
   webdomainToken: WebDomainToken?
 ) {
+  CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
   if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
     if let configForSelectedAction = shieldActionConfig[
       action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
@@ -89,6 +91,7 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle application")
+
     handleAction(
       action: action,
       completionHandler: completionHandler,
@@ -102,6 +105,7 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle domain")
+
     handleAction(
       action: action,
       completionHandler: completionHandler,
@@ -115,6 +119,7 @@ class ShieldActionExtension: ShieldActionDelegate {
     completionHandler: @escaping (ShieldActionResponse) -> Void
   ) {
     logger.log("handle category")
+
     handleAction(
       action: action,
       completionHandler: completionHandler,

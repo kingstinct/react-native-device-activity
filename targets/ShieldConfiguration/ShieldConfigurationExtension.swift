@@ -52,45 +52,50 @@ func resolveIcon(dict: [String: Any]) -> UIImage? {
   return image
 }
 
-func getShieldConfiguration(config: [String: Any], placeholders: [String: String?])
+func getShieldConfiguration(placeholders: [String: String?])
   -> ShieldConfiguration {
+
   logger.log("Calling getShieldConfiguration")
 
-  let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
+  if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+    let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
 
-  let title = config["title"] as? String
-  let titleColor = getColor(color: config["titleColor"] as? [String: Double])
+    let title = config["title"] as? String
+    let titleColor = getColor(color: config["titleColor"] as? [String: Double])
 
-  let subtitle = config["subtitle"] as? String
-  let subtitleColor = getColor(color: config["subtitleColor"] as? [String: Double])
+    let subtitle = config["subtitle"] as? String
+    let subtitleColor = getColor(color: config["subtitleColor"] as? [String: Double])
 
-  let primaryButtonLabel = config["primaryButtonLabel"] as? String
-  let primaryButtonLabelColor = getColor(
-    color: config["primaryButtonLabelColor"] as? [String: Double])
-  let primaryButtonBackgroundColor = getColor(
-    color: config["primaryButtonBackgroundColor"] as? [String: Double])
+    let primaryButtonLabel = config["primaryButtonLabel"] as? String
+    let primaryButtonLabelColor = getColor(
+      color: config["primaryButtonLabelColor"] as? [String: Double])
+    let primaryButtonBackgroundColor = getColor(
+      color: config["primaryButtonBackgroundColor"] as? [String: Double])
 
-  let secondaryButtonLabel = config["secondaryButtonLabel"] as? String
-  let secondaryButtonLabelColor = getColor(
-    color: config["secondaryButtonLabelColor"] as? [String: Double]
-  )
+    let secondaryButtonLabel = config["secondaryButtonLabel"] as? String
+    let secondaryButtonLabelColor = getColor(
+      color: config["secondaryButtonLabelColor"] as? [String: Double]
+    )
 
-  let shield = ShieldConfiguration(
-    backgroundBlurStyle: config["backgroundBlurStyle"] != nil
-      ? UIBlurEffect.Style.init(rawValue: config["backgroundBlurStyle"] as! Int) : nil,
-    backgroundColor: backgroundColor,
-    icon: resolveIcon(dict: config),
-    title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
-    subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
-    primaryButtonLabel: buildLabel(
-      text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),
-    primaryButtonBackgroundColor: primaryButtonBackgroundColor,
-    secondaryButtonLabel: buildLabel(
-      text: secondaryButtonLabel, with: secondaryButtonLabelColor, placeholders: placeholders)
-  )
-  logger.log("shield initialized")
+    let shield = ShieldConfiguration(
+      backgroundBlurStyle: config["backgroundBlurStyle"] != nil
+        ? UIBlurEffect.Style.init(rawValue: config["backgroundBlurStyle"] as! Int) : nil,
+      backgroundColor: backgroundColor,
+      icon: resolveIcon(dict: config),
+      title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
+      subtitle: buildLabel(text: subtitle, with: subtitleColor, placeholders: placeholders),
+      primaryButtonLabel: buildLabel(
+        text: primaryButtonLabel, with: primaryButtonLabelColor, placeholders: placeholders),
+      primaryButtonBackgroundColor: primaryButtonBackgroundColor,
+      secondaryButtonLabel: buildLabel(
+        text: secondaryButtonLabel, with: secondaryButtonLabelColor, placeholders: placeholders)
+    )
+    logger.log("shield initialized")
 
-  return shield
+    return shield
+  }
+
+  return ShieldConfiguration()
 }
 
 // Override the functions below to customize the shields used in various situations.
@@ -111,11 +116,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       )
     ]
 
-    if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-      return getShieldConfiguration(config: config, placeholders: placeholders)
-    }
-
-    return ShieldConfiguration()
+    return getShieldConfiguration(placeholders: placeholders)
   }
 
   override func configuration(shielding application: Application, in category: ActivityCategory)
@@ -134,11 +135,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       )
     ]
 
-    if let dict = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-      return getShieldConfiguration(config: dict, placeholders: placeholders)
-    }
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-    return ShieldConfiguration()
+    return getShieldConfiguration(placeholders: placeholders)
   }
 
   override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
@@ -155,12 +154,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       )
     ]
 
-    // Customize the shield as needed for web domains.
-    if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-      return getShieldConfiguration(config: config, placeholders: placeholders)
-    }
-
-    return ShieldConfiguration()
+    return getShieldConfiguration(placeholders: placeholders)
   }
 
   override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory)
@@ -179,10 +173,6 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       )
     ]
 
-    if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
-      return getShieldConfiguration(config: config, placeholders: placeholders)
-    }
-
-    return ShieldConfiguration()
+    return getShieldConfiguration(placeholders: placeholders)
   }
 }
