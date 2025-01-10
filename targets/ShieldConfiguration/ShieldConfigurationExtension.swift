@@ -81,7 +81,7 @@ func getShieldConfiguration(placeholders: [String: String?])
 
     let shield = ShieldConfiguration(
       backgroundBlurStyle: config["backgroundBlurStyle"] != nil
-        ? UIBlurEffect.Style.init(rawValue: config["backgroundBlurStyle"] as! Int) : nil,
+        ? (config["backgroundBlurStyle"] as? Int).flatMap(UIBlurEffect.Style.init) : nil,
       backgroundColor: backgroundColor,
       icon: resolveIcon(dict: config),
       title: buildLabel(text: title, with: titleColor, placeholders: placeholders),
