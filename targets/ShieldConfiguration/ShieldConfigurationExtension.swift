@@ -57,6 +57,8 @@ func getShieldConfiguration(placeholders: [String: String?])
 
   logger.log("Calling getShieldConfiguration")
 
+  CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
   if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
     let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
 
@@ -134,8 +136,6 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         categoryToken: category.token
       )
     ]
-
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
     return getShieldConfiguration(placeholders: placeholders)
   }
