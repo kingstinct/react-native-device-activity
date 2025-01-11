@@ -29,31 +29,66 @@ struct InnerView: View {
 }
 
 @available(iOS 15.0, *)
-struct ScreenTimeSelectAppsContentView: View {
-  @State private var pickerIsPresented = false
+struct Picker: View {
   @ObservedObject var model: ScreenTimeSelectAppsModel
 
   var body: some View {
     if #available(iOS 16.0, *) {
-      InnerView()
-        .onTapGesture {
-          pickerIsPresented = true
-        }
-        .familyActivityPicker(
-          headerText: $model.headerText.wrappedValue,
-          footerText: $model.footerText.wrappedValue,
-          isPresented: $pickerIsPresented,
-          selection: $model.activitySelection
-        )
+      FamilyActivityPicker(
+        headerText: $model.headerText.wrappedValue,
+        footerText: $model.footerText.wrappedValue,
+        selection: $model.activitySelection
+      )
+      .allowsHitTesting(false)
     } else {
-      InnerView()
-        .onTapGesture {
-          pickerIsPresented = true
-        }
-        .familyActivityPicker(
-          isPresented: $pickerIsPresented,
-          selection: $model.activitySelection
-        )
+      FamilyActivityPicker(
+        selection: $model.activitySelection
+      )
+      .allowsHitTesting(false)
     }
+  }
+}
+
+@available(iOS 15.0, *)
+struct ScreenTimeSelectAppsContentView: View {
+  @State private var pickerIsPresented = false
+  @ObservedObject var model: ScreenTimeSelectAppsModel
+  @State private var shouldReload = false
+
+  var body: some View {
+    InnerView()
+      .onTapGesture {
+        print("Opening picker - resetting state")
+        pickerIsPresented = true
+      }
+      .sheet(
+        isPresented: $pickerIsPresented,
+        onDismiss: {
+          print("Sheet dismissed")
+          pickerIsPresented = false
+          if shouldReload {
+            self.shouldReload = false
+            DispatchQueue.main.async {
+              pickerIsPresented = true
+            }
+          }
+        },
+        content: {
+          ZStack {
+            Button(
+              role: .none,
+              action: {
+                print("Background tapped")
+                pickerIsPresented = false
+                self.shouldReload = true
+              }
+            ) {
+              Text("View crashed - tap to reload")
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Picker(model: model)
+          }
+        })
   }
 }
