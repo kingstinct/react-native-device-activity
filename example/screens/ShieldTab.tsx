@@ -7,6 +7,8 @@ import {
   View,
   SafeAreaView,
   TextInput,
+  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import { UIBlurEffectStyle } from "react-native-device-activity/ReactNativeDeviceActivity.types";
@@ -172,26 +174,53 @@ export function ShieldTab() {
           }}
         >
           {showSelectionView && (
-            <ReactNativeDeviceActivity.DeviceActivitySelectionView
+            <View
               style={{
                 flex: 1,
                 height: 600,
-                borderRadius: 20,
-                width: "100%",
               }}
-              onRefreshAfterCrash={() => {
-                setShowSelectionView(false);
-                setTimeout(() => {
-                  setShowSelectionView(true);
-                }, 0);
-              }}
-              headerText="a header text!"
-              footerText="a footer text!"
-              onSelectionChange={onSelectionChange}
-              familyActivitySelection={
-                familyActivitySelectionResult?.familyActivitySelection
-              }
-            />
+            >
+              <Pressable
+                style={{
+                  flex: 1,
+                  position: "absolute",
+                  height: 600,
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => {
+                  setShowSelectionView(false);
+                  setTimeout(() => {
+                    setShowSelectionView(true);
+                  }, 100);
+                }}
+              >
+                <Text>Swift view crash - tap to reload</Text>
+              </Pressable>
+
+              <ReactNativeDeviceActivity.DeviceActivitySelectionView
+                style={{
+                  flex: 1,
+                  height: 600,
+                  width: "100%",
+                  backgroundColor: "transparent",
+                  pointerEvents: "none",
+                }}
+                onRefreshAfterCrash={() => {
+                  setShowSelectionView(false);
+                  setTimeout(() => {
+                    setShowSelectionView(true);
+                  }, 0);
+                }}
+                headerText="a header text!"
+                footerText="a footer text!"
+                onSelectionChange={onSelectionChange}
+                familyActivitySelection={
+                  familyActivitySelectionResult?.familyActivitySelection
+                }
+              />
+            </View>
           )}
         </View>
         <Text>
