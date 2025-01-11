@@ -9,6 +9,7 @@ import FamilyControls
 import Foundation
 import ManagedSettings
 import UIKit
+import WebKit
 import os
 
 var appGroup = "group.ActivityMonitor"
@@ -124,19 +125,30 @@ func openUrl(urlString: String) {
     return  // be safe
   }
 
-  /*let context = NSExtensionContext()
-   context.open(url) { success in
+  let context = NSExtensionContext()
+  context.open(url) { _ in
 
-   }*/
+  }
 
-  let application =
-    UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication
+ /* let webView = WKWebView()
+  webView.load(URLRequest(url: url))
+*/
+  /*let application =
+    UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication*/
 
-  if #available(iOS 10.0, *) {
+  /*if #available(iOS 10.0, *) {
     application.open(url, options: [:], completionHandler: nil)
   } else {
     application.openURL(url)
-  }
+  }*/
+}
+
+let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
+
+func notifyAppWithName(name: String) {
+  let notificationName = CFNotificationName(name as CFString)
+
+  CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
 }
 
 func sendNotification(contents: [String: Any], placeholders: [String: String?]) {

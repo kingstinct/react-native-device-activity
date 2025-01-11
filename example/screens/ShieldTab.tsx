@@ -42,8 +42,6 @@ export function ShieldTab() {
     }
   }, [familyActivitySelectionResult?.familyActivitySelection]);
 
-  const theme = useTheme();
-
   const onSelectionChange = useCallback(
     (
       event: NativeSyntheticEvent<{
@@ -80,6 +78,8 @@ export function ShieldTab() {
             blue: 0,
           },
           subtitle: "subtitle",
+          primaryButtonLabel: "primaryButtonLabel",
+          secondaryButtonLabel: "secondaryButtonLabel",
           subtitleColor: {
             red: Math.random() * 255,
             green: Math.random() * 255,
@@ -103,19 +103,19 @@ export function ShieldTab() {
         },
         {
           primary: {
-            type: "unblockAll",
-            behavior: "defer",
+            type: "openApp",
+            behavior: "close",
           },
           secondary: {
             type: "dismiss",
-            behavior: "close",
+            behavior: "defer",
           },
         },
       ),
     [shieldTitle],
   );
 
-  const [showSelectionView, setShowSelectionView] = useState(true);
+  const [showSelectionView, setShowSelectionView] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
