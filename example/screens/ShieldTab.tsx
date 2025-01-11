@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import { UIBlurEffectStyle } from "react-native-device-activity/ReactNativeDeviceActivity.types";
-import { Switch, useTheme } from "react-native-paper";
+import { Button, Modal, Portal, Switch, useTheme } from "react-native-paper";
 
 export function ShieldTab() {
   const [shieldTitle, setShieldTitle] = React.useState<string>("");
@@ -141,6 +141,7 @@ export function ShieldTab() {
           />
           <Text>Shield active</Text>
         </View>
+
         <View
           style={{
             flexDirection: "row",
@@ -165,15 +166,17 @@ export function ShieldTab() {
           />
           <Text style={{ flex: 1 }}>Block selected apps</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 10,
-            margin: 10,
-            alignItems: "center",
-          }}
-        >
-          {showSelectionView && (
+        <Button onPress={() => setShowSelectionView(true)}>
+          Show selection view
+        </Button>
+        <Portal>
+          <Modal
+            visible={showSelectionView}
+            onDismiss={() => setShowSelectionView(false)}
+            contentContainerStyle={{
+              height: 600,
+            }}
+          >
             <View
               style={{
                 flex: 1,
@@ -188,6 +191,7 @@ export function ShieldTab() {
                   width: "100%",
                   alignItems: "center",
                   justifyContent: "center",
+                  backgroundColor: "white",
                 }}
                 onPress={() => {
                   setShowSelectionView(false);
@@ -199,30 +203,32 @@ export function ShieldTab() {
                 <Text>Swift view crash - tap to reload</Text>
               </Pressable>
 
-              <ReactNativeDeviceActivity.DeviceActivitySelectionView
-                style={{
-                  flex: 1,
-                  height: 600,
-                  width: "100%",
-                  backgroundColor: "transparent",
-                  pointerEvents: "none",
-                }}
-                onRefreshAfterCrash={() => {
-                  setShowSelectionView(false);
-                  setTimeout(() => {
-                    setShowSelectionView(true);
-                  }, 0);
-                }}
-                headerText="a header text!"
-                footerText="a footer text!"
-                onSelectionChange={onSelectionChange}
-                familyActivitySelection={
-                  familyActivitySelectionResult?.familyActivitySelection
-                }
-              />
+              {showSelectionView && (
+                <ReactNativeDeviceActivity.DeviceActivitySelectionView
+                  style={{
+                    flex: 1,
+                    height: 600,
+                    width: "100%",
+                    backgroundColor: "transparent",
+                    pointerEvents: "none",
+                  }}
+                  onRefreshAfterCrash={() => {
+                    setShowSelectionView(false);
+                    setTimeout(() => {
+                      setShowSelectionView(true);
+                    }, 0);
+                  }}
+                  headerText="a header text!"
+                  footerText="a footer text!"
+                  onSelectionChange={onSelectionChange}
+                  familyActivitySelection={
+                    familyActivitySelectionResult?.familyActivitySelection
+                  }
+                />
+              )}
             </View>
-          )}
-        </View>
+          </Modal>
+        </Portal>
         <Text>
           {familyActivitySelectionResult &&
           familyActivitySelectionResult?.categoryCount < 13
