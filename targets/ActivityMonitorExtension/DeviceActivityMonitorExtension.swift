@@ -15,15 +15,6 @@ import os
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 @available(iOS 15.0, *)
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
-  let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-  let store = ManagedSettingsStore()
-
-  func notifyAppWithName(name: String) {
-    let notificationName = CFNotificationName(name as CFString)
-
-    CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
-  }
-
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     logger.log("intervalDidStart")
@@ -33,7 +24,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidStart"
     )
 
-    self.notifyAppWithName(name: "intervalDidStart")
+    notifyAppWithName(name: "intervalDidStart")
 
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidStart")
   }
@@ -49,7 +40,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-    self.notifyAppWithName(name: "intervalDidEnd")
+    notifyAppWithName(name: "intervalDidEnd")
 
     self.executeActionsForEvent(activityName: activity.rawValue, callbackName: "intervalDidEnd")
   }
@@ -84,7 +75,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       eventName: event.rawValue
     )
 
-    self.notifyAppWithName(name: "eventDidReachThreshold")
+    notifyAppWithName(name: "eventDidReachThreshold")
 
     self.executeActionsForEvent(
       activityName: activity.rawValue, callbackName: "eventDidReachThreshold",
@@ -100,7 +91,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalWillStartWarning"
     )
 
-    self.notifyAppWithName(name: "intervalWillStartWarning")
+    notifyAppWithName(name: "intervalWillStartWarning")
 
     self.executeActionsForEvent(
       activityName: activity.rawValue, callbackName: "intervalWillStartWarning")
@@ -115,7 +106,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalWillEndWarning"
     )
 
-    self.notifyAppWithName(name: "intervalWillEndWarning")
+    notifyAppWithName(name: "intervalWillEndWarning")
 
     self.executeActionsForEvent(
       activityName: activity.rawValue, callbackName: "intervalWillEndWarning")
@@ -133,7 +124,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       eventName: event.rawValue
     )
 
-    self.notifyAppWithName(name: "eventWillReachThresholdWarning")
+    notifyAppWithName(name: "eventWillReachThresholdWarning")
 
     self.executeActionsForEvent(
       activityName: activity.rawValue, callbackName: "eventWillReachThresholdWarning",

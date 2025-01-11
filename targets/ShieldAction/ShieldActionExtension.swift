@@ -20,6 +20,21 @@ func handleAction(
       unblockAllApps()
     }
 
+    if type == "sendNotification" {
+      // todo: replace with general string
+      /*DispatchQueue.main.async(execute: {
+        openUrl(urlString: "device-activity://")
+      })
+
+      notifyAppWithName(name: "fromShieldExtensions")
+
+      sleep(ms: 1)*/
+
+      if let payload = configForSelectedAction["payload"] as? [String: Any] {
+        sendNotification(contents: payload, placeholders: [:])
+      }
+    }
+
     if type == "unblockCurrentApp" {
       let unblockedSelectionStr = userDefaults?.string(forKey: "unblockedSelection")
 

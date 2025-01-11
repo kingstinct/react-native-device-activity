@@ -136,17 +136,38 @@ export type DeviceActivityEvent = {
   includesPastActivity?: boolean;
 };
 
-export type ShieldActionType = "unblockAll" | "dismiss" | "unblockCurrentApp";
+export type ShieldActionType =
+  | "unblockAll"
+  | "dismiss"
+  | "unblockCurrentApp"
+  | "sendNotification"
+  | "openApp";
 
 export type ShieldAction = {
   type: ShieldActionType;
   delay?: number;
+  payload?: NotificationPayload;
   behavior: "close" | "defer";
 };
 
 export type ShieldActions = {
   primary: ShieldAction;
   secondary?: ShieldAction;
+};
+
+export type NotificationPayload = {
+  title: string;
+  body: string;
+  sound?: "default" | "defaultCritical" | "defaultRingtone";
+  categoryIdentifier?: string;
+  badge?: number;
+  userInfo?: Record<string, any>;
+  interruptionLevel?: "active" | "critical" | "passive";
+  targetContentIdentifier?: string;
+  launchImageName?: string;
+  identifier?: string;
+  threadIdentifier?: string;
+  subtitle?: string;
 };
 
 export type Action =
@@ -175,20 +196,7 @@ export type Action =
     }
   | {
       type: "sendNotification";
-      payload: {
-        title: string;
-        body: string;
-        sound?: "default" | "defaultCritical" | "defaultRingtone";
-        categoryIdentifier?: string;
-        badge?: number;
-        userInfo?: Record<string, any>;
-        interruptionLevel?: "active" | "critical" | "passive";
-        targetContentIdentifier?: string;
-        launchImageName?: string;
-        identifier?: string;
-        threadIdentifier?: string;
-        subtitle?: string;
-      };
+      payload: NotificationPayload;
       sleepBefore?: number;
       sleepAfter?: number;
     }
