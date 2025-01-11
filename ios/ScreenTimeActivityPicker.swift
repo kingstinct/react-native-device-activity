@@ -8,6 +8,7 @@
 import FamilyControls
 import Foundation
 import SwiftUI
+import ExpoModulesCore
 
 @available(iOS 15.0, *)
 class ScreenTimeSelectAppsModel: ObservableObject {
@@ -51,44 +52,40 @@ struct Picker: View {
 
 @available(iOS 15.0, *)
 struct ScreenTimeSelectAppsContentView: View {
-  @State private var pickerIsPresented = false
   @ObservedObject var model: ScreenTimeSelectAppsModel
-  @State private var shouldReload = false
+  var onRefreshAfterCrash: EventDispatcher
 
   var body: some View {
-    InnerView()
-      .onTapGesture {
-        print("Opening picker - resetting state")
-        pickerIsPresented = true
-      }
-      .sheet(
-        isPresented: $pickerIsPresented,
-        onDismiss: {
-          print("Sheet dismissed")
-          pickerIsPresented = false
-          if shouldReload {
-            self.shouldReload = false
-            DispatchQueue.main.async {
-              pickerIsPresented = true
-            }
-          }
-        },
-        content: {
-          ZStack {
-            Button(
-              role: .none,
-              action: {
-                print("Background tapped")
-                pickerIsPresented = false
-                self.shouldReload = true
-              }
-            ) {
-              Text("View crashed - tap to reload")
-            }
-            .buttonStyle(PlainButtonStyle())
+    if #available(iOS 16.0, *) {
+      ZStack {
+        Button(action: {
+          print("Background tapped - reloading picker")
+          // Delegate will handle reload from RN side
+          onRefreshAfterCrash()
 
-            Picker(model: model)
+        }) {
+          ZStack {
+            Color.red.opacity(0.2)
+            Text("View crashed - tap to reload")
+              .foregroundColor(.white)
+              .font(.headline)
+              .shadow(radius: 2)
           }
-        })
+          .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        
+        FamilyActivityPicker(
+          headerText: $model.headerText.wrappedValue,
+          footerText: $model.footerText.wrappedValue,
+          selection: $model.activitySelection
+        )
+        .allowsHitTesting(false)
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .edgesIgnoringSafeArea(.all)
+    } else {
+      // ... iOS 15 implementation ...
+    }
   }
 }
