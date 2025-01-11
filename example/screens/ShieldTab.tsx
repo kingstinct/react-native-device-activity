@@ -113,6 +113,8 @@ export function ShieldTab() {
     [shieldTitle],
   );
 
+  const [showSelectionView, setShowSelectionView] = useState(true);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
@@ -169,42 +171,37 @@ export function ShieldTab() {
             alignItems: "center",
           }}
         >
-          <ReactNativeDeviceActivity.DeviceActivitySelectionView
-            style={{
-              width: 100,
-              height: 40,
-              borderRadius: 20,
-              borderWidth: 10,
-              borderColor: theme.colors.primary,
-            }}
-            headerText="a header text!"
-            footerText="a footer text!"
-            onSelectionChange={onSelectionChange}
-            familyActivitySelection={
-              familyActivitySelectionResult?.familyActivitySelection
-            }
-          >
-            <View
-              pointerEvents="none"
+          {showSelectionView && (
+            <ReactNativeDeviceActivity.DeviceActivitySelectionView
               style={{
-                backgroundColor: theme.colors.primary,
                 flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
+                height: 600,
+                borderRadius: 20,
+                width: "100%",
               }}
-            >
-              <Text style={{ color: "white" }}>Select apps</Text>
-            </View>
-          </ReactNativeDeviceActivity.DeviceActivitySelectionView>
-          <Text>
-            {familyActivitySelectionResult &&
-            familyActivitySelectionResult?.categoryCount < 13
-              ? `${familyActivitySelectionResult?.applicationCount} apps, ${familyActivitySelectionResult?.categoryCount} categories, ${familyActivitySelectionResult?.webDomainCount} domains`
-              : familyActivitySelectionResult?.categoryCount
-                ? "All categories selected"
-                : "Nothing selected"}
-          </Text>
+              onRefreshAfterCrash={() => {
+                setShowSelectionView(false);
+                setTimeout(() => {
+                  setShowSelectionView(true);
+                }, 0);
+              }}
+              headerText="a header text!"
+              footerText="a footer text!"
+              onSelectionChange={onSelectionChange}
+              familyActivitySelection={
+                familyActivitySelectionResult?.familyActivitySelection
+              }
+            />
+          )}
         </View>
+        <Text>
+          {familyActivitySelectionResult &&
+          familyActivitySelectionResult?.categoryCount < 13
+            ? `${familyActivitySelectionResult?.applicationCount} apps, ${familyActivitySelectionResult?.categoryCount} categories, ${familyActivitySelectionResult?.webDomainCount} domains`
+            : familyActivitySelectionResult?.categoryCount
+              ? "All categories selected"
+              : "Nothing selected"}
+        </Text>
         <TextInput
           placeholder="Enter shield title"
           onChangeText={(text) => setShieldTitle(text)}
