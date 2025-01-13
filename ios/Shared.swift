@@ -130,7 +130,7 @@ func openUrl(urlString: String) {
 
   }
 
- /* let webView = WKWebView()
+  /* let webView = WKWebView()
   webView.load(URLRequest(url: url))
 */
   /*let application =

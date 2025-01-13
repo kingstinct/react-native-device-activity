@@ -31,7 +31,6 @@ export type DeviceActivitySelectionEvent = {
 
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
-  onRefreshAfterCrash?: () => void;
   onSelectionChange?: (
     selection: NativeSyntheticEvent<DeviceActivitySelectionEvent>,
   ) => void;

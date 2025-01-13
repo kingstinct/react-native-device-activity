@@ -55,7 +55,6 @@ struct Picker: View {
 @available(iOS 15.0, *)
 struct ScreenTimeSelectAppsContentView: View {
   @ObservedObject var model: ScreenTimeSelectAppsModel
-  var onRefreshAfterCrash: EventDispatcher
 
   var body: some View {
     if #available(iOS 16.0, *) {

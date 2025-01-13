@@ -212,12 +212,6 @@ export function ShieldTab() {
                     backgroundColor: "transparent",
                     pointerEvents: "none",
                   }}
-                  onRefreshAfterCrash={() => {
-                    setShowSelectionView(false);
-                    setTimeout(() => {
-                      setShowSelectionView(true);
-                    }, 0);
-                  }}
                   headerText="a header text!"
                   footerText="a footer text!"
                   onSelectionChange={onSelectionChange}

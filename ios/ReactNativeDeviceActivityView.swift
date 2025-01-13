@@ -18,8 +18,7 @@ class ReactNativeDeviceActivityView: ExpoView {
   required init(appContext: AppContext? = nil) {
     contentView = UIHostingController(
       rootView: ScreenTimeSelectAppsContentView(
-        model: model,
-        onRefreshAfterCrash: onRefreshAfterCrash
+        model: model
       )
     )
 
@@ -49,8 +48,6 @@ class ReactNativeDeviceActivityView: ExpoView {
   }
 
   let onSelectionChange = EventDispatcher()
-
-  let onRefreshAfterCrash = EventDispatcher()
 
   var previousSelection: FamilyActivitySelection?
 
