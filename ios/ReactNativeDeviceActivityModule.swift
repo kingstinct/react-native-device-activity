@@ -551,16 +551,14 @@ public class ReactNativeDeviceActivityModule: Module {
       "onDeviceActivityMonitorEvent",
       // "onManagedStoreWillChange",
       "onDeviceActivityDetected",
-      "onAuthorizationStatusChange",
-      "onRefreshAfterCrash"
+      "onAuthorizationStatusChange"
     )
 
     // Enables the module to be used as a native view. Definition components that are accepted as part of the
     // view definition: Prop, Events.
     View(ReactNativeDeviceActivityView.self) {
       Events(
-        "onSelectionChange",
-        "onRefreshAfterCrash"
+        "onSelectionChange"
       )
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelection") { (view: ReactNativeDeviceActivityView, prop: String) in
