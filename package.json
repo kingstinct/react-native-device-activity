@@ -1,6 +1,6 @@
 {
   "name": "react-native-device-activity",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Provides access to Apples DeviceActivity API",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -11,7 +11,7 @@
     "pre-push": "npm run typecheck && npm run lint && example/ios/Pods/SwiftLint/swiftlint lint --strict",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
-    "prepare": "expo-module prepare && husky",
+    "prepare": "husky",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
