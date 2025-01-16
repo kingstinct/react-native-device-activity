@@ -6,6 +6,18 @@ import { appGroupName } from "./AppGroup";
 // the bridge module (from NativeModulesProxy) if the remote debugger is on.
 const deviceActivityModule = requireNativeModule("ReactNativeDeviceActivity");
 
-deviceActivityModule.setAppGroup(appGroupName);
+if (appGroupName) {
+  deviceActivityModule.setAppGroup(appGroupName);
+} else {
+  const SKIP_APPGROUP_WARNING = process.env.SKIP_APPGROUP_WARNING
+    ? JSON.parse(process.env.SKIP_APPGROUP_WARNING)
+    : false;
+
+  if (!SKIP_APPGROUP_WARNING) {
+    console.warn(
+      "appGroup is not set for react-native-device-activity config plugin",
+    );
+  }
+}
 
 export default deviceActivityModule;
