@@ -65,7 +65,7 @@ export default function App() {
 
     const eventsOccurredToday = todaysThresholdsReached.map((event) => {
       const minutesRegistered = parseInt(
-        event.eventName.split("_minutes_today")[0],
+        event.eventName!.split("_minutes_today")[0],
         10,
       );
       return {
@@ -80,7 +80,11 @@ export default function App() {
       (acc, event) => {
         return event.minutesRegistered > acc.minutesRegistered ? event : acc;
       },
-      { minutesRegistered: 0, event: "none", registeredAt: new Date() },
+      {
+        minutesRegistered: 0,
+        event: "none" as string | undefined,
+        registeredAt: new Date(),
+      },
     );
 
     setLargestEvent(largestMinutesRegistered);

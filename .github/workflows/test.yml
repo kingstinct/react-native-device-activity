@@ -32,7 +32,23 @@ jobs:
       - run: yarn install
       
       - run: yarn typecheck
-      
+
+  typecheck-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - run: yarn install
+
+      - run: npm install
+        working-directory: example
+      - run: yarn typecheck
+        working-directory: example
+
   swift-lint:
     runs-on: macos-latest
     steps:
