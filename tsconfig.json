@@ -2,7 +2,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "outDir": "./build",
+    "noEmit": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true
   },

@@ -19,7 +19,7 @@ import {
   DeviceActivityEvent,
   EventParsed,
   UIBlurEffectStyle,
-} from "react-native-device-activity/ReactNativeDeviceActivity.types";
+} from "react-native-device-activity";
 
 // const initialMinutes = 1;
 // const postponeMinutes = 60;

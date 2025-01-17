@@ -9,3 +9,11 @@ __tests__
 /android/src/test/
 /android/build/
 /example/
+
+# Test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+__tests__/
+

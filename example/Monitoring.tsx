@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { DeviceActivityEvent } from "react-native-device-activity/ReactNativeDeviceActivity.types";
+import { DeviceActivityEvent } from "react-native-device-activity";
 
 const startMonitoring = (activitySelection: string) => {
   const timeLimitMinutes = 1;
