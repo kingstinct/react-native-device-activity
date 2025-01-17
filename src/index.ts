@@ -13,6 +13,7 @@ import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
   Action,
   AuthorizationStatus,
+  AuthorizationStatusType,
   CallbackEventName,
   CallbackName,
   DeviceActivityEvent,
@@ -29,7 +30,7 @@ import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
 export async function requestAuthorization(
   forIndividualOrChild: "individual" | "child" = "individual",
-): Promise<AuthorizationStatus> {
+): Promise<AuthorizationStatusType> {
   try {
     await ReactNativeDeviceActivityModule.requestAuthorization(
       forIndividualOrChild,
@@ -41,7 +42,7 @@ export async function requestAuthorization(
   return getAuthorizationStatus();
 }
 
-export async function revokeAuthorization(): Promise<AuthorizationStatus> {
+export async function revokeAuthorization(): Promise<AuthorizationStatusType> {
   await ReactNativeDeviceActivityModule.revokeAuthorization();
   return getAuthorizationStatus();
 }
@@ -288,7 +289,7 @@ export function unblockApps(): PromiseLike<void> | void {
   return ReactNativeDeviceActivityModule.unblockApps();
 }
 
-export function getAuthorizationStatus(): AuthorizationStatus {
+export function getAuthorizationStatus(): AuthorizationStatusType {
   return ReactNativeDeviceActivityModule.authorizationStatus();
 }
 
@@ -321,7 +322,7 @@ export const useActivities = () => {
 
 export const useAuthorizationStatus = () => {
   const [authorizationStatus, setAuthorizationStatus] =
-    useState<AuthorizationStatus>(AuthorizationStatus.notDetermined);
+    useState<AuthorizationStatusType>(AuthorizationStatus.notDetermined);
 
   useEffect(() => {
     const subscription = onAuthorizationStatusChange((event) => {
@@ -339,9 +340,9 @@ export const useAuthorizationStatus = () => {
 };
 
 export function onAuthorizationStatusChange(
-  listener: (event: { authorizationStatus: AuthorizationStatus }) => void,
+  listener: (event: { authorizationStatus: AuthorizationStatusType }) => void,
 ): Subscription {
-  return emitter.addListener<{ authorizationStatus: AuthorizationStatus }>(
+  return emitter.addListener<{ authorizationStatus: AuthorizationStatusType }>(
     "onAuthorizationStatusChange",
     listener,
   );

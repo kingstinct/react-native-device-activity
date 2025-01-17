@@ -13,9 +13,9 @@ const warnFnArray = () => {
   return [];
 };
 
-const warnFnNumber = () => {
+const warnFnNumber = <T extends number>() => {
   console.warn(warnText);
-  return 0;
+  return 0 as T;
 };
 
 const warnFnBoolean = () => {

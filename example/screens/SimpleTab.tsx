@@ -9,28 +9,33 @@ import {
   RefreshControl,
   AppState,
 } from "react-native";
-import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { AuthorizationStatus } from "react-native-device-activity/ReactNativeDeviceActivity.types";
+import {
+  AuthorizationStatus,
+  cleanUpAfterActivity,
+  revokeAuthorization,
+  stopMonitoring,
+  useActivities,
+  useAuthorizationStatus,
+  AuthorizationStatusType,
+} from "react-native-device-activity";
 import { Button, Modal, Text, Title } from "react-native-paper";
 
 import { CreateActivity } from "../components/CreateActivity";
 
-const authorizationStatusMap = {
+const authorizationStatusMap: Record<AuthorizationStatusType, string> = {
   [AuthorizationStatus.approved]: "approved",
   [AuthorizationStatus.denied]: "denied",
   [AuthorizationStatus.notDetermined]: "notDetermined",
 };
 
 export function SimpleTab() {
-  const authorizationStatus =
-    ReactNativeDeviceActivity.useAuthorizationStatus();
+  const authorizationStatus = useAuthorizationStatus();
 
-  const [activities, refreshActivities] =
-    ReactNativeDeviceActivity.useActivities();
+  const [activities, refreshActivities] = useActivities();
 
   const requestAuthorization = useCallback(async () => {
     if (authorizationStatus === AuthorizationStatus.notDetermined) {
-      await ReactNativeDeviceActivity.requestAuthorization();
+      await requestAuthorization();
     } else if (authorizationStatus === AuthorizationStatus.denied) {
       Alert.alert(
         "You didn't grant access",
@@ -47,7 +52,7 @@ export function SimpleTab() {
         ],
       );
     } else {
-      await ReactNativeDeviceActivity.revokeAuthorization();
+      await revokeAuthorization();
     }
   }, [authorizationStatus]);
 
@@ -118,8 +123,8 @@ export function SimpleTab() {
             <Button
               mode="contained"
               onPress={() => {
-                ReactNativeDeviceActivity.cleanUpAfterActivity(activity);
-                ReactNativeDeviceActivity.stopMonitoring([activity]);
+                cleanUpAfterActivity(activity);
+                stopMonitoring([activity]);
                 refreshActivities();
               }}
             >

@@ -223,11 +223,14 @@ export type DeviceActivityEventRaw = Omit<
   familyActivitySelectionIndex: number;
 };
 
-export enum AuthorizationStatus {
-  notDetermined = 0,
-  denied = 1,
-  approved = 2,
-}
+export const AuthorizationStatus = {
+  notDetermined: 0,
+  denied: 1,
+  approved: 2,
+} as const;
+
+export type AuthorizationStatusType =
+  (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
 
 export type CallbackName =
   | "intervalDidStart"
@@ -256,7 +259,7 @@ export type ReactNativeDeviceActivityNativeModule = {
   ) => boolean;
   getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
   activities: () => string[];
-  authorizationStatus: () => AuthorizationStatus;
+  authorizationStatus: () => AuthorizationStatusType;
   stopMonitoring: (activityNames?: string[]) => void;
   startMonitoring: (
     activityName: string,
@@ -277,7 +280,7 @@ export type ShieldConfiguration = {
   /**
    * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/backgroundblurstyle
    */
-  backgroundBlurStyle?: UIBlurEffectStyle;
+  backgroundBlurStyle?: (typeof UIBlurEffectStyle)[keyof typeof UIBlurEffectStyle];
   /**
    * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration/title
    */
@@ -355,59 +358,59 @@ type UIColor = {
   alpha?: number;
 };
 
-export enum UIBlurEffectStyle {
-  extraLight = 0,
-  light = 1,
-  dark = 2,
+export const UIBlurEffectStyle = {
+  extraLight: 0,
+  light: 1,
+  dark: 2,
 
   // @available(iOS 10.0, *)
-  regular = 4,
+  regular: 4,
 
   // @available(iOS 10.0, *)
-  prominent = 5,
+  prominent: 5,
 
   // @available(iOS 13.0, *)
-  systemUltraThinMaterial = 6,
+  systemUltraThinMaterial: 6,
 
   // @available(iOS 13.0, *)
-  systemThinMaterial = 7,
+  systemThinMaterial: 7,
 
   // @available(iOS 13.0, *)
-  systemMaterial = 8,
+  systemMaterial: 8,
 
   // @available(iOS 13.0, *)
-  systemThickMaterial = 9,
+  systemThickMaterial: 9,
 
   // @available(iOS 13.0, *)
-  systemChromeMaterial = 10,
+  systemChromeMaterial: 10,
 
   // @available(iOS 13.0, *)
-  systemUltraThinMaterialLight = 11,
+  systemUltraThinMaterialLight: 11,
 
   // @available(iOS 13.0, *)
-  systemThinMaterialLight = 12,
+  systemThinMaterialLight: 12,
 
   // @available(iOS 13.0, *)
-  systemMaterialLight = 13,
+  systemMaterialLight: 13,
 
   // @available(iOS 13.0, *)
-  systemThickMaterialLight = 14,
+  systemThickMaterialLight: 14,
 
   // @available(iOS 13.0, *)
-  systemChromeMaterialLight = 15,
+  systemChromeMaterialLight: 15,
 
   // @available(iOS 13.0, *)
-  systemUltraThinMaterialDark = 16,
+  systemUltraThinMaterialDark: 16,
 
   // @available(iOS 13.0, *)
-  systemThinMaterialDark = 17,
+  systemThinMaterialDark: 17,
 
   // @available(iOS 13.0, *)
-  systemMaterialDark = 18,
+  systemMaterialDark: 18,
 
   // @available(iOS 13.0, *)
-  systemThickMaterialDark = 19,
+  systemThickMaterialDark: 19,
 
   // @available(iOS 13.0, *)
-  systemChromeMaterialDark = 20,
-}
+  systemChromeMaterialDark: 20,
+} as const;

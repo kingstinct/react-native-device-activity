@@ -540,32 +540,6 @@ func getColor(color: [String: Double]?) -> UIColor? {
   return nil
 }
 
-enum Action {
-  case unblockAll
-}
-
-@available(iOS 15.0, *)
-struct ShieldActionConfig {
-  var response: ShieldActionResponse
-
-  var actions: [Action]
-}
-
-@available(iOS 15.0, *)
-func saveShieldActionConfig(primary: ShieldActionConfig, secondary: ShieldActionConfig) {
-  userDefaults?.set(
-    [
-      "primaryButtonActionResponse": primary.response.rawValue,
-      "primaryButtonAction": primary.actions.map({ _ in
-        return ["type": "unblockAll"]
-      }),
-      "secondaryButtonActionResponse": secondary.response.rawValue,
-      "secondaryButtonAction": secondary.actions.map({ _ in
-        return ["type": "unblockAll"]
-      })
-    ], forKey: "shieldActionConfig")
-}
-
 func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
   let now = (Date().timeIntervalSince1970 * 1000).rounded()
   let fullEventName =

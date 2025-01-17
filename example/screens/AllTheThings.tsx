@@ -112,7 +112,9 @@ export function AllTheThings() {
   const [shieldTitle, setShieldTitle] = React.useState<string>("");
   const [activities, setActivities] = React.useState<string[]>([]);
   const [authorizationStatus, setAuthorizationStatus] =
-    React.useState<AuthorizationStatus | null>(null);
+    React.useState<ReactNativeDeviceActivity.AuthorizationStatusType | null>(
+      null,
+    );
 
   /*console.log(
     JSON.stringify(
