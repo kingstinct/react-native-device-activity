@@ -89,6 +89,10 @@ export function userDefaultsClear() {
   return ReactNativeDeviceActivityModule.userDefaultsClear();
 }
 
+export function userDefaultsClearWithPrefix(prefix: string) {
+  return ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(prefix);
+}
+
 function convertDeviceActivityEvents(
   events: DeviceActivityEvent[],
 ): [DeviceActivityEventRaw[], FamilyActivitySelection[]] {
@@ -390,3 +394,5 @@ export {
   DeviceActivitySelectionView,
   DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
 };
+
+export * from "./ReactNativeDeviceActivity.types";
