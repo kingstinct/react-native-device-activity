@@ -391,9 +391,8 @@ export function isAvailable(): boolean {
   return Platform.OS === "ios" && parseInt(Platform.Version, 10) >= 15;
 }
 
-export {
-  DeviceActivitySelectionView,
-  DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
-};
+export { DeviceActivitySelectionView };
+
+export type { DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps };
 
 export * from "./ReactNativeDeviceActivity.types";
