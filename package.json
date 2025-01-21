@@ -1,6 +1,6 @@
 {
   "name": "react-native-device-activity",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Provides access to Apples DeviceActivity API",
   "main": "src/index.ts",
   "scripts": {
