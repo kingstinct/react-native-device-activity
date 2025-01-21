@@ -52,7 +52,7 @@ export function getEvents(
 ): EventParsed[] {
   const events =
     ReactNativeDeviceActivityModule?.getEvents(onlyEventsForActivityWithName) ??
-    [];
+    {};
 
   const eventsParsed = Object.keys(events).map((key) => {
     const [, activityName, callbackName, eventName] = key.split("_");
