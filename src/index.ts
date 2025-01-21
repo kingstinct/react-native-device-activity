@@ -1,11 +1,4 @@
-import {
-  NativeModulesProxy,
-  EventEmitter,
-  Subscription,
-} from "expo-modules-core";
-
-// Import the native module. On web, it will be resolved to ReactNativeDeviceActivity.web.ts
-// and on native platforms to ReactNativeDeviceActivity.ts
+import { EventEmitter, Subscription } from "expo-modules-core";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
@@ -302,11 +295,9 @@ export function getAuthorizationStatus(): AuthorizationStatusType {
   );
 }
 
-const emitterModule =
-  ReactNativeDeviceActivityModule ??
-  NativeModulesProxy.ReactNativeDeviceActivity;
-
-const emitter = emitterModule ? new EventEmitter(emitterModule) : undefined;
+const emitter = ReactNativeDeviceActivityModule
+  ? new EventEmitter(ReactNativeDeviceActivityModule)
+  : undefined;
 
 export const useActivities = () => {
   const [activities, setActivities] = useState<string[]>([]);
