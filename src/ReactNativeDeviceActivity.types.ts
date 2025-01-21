@@ -241,6 +241,7 @@ export type CallbackName =
   | "eventWillReachThresholdWarning";
 
 export type ReactNativeDeviceActivityNativeModule = {
+  setAppGroup: (appGroupName: string) => void;
   userDefaultsSet: (dict: any) => void;
   userDefaultsGet: (key: string) => any;
   userDefaultsRemove: (key: string) => void;

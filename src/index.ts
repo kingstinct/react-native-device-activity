@@ -32,7 +32,7 @@ export async function requestAuthorization(
   forIndividualOrChild: "individual" | "child" = "individual",
 ): Promise<AuthorizationStatusType> {
   try {
-    await ReactNativeDeviceActivityModule.requestAuthorization(
+    await ReactNativeDeviceActivityModule?.requestAuthorization(
       forIndividualOrChild,
     );
   } catch (error) {
@@ -43,16 +43,16 @@ export async function requestAuthorization(
 }
 
 export async function revokeAuthorization(): Promise<AuthorizationStatusType> {
-  await ReactNativeDeviceActivityModule.revokeAuthorization();
+  await ReactNativeDeviceActivityModule?.revokeAuthorization();
   return getAuthorizationStatus();
 }
 
 export function getEvents(
   onlyEventsForActivityWithName?: string,
 ): EventParsed[] {
-  const events = ReactNativeDeviceActivityModule.getEvents(
-    onlyEventsForActivityWithName,
-  );
+  const events =
+    ReactNativeDeviceActivityModule?.getEvents(onlyEventsForActivityWithName) ??
+    [];
 
   const eventsParsed = Object.keys(events).map((key) => {
     const [, activityName, callbackName, eventName] = key.split("_");
@@ -71,27 +71,27 @@ export function getEvents(
 }
 
 export function userDefaultsSet(key: string, value: any) {
-  return ReactNativeDeviceActivityModule.userDefaultsSet({ key, value });
+  return ReactNativeDeviceActivityModule?.userDefaultsSet({ key, value });
 }
 
 export function userDefaultsGet<T>(key: string): T | undefined {
-  return ReactNativeDeviceActivityModule.userDefaultsGet(key) as T | undefined;
+  return ReactNativeDeviceActivityModule?.userDefaultsGet(key) as T | undefined;
 }
 
 export function userDefaultsRemove(key: string) {
-  return ReactNativeDeviceActivityModule.userDefaultsRemove(key);
+  return ReactNativeDeviceActivityModule?.userDefaultsRemove(key);
 }
 
 export function userDefaultsAll(): Record<string, any> {
-  return ReactNativeDeviceActivityModule.userDefaultsAll();
+  return ReactNativeDeviceActivityModule?.userDefaultsAll() ?? {};
 }
 
 export function userDefaultsClear() {
-  return ReactNativeDeviceActivityModule.userDefaultsClear();
+  return ReactNativeDeviceActivityModule?.userDefaultsClear();
 }
 
 export function userDefaultsClearWithPrefix(prefix: string) {
-  return ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(prefix);
+  return ReactNativeDeviceActivityModule?.userDefaultsClearWithPrefix(prefix);
 }
 
 function convertDeviceActivityEvents(
@@ -133,7 +133,7 @@ export async function startMonitoring(
   const [deviceActivityEventsRaw, uniqueSelections] =
     convertDeviceActivityEvents(deviceActivityEvents);
 
-  return ReactNativeDeviceActivityModule.startMonitoring(
+  return ReactNativeDeviceActivityModule?.startMonitoring(
     activityName,
     deviceActivitySchedule,
     deviceActivityEventsRaw,
@@ -160,10 +160,10 @@ export const configureActions = ({
 };
 
 export const cleanUpAfterActivity = (activityName: string) => {
-  ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(
+  ReactNativeDeviceActivityModule?.userDefaultsClearWithPrefix(
     `actions_for_${activityName}`,
   );
-  ReactNativeDeviceActivityModule.userDefaultsClearWithPrefix(
+  ReactNativeDeviceActivityModule?.userDefaultsClearWithPrefix(
     `events_${activityName}`,
   );
 };
@@ -176,7 +176,7 @@ export const setFamilyActivitySelectionId = ({
   familyActivitySelection: string;
 }) => {
   const previousValue =
-    (ReactNativeDeviceActivityModule.userDefaultsGet(
+    (ReactNativeDeviceActivityModule?.userDefaultsGet(
       "familyActivitySelectionIds",
     ) as Record<string, string>) ?? {};
 
@@ -188,7 +188,7 @@ export const setFamilyActivitySelectionId = ({
 
 export const getFamilyActivitySelectionId = (id: string) => {
   const previousValue =
-    (ReactNativeDeviceActivityModule.userDefaultsGet(
+    (ReactNativeDeviceActivityModule?.userDefaultsGet(
       "familyActivitySelectionIds",
     ) as Record<string, string>) ?? {};
 
@@ -196,13 +196,17 @@ export const getFamilyActivitySelectionId = (id: string) => {
 };
 
 export function getAppGroupFileDirectory(): string {
-  return ReactNativeDeviceActivityModule.getAppGroupFileDirectory();
+  return ReactNativeDeviceActivityModule?.getAppGroupFileDirectory() ?? "";
 }
 
 export function onDeviceActivityDetected(
   listener: (event: { activityName: string }) => void,
 ) {
-  const handler = emitter.addListener<{ activityName: string }>(
+  if (!emitter) {
+    return { remove: () => {} };
+  }
+
+  const handler = emitter?.addListener<{ activityName: string }>(
     "onDeviceActivityDetected",
     listener,
   );
@@ -217,14 +221,14 @@ export const useDeviceActivities = () => {
     // this one seems more stable
     const sub = onDeviceActivityMonitorEvent((event) => {
       if (event.callbackName === "intervalDidStart") {
-        setActivities(ReactNativeDeviceActivityModule.activities());
+        setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
       }
     });
     const subscription = onDeviceActivityDetected((event) => {
-      setActivities(ReactNativeDeviceActivityModule.activities());
+      setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
     });
 
-    setActivities(ReactNativeDeviceActivityModule.activities());
+    setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
 
     return () => {
       subscription.remove();
@@ -236,15 +240,15 @@ export const useDeviceActivities = () => {
 };
 
 export function stopMonitoring(activityNames?: string[]): void {
-  return ReactNativeDeviceActivityModule.stopMonitoring(activityNames);
+  return ReactNativeDeviceActivityModule?.stopMonitoring(activityNames);
 }
 
 export function getActivities(): string[] {
-  return ReactNativeDeviceActivityModule.activities();
+  return ReactNativeDeviceActivityModule?.activities() ?? [];
 }
 
 export function isShieldActive(): boolean {
-  return ReactNativeDeviceActivityModule.isShieldActive();
+  return ReactNativeDeviceActivityModule?.isShieldActive() ?? false;
 }
 
 export function moveFile(
@@ -252,7 +256,7 @@ export function moveFile(
   destinationUri: string,
   overwrite: boolean = false,
 ) {
-  return ReactNativeDeviceActivityModule.moveFile(
+  return ReactNativeDeviceActivityModule?.moveFile(
     sourceUri,
     destinationUri,
     overwrite,
@@ -264,7 +268,7 @@ export function copyFile(
   destinationUri: string,
   overwrite: boolean = false,
 ) {
-  return ReactNativeDeviceActivityModule.copyFile(
+  return ReactNativeDeviceActivityModule?.copyFile(
     sourceUri,
     destinationUri,
     overwrite,
@@ -274,39 +278,45 @@ export function copyFile(
 export function isShieldActiveWithSelection(
   familyActivitySelectionStr: string,
 ): boolean {
-  return ReactNativeDeviceActivityModule.isShieldActiveWithSelection(
-    familyActivitySelectionStr,
+  return (
+    ReactNativeDeviceActivityModule?.isShieldActiveWithSelection(
+      familyActivitySelectionStr,
+    ) ?? false
   );
 }
 
 export function blockApps(
   familyActivitySelectionStr?: string,
 ): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule.blockApps(familyActivitySelectionStr);
+  return ReactNativeDeviceActivityModule?.blockApps(familyActivitySelectionStr);
 }
 
 export function unblockApps(): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule.unblockApps();
+  return ReactNativeDeviceActivityModule?.unblockApps();
 }
 
 export function getAuthorizationStatus(): AuthorizationStatusType {
-  return ReactNativeDeviceActivityModule.authorizationStatus();
+  return (
+    ReactNativeDeviceActivityModule?.authorizationStatus() ??
+    AuthorizationStatus.notDetermined
+  );
 }
 
-const emitter = new EventEmitter(
+const emitterModule =
   ReactNativeDeviceActivityModule ??
-    NativeModulesProxy.ReactNativeDeviceActivity,
-);
+  NativeModulesProxy.ReactNativeDeviceActivity;
+
+const emitter = emitterModule ? new EventEmitter(emitterModule) : undefined;
 
 export const useActivities = () => {
   const [activities, setActivities] = useState<string[]>([]);
 
   useEffect(() => {
     const subscription = onDeviceActivityDetected(() => {
-      setActivities(ReactNativeDeviceActivityModule.activities());
+      setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
     });
 
-    setActivities(ReactNativeDeviceActivityModule.activities());
+    setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
 
     return () => {
       subscription.remove();
@@ -314,7 +324,7 @@ export const useActivities = () => {
   }, []);
 
   const refresh = useCallback(() => {
-    setActivities(ReactNativeDeviceActivityModule.activities());
+    setActivities(ReactNativeDeviceActivityModule?.activities() ?? []);
   }, []);
 
   return [activities, refresh] as const;
@@ -342,6 +352,10 @@ export const useAuthorizationStatus = () => {
 export function onAuthorizationStatusChange(
   listener: (event: { authorizationStatus: AuthorizationStatusType }) => void,
 ): Subscription {
+  if (!emitter) {
+    return { remove: () => {} };
+  }
+
   return emitter.addListener<{ authorizationStatus: AuthorizationStatusType }>(
     "onAuthorizationStatusChange",
     listener,
@@ -351,6 +365,9 @@ export function onAuthorizationStatusChange(
 export function onDeviceActivityMonitorEvent(
   listener: (event: DeviceActivityMonitorEventPayload) => void,
 ): Subscription {
+  if (!emitter) {
+    return { remove: () => {} };
+  }
   return emitter.addListener<DeviceActivityMonitorEventPayload>(
     "onDeviceActivityMonitorEvent",
     listener,
@@ -388,7 +405,11 @@ export function updateShieldWithId(
 }
 
 export function isAvailable(): boolean {
-  return Platform.OS === "ios" && parseInt(Platform.Version, 10) >= 15;
+  return (
+    Platform.OS === "ios" &&
+    parseInt(Platform.Version, 10) >= 15 &&
+    !!ReactNativeDeviceActivityModule
+  );
 }
 
 export { DeviceActivitySelectionView };
