@@ -23,7 +23,10 @@ const warnFnBoolean = () => {
   return false;
 };
 
-const mockModule: ReactNativeDeviceActivityNativeModule & ProxyNativeModule = {
+const mockModule:
+  | (ReactNativeDeviceActivityNativeModule & ProxyNativeModule)
+  | null = {
+  setAppGroup: warnFn,
   isAvailable: () => false,
   requestAuthorization: warnFn,
   userDefaultsAll: warnFn,
