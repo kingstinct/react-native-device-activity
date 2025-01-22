@@ -26,7 +26,7 @@ const withCopyTargetFolder = (
     recursive: true,
   });
 
-  const nativeTargets = fs.readdirSync(projectTargetFolderPath, {
+  const nativeTargets = fs.readdirSync(packageTargetFolderPath, {
     withFileTypes: false,
   });
 
