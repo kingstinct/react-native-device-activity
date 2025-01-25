@@ -6,19 +6,17 @@ const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
 const withExpoExperimentalAppExtension = require("./config-plugin/withExperimentalExpoAppExtensions");
 const withInfoPlistAppGroup = require("./config-plugin/withInfoPlistAppGroup");
-const withTargetEntitlements = require("./config-plugin/withTargetEntitlements");
+const {
+  withTargetEntitlements,
+} = require("./config-plugin/withTargetEntitlements");
 const withXcodeSettings = require("./config-plugin/withXCodeSettings");
 const pkg = require("./package.json");
 
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId?: string; match?: string; appGroup: string; copyToTargetFolder?: boolean }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
-  if (
-    !props ||
-    !props.appGroup ||
-    (typeof props.appleTeamId !== "string" && !props.ios?.appleTeamId)
-  ) {
+  if (!props || !props.appGroup) {
     throw Error(
-      "'appGroup' and 'appleTeamId' props are required for react-native-device-activity config plugin (for appleTeamId you can also set ios.appleTeamId)",
+      "'appGroup' is required for react-native-device-activity config plugin",
     );
   }
 

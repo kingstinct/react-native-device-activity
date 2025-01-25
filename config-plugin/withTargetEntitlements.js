@@ -1,7 +1,7 @@
 const { default: plist } = require("@expo/plist");
 const fs = require("fs");
 
-export const targets = [
+const targets = [
   "ActivityMonitorExtension",
   "ShieldConfiguration",
   "ShieldAction",
@@ -45,4 +45,4 @@ const withTargetEntitlements = (config, { appGroup }) => {
   return config;
 };
 
-module.exports = withTargetEntitlements;
+module.exports = { withTargetEntitlements, targets };
