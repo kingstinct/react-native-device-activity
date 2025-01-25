@@ -1,37 +1,32 @@
 /** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
 const withTargetsDir = require("@kingstinct/expo-apple-targets/build/config-plugin");
-const { createRunOncePlugin, withInfoPlist } = require("expo/config-plugins");
+const { createRunOncePlugin } = require("expo/config-plugins");
 
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
+const withInfoPlistAppGroup = require("./config-plugin/withInfoPlistAppGroup");
+const withTargetEntitlements = require("./config-plugin/withTargetEntitlements");
 const withXcodeSettings = require("./config-plugin/withXCodeSettings");
 const pkg = require("./package.json");
 
-const withAllXcodeSettings = (config, props) => {
-  return withXcodeSettings(config, { appGroup: props.appGroup });
-};
-
-/** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string }>} */
-const updateInfoPlist = (config, props) => {
-  return withInfoPlist(config, (config) => {
-    config.modResults.REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP =
-      "$(REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP)";
-    return config;
-  });
-};
-
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string; appGroup: string; copyToTargetFolder?: boolean }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
-  if (!props || !props.appGroup || typeof props.appleTeamId !== "string") {
+  if (
+    !props ||
+    !props.appGroup ||
+    (typeof props.appleTeamId !== "string" && !props.ios?.appleTeamId)
+  ) {
     throw Error(
-      "'appGroup' and 'appleTeamId' props are required for react-native-device-activity config plugin",
+      "'appGroup' and 'appleTeamId' props are required for react-native-device-activity config plugin (for appleTeamId you can also set ios.appleTeamId)",
     );
   }
 
-  return withAllXcodeSettings(
-    updateInfoPlist(
-      withTargetsDir(
-        withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
+  return withXcodeSettings(
+    withTargetEntitlements(
+      withInfoPlistAppGroup(
+        withTargetsDir(
+          withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
+        ),
         props,
       ),
       props,
