@@ -71,7 +71,11 @@ export function ShieldTab() {
         {
           title: shieldTitle,
           backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
-          // backgroundColor: null,
+          backgroundColor: {
+            red: 255,
+            green: 0,
+            blue: 0,
+          },
           titleColor: {
             red: 255,
             green: 0,

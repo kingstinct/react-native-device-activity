@@ -1,10 +1,24 @@
 /** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
 const withTargetsDir = require("@kingstinct/expo-apple-targets/build/config-plugin");
-const { createRunOncePlugin } = require("expo/config-plugins");
+const { createRunOncePlugin, withInfoPlist } = require("expo/config-plugins");
 
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
+const withXcodeSettings = require("./config-plugin/withXCodeSettings");
 const pkg = require("./package.json");
+
+const withAllXcodeSettings = (config, props) => {
+  return withXcodeSettings(config, { appGroup: props.appGroup });
+};
+
+/** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string }>} */
+const updateInfoPlist = (config, props) => {
+  return withInfoPlist(config, (config) => {
+    config.modResults.REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP =
+      "$(REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP)";
+    return config;
+  });
+};
 
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string; appGroup: string; copyToTargetFolder?: boolean }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
@@ -14,8 +28,14 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
     );
   }
 
-  return withTargetsDir(
-    withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
+  return withAllXcodeSettings(
+    updateInfoPlist(
+      withTargetsDir(
+        withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
+        props,
+      ),
+      props,
+    ),
     props,
   );
 };

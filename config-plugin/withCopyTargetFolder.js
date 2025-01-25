@@ -73,26 +73,6 @@ const withCopyTargetFolder = (
     fs.writeFileSync(entitlementsFilePath, modifiedEntitlementsFileContents);
   }
 
-  const swiftFiles = fs
-    .readdirSync(projectTargetFolderPath, { recursive: true })
-    .filter(
-      (file) =>
-        targets.some((target) => file.startsWith(target)) &&
-        file.endsWith(".swift"),
-    );
-
-  for (const swiftFile of swiftFiles) {
-    const swiftFilePath = projectTargetFolderPath + "/" + swiftFile;
-    const swiftFileContents = fs.readFileSync(swiftFilePath, "utf8");
-
-    const modifiedSwiftFileContents = swiftFileContents.replace(
-      "group.ActivityMonitor",
-      appGroup,
-    );
-
-    fs.writeFileSync(swiftFilePath, modifiedSwiftFileContents);
-  }
-
   return config;
 };
 
