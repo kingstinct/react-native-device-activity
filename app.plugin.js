@@ -4,12 +4,13 @@ const { createRunOncePlugin } = require("expo/config-plugins");
 
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
+const withExpoExperimentalAppExtension = require("./config-plugin/withExperimentalExpoAppExtensions");
 const withInfoPlistAppGroup = require("./config-plugin/withInfoPlistAppGroup");
 const withTargetEntitlements = require("./config-plugin/withTargetEntitlements");
 const withXcodeSettings = require("./config-plugin/withXCodeSettings");
 const pkg = require("./package.json");
 
-/** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId: string; match?: string; appGroup: string; copyToTargetFolder?: boolean }>} */
+/** @type {import('@expo/config-plugins').ConfigPlugin<{ appleTeamId?: string; match?: string; appGroup: string; copyToTargetFolder?: boolean }>} */
 const withActivityMonitorExtensionPlugin = (config, props) => {
   if (
     !props ||
@@ -25,7 +26,13 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
     withTargetEntitlements(
       withInfoPlistAppGroup(
         withTargetsDir(
-          withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
+          withEntitlementsPlugin(
+            withCopyTargetFolder(
+              withExpoExperimentalAppExtension(config, props),
+              props,
+            ),
+            props,
+          ),
         ),
         props,
       ),

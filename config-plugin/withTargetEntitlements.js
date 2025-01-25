@@ -1,7 +1,7 @@
 const { default: plist } = require("@expo/plist");
 const fs = require("fs");
 
-const targets = [
+export const targets = [
   "ActivityMonitorExtension",
   "ShieldConfiguration",
   "ShieldAction",
