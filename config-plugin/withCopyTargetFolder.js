@@ -1,6 +1,12 @@
 const { default: plist } = require("@expo/plist");
 const fs = require("fs");
 
+const targets = [
+  "ActivityMonitorExtension",
+  "ShieldConfiguration",
+  "ShieldAction",
+];
+
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; copyToTargetFolder?: boolean }>} */
 const withCopyTargetFolder = (
   config,
@@ -41,7 +47,11 @@ const withCopyTargetFolder = (
   // find all entitlements files in the projectTargetFolderPath
   const entitlementsFiles = fs
     .readdirSync(projectTargetFolderPath, { recursive: true })
-    .filter((file) => file.endsWith(".entitlements"));
+    .filter(
+      (file) =>
+        targets.some((target) => file.startsWith(target)) &&
+        file.endsWith(".entitlements"),
+    );
 
   for (const entitlementsFile of entitlementsFiles) {
     const entitlementsFilePath =
@@ -65,7 +75,11 @@ const withCopyTargetFolder = (
 
   const swiftFiles = fs
     .readdirSync(projectTargetFolderPath, { recursive: true })
-    .filter((file) => file.endsWith(".swift"));
+    .filter(
+      (file) =>
+        targets.some((target) => file.startsWith(target)) &&
+        file.endsWith(".swift"),
+    );
 
   for (const swiftFile of swiftFiles) {
     const swiftFilePath = projectTargetFolderPath + "/" + swiftFile;
