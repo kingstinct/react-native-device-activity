@@ -30,9 +30,8 @@ const DeviceActivityPicker = () => {
           event.nativeEvent.familyActivitySelection
         )
       }}
-      familyActivitySelection={familyActivitySelection}>
-        <Text>Click here</Text>
-    </ReactNativeDeviceActivity.DeviceActivitySelectionView>)
+      familyActivitySelection={familyActivitySelection} />
+    )
   }
 }
 
@@ -94,14 +93,19 @@ The package requires native code, which includes a custom app target. Currently 
       "react-native-device-activity",
       {
         "appleTeamId": "<YOUR_TEAM_ID>",
+        "appGroup": "group.<YOUR_APP_GROUP_NAME>",
       }
     ]
   ],
   ```
 
-The Swift files for the iOS target will be copied to your local `/targets` directory. You might want to add it to your .gitignore.
+The Swift files for the iOS target will be copied to your local `/targets` directory. You might want to add it to your .gitignore (or if you have other targets in there, you might want to specifically add the three targets added by this library).
 
-⚠️ Please note that you need to apply to [apply to use this API](https://developer.apple.com/contact/request/family-controls-distribution) before launching it in AppStore
+For Expo to be able to automatically handle provisioning you need to specify extra.eas.build.experimental.ios.appExtensions in your app.json/app.config.ts [as seen here](https://github.com/Intentional-Digital/react-native-device-activity/blob/main/example/app.json#L57).
+
+## Customize native code
+
+You can potentially modify the targets manually, although you risk the library and your app code diverging. If you want to disable the automatic copying of the targets, you can set `copyToTargetFolder` to `false` in the plugin configuration [as seen here](https://github.com/Intentional-Digital/react-native-device-activity/blob/main/example/app.json#L53).
 
 # Installation in bare React Native projects
 
@@ -117,6 +121,25 @@ npm install react-native-device-activity
 
 Run `npx pod-install` after installing the npm package.
 
+## Family Controls (distribution) entitlement requires approval from Apple
+As early as possible you want to [request approval from Apple](https://developer.apple.com/contact/request/family-controls-distribution), since it can take time to get approved.
+
+Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. I.e. you can't even build an Expo Dev Client.
+
+For every base bundleIdentifier you need approval for 4 bundleIdentifiers:
+- com.your-bundleIdentifier
+- com.your-bundleIdentifier.ActivityMonitor
+- com.your-bundleIdentifier.ShieldAction
+- com.your-bundleIdentifier.ShieldConfiguration
+
+Once you've gotten approval you need to manually add the "Family Controls (Distribution)" under Additional Capabilities for each of the bundleIdentifiers on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) mentioned above. If you use Expo/EAS this has to be done only once, and after that provisioning will be handled automatically.
+
+⚠️ If you don't do all the above you will run in to a lot of strange provisioning errors.
+
+## Limitations and weird/notable things
+- The DeviceActivitySelectionView is prone to crashes, which is outside of our control. The best we can do is provide fallback views that allows the user to know what's happening and reload the view.
+- If you've asked about the authorization status once and the user after that revokes it outside the app, the native APIs won't reflect this until the app is restarted.
+- requestAuthorization() can be called multiple times, even when the user has already denied permission.
 
 
 # Contributing

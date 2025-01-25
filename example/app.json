@@ -62,12 +62,26 @@
               "appExtensions": [
                 {
                   "targetName": "ActivityMonitorExtension",
-                  "bundleIdentifier": "com.myapp.extension",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ActivityMonitorExtension",
                   "entitlements": {
                     "com.apple.developer.family-controls": true,
-                    "com.apple.security.application-groups": [
-                      "group.ActivityMonitor"
-                    ]
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                  }
+                },
+                {
+                  "targetName": "ShieldConfiguration",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldConfiguration",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                  }
+                },
+                {
+                  "targetName": "ShieldAction",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldAction",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
                   }
                 }
               ]
