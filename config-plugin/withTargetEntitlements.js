@@ -10,9 +10,10 @@ const targets = [
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; }>} */
 const withTargetEntitlements = (config, { appGroup }) => {
   const projectRoot = config._internal.projectRoot;
-  // eslint-disable-next-line no-undef
-  const projectTargetFolderPath = projectRoot + "/targets";
+const path = require('path');
 
+// eslint-disable-next-line no-undef
+const projectTargetFolderPath = path.join(projectRoot, "targets");
   // find all entitlements files in the projectTargetFolderPath
   const entitlementsFiles = fs
     .readdirSync(projectTargetFolderPath, { recursive: true })
