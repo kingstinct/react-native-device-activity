@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
     "prepare": "husky",
-    "prepublishOnly": "expo-module prepublishOnly",
+    "prepublishOnly": "expo-module prepublishOnly && tsc",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
     "open:android": "open -a \"Android Studio\" example/android"
