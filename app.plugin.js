@@ -4,7 +4,6 @@ const { createRunOncePlugin } = require("expo/config-plugins");
 
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
-const withExpoExperimentalAppExtension = require("./config-plugin/withExperimentalExpoAppExtensions");
 const withInfoPlistAppGroup = require("./config-plugin/withInfoPlistAppGroup");
 const {
   withTargetEntitlements,
@@ -21,16 +20,10 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
   }
 
   return withXcodeSettings(
-    withTargetEntitlements(
+    withEntitlementsPlugin(
       withInfoPlistAppGroup(
         withTargetsDir(
-          withEntitlementsPlugin(
-            withCopyTargetFolder(
-              withExpoExperimentalAppExtension(config, props),
-              props,
-            ),
-            props,
-          ),
+          withTargetEntitlements(withCopyTargetFolder(config, props), props),
         ),
         props,
       ),
