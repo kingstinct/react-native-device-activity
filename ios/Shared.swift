@@ -12,7 +12,8 @@ import UIKit
 import WebKit
 import os
 
-var appGroup = "group.ActivityMonitor"
+let appGroup =
+  Bundle.main.object(forInfoDictionaryKey: "REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP") as? String
 var userDefaults = UserDefaults(suiteName: appGroup)
 
 @available(iOS 14.0, *)
@@ -575,9 +576,12 @@ func traverseDirectory(at path: String) {
 }
 
 func getAppGroupDirectory() -> URL? {
-  let fileManager = FileManager.default
-  let container = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
-  return container
+  if let appGroup = appGroup {
+    let fileManager = FileManager.default
+    let container = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+    return container
+  }
+  return nil
 }
 
 func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {

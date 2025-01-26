@@ -55,7 +55,11 @@ func resolveIcon(dict: [String: Any]) -> UIImage? {
 func getShieldConfiguration(placeholders: [String: String?])
   -> ShieldConfiguration {
 
-  logger.log("Calling getShieldConfiguration")
+  if let appGroup = appGroup {
+    logger.log("Calling getShieldConfiguration with appgroup: \(appGroup, privacy: .public)")
+  } else {
+    logger.log("Calling getShieldConfiguration without appgroup!")
+  }
 
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 

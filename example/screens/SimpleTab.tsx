@@ -17,6 +17,7 @@ import {
   useActivities,
   useAuthorizationStatus,
   AuthorizationStatusType,
+  requestAuthorization,
 } from "react-native-device-activity";
 import { Button, Modal, Text, Title } from "react-native-paper";
 
@@ -33,7 +34,7 @@ export function SimpleTab() {
 
   const [activities, refreshActivities] = useActivities();
 
-  const requestAuthorization = useCallback(async () => {
+  const onPressRequestCallback = useCallback(async () => {
     if (authorizationStatus === AuthorizationStatus.notDetermined) {
       await requestAuthorization();
     } else if (authorizationStatus === AuthorizationStatus.denied) {
@@ -102,7 +103,7 @@ export function SimpleTab() {
             {authorizationStatusMap[authorizationStatus]}
           </Text>
 
-          <Button onPress={requestAuthorization} mode="contained">
+          <Button onPress={onPressRequestCallback} mode="contained">
             {authorizationStatus === AuthorizationStatus.approved
               ? "Revoke authorization"
               : "Request authorization"}

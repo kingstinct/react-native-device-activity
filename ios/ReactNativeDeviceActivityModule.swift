@@ -234,11 +234,6 @@ public class ReactNativeDeviceActivityModule: Module {
       return to.absoluteString
     }
 
-    Function("setAppGroup") { (appGroupIn: String) in
-      appGroup = appGroupIn
-      userDefaults = UserDefaults(suiteName: appGroup)
-    }
-
     OnStartObserving {
       onDeviceActivityDetectedHandle = AuthorizationCenter.shared.$authorizationStatus.sink {
         status in
