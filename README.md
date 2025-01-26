@@ -5,9 +5,11 @@
 
 # react-native-device-activity
 
-Provides access to Apples DeviceActivity API. It does require a Custom Dev Client to work with Expo.
+Provides direct access to Apples Screen Time, Device Activity and Shielding APIs.
 
-Please note that it only supports iOS (and requires iOS 15 or higher). For Android I'd probably look into [UsageStats](https://developer.android.com/reference/android/app/usage/UsageStats), which seems provide more granularity.
+⚠️ Before planning and starting using these APIs it is highly recommended to familiarize yourself with the [special approval and entitlements required](https://github.com/Kingstinct/react-native-device-activity#family-controls-distribution-entitlement-requires-approval-from-apple).
+
+Please note that it only supports iOS (and requires iOS 15 or higher) and requires a Custom Dev Client to work with Expo. For Android I'd probably look into [UsageStats](https://developer.android.com/reference/android/app/usage/UsageStats), which seems provide more granularity.
 
 # Examples
 
@@ -79,6 +81,7 @@ const events = ReactNativeDeviceActivityModule.getEvents();
 For [managed](https://docs.expo.dev/archive/managed-vs-bare/) Expo projects, please follow the installation instructions in the [API documentation for the latest stable release](#api-documentation). If you follow the link and there is no documentation available then this library is not yet usable within managed projects &mdash; it is likely to be included in an upcoming Expo SDK release.
 
 The package requires native code, which includes a custom app target. Currently it requires targeting iOS 15 or higher, so populate app.json/app.config.json as follows:
+
 ```
 "plugins": [
     [
@@ -97,7 +100,7 @@ The package requires native code, which includes a custom app target. Currently 
       }
     ]
   ],
-  ```
+```
 
 The Swift files for the iOS target will be copied to your local `/targets` directory. You might want to add it to your .gitignore (or if you have other targets in there, you might want to specifically add the three targets added by this library).
 
@@ -122,11 +125,13 @@ npm install react-native-device-activity
 Run `npx pod-install` after installing the npm package.
 
 ## Family Controls (distribution) entitlement requires approval from Apple
+
 As early as possible you want to [request approval from Apple](https://developer.apple.com/contact/request/family-controls-distribution), since it can take time to get approved.
 
 Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. I.e. you can't even build an Expo Dev Client.
 
 For every base bundleIdentifier you need approval for 4 bundleIdentifiers:
+
 - com.your-bundleIdentifier
 - com.your-bundleIdentifier.ActivityMonitor
 - com.your-bundleIdentifier.ShieldAction
@@ -137,11 +142,11 @@ Once you've gotten approval you need to manually add the "Family Controls (Distr
 ⚠️ If you don't do all the above you will run in to a lot of strange provisioning errors.
 
 ## Limitations and weird/notable things
+
 - The DeviceActivitySelectionView is prone to crashes, which is outside of our control. The best we can do is provide fallback views that allows the user to know what's happening and reload the view.
 - If you've asked about the authorization status once and the user after that revokes it outside the app, the native APIs won't reflect this until the app is restarted.
 - requestAuthorization() can be called multiple times, even when the user has already denied permission.
 
-
 # Contributing
 
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
+Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
