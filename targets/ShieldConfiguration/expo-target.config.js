@@ -2,7 +2,7 @@ const {
   default: getAppGroupFromExpoConfig,
 } = require("react-native-device-activity/config-plugin/getAppGroupFromExpoConfig");
 
-/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
+/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').ConfigFunction} */
 const config = (config) => {
   const appGroup = getAppGroupFromExpoConfig(config);
 
