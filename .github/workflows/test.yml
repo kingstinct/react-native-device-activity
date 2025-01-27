@@ -65,6 +65,8 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
+
+      - run: yarn install
       
       - run: npm install
         working-directory: example

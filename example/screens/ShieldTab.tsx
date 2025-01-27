@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   NativeSyntheticEvent,
   ScrollView,
@@ -7,12 +7,11 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  TouchableOpacity,
   Pressable,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { UIBlurEffectStyle } from "react-native-device-activity/ReactNativeDeviceActivity.types";
-import { Button, Modal, Portal, Switch, useTheme } from "react-native-paper";
+import { UIBlurEffectStyle } from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
+import { Button, Modal, Portal, Switch } from "react-native-paper";
 
 export function ShieldTab() {
   const [shieldTitle, setShieldTitle] = React.useState<string>("");
