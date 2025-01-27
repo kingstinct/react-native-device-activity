@@ -23,7 +23,6 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
       ),
       props,
     ),
-
     props,
   );
 };

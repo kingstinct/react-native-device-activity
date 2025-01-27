@@ -17,9 +17,7 @@ const getAppGroupFromExpoConfig = (config) => {
     return null;
   });
 
-  const pluginProps = plugin?.[1];
-
-  const appGroup = pluginProps?.appGroup;
+  const { appGroup } = plugin?.[1] ?? {};
 
   if (!appGroup) {
     console.error(

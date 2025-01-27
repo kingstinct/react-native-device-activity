@@ -1,18 +1,5 @@
 const {
-  default: getAppGroupFromExpoConfig,
-} = require("react-native-device-activity/config-plugin/getAppGroupFromExpoConfig");
+  createConfig,
+} = require("react-native-device-activity/config-plugin/createExpoTargetConfig");
 
-/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').ConfigFunction} */
-const config = (config) => {
-  const appGroup = getAppGroupFromExpoConfig(config);
-
-  return {
-    type: "shield-action",
-    entitlements: {
-      "com.apple.developer.family-controls": true,
-      "com.apple.security.application-groups": [appGroup],
-    },
-  };
-};
-
-module.exports = config;
+module.exports = createConfig("shield-action");
