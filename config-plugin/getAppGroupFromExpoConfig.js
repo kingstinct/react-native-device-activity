@@ -28,4 +28,4 @@ const getAppGroupFromExpoConfig = (config) => {
   return appGroup;
 };
 
-export default getAppGroupFromExpoConfig;
+module.exports = getAppGroupFromExpoConfig;

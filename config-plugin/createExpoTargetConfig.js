@@ -1,6 +1,4 @@
-const {
-  default: getAppGroupFromExpoConfig,
-} = require("./getAppGroupFromExpoConfig");
+const getAppGroupFromExpoConfig = require("./getAppGroupFromExpoConfig");
 
 /**
  * Creates a configuration function for Apple target extensions
