@@ -7,6 +7,6 @@
     "noUncheckedIndexedAccess": true,
     "noEmit": false
   },
-  "include": ["./src"],
+  "include": ["./src", "config-plugin/getAppGroupFromExpoConfig.js"],
   "exclude": ["**/__mocks__/*", "**/__tests__/*"]
 }

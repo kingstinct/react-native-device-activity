@@ -1,10 +1,7 @@
 const fs = require("fs");
 
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; copyToTargetFolder?: boolean }>} */
-const withCopyTargetFolder = (
-  config,
-  { appGroup, copyToTargetFolder = true },
-) => {
+const withCopyTargetFolder = (config, { copyToTargetFolder = true }) => {
   if (!copyToTargetFolder) {
     return config;
   }

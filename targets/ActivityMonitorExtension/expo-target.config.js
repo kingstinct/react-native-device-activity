@@ -1,6 +1,18 @@
+const {
+  default: getAppGroupFromExpoConfig,
+} = require("react-native-device-activity/config-plugin/getAppGroupFromExpoConfig");
+
 /** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
-const config = {
-  type: "device-activity-monitor",
+const config = (config) => {
+  const appGroup = getAppGroupFromExpoConfig(config);
+
+  return {
+    type: "device-activity-monitor",
+    entitlements: {
+      "com.apple.developer.family-controls": true,
+      "com.apple.security.application-groups": [appGroup],
+    },
+  };
 };
 
 module.exports = config;
