@@ -22,7 +22,7 @@ const getAppGroupFromExpoConfig = (config) => {
   const appGroup = pluginProps?.appGroup;
 
   if (!appGroup) {
-    throw new Error(
+    console.error(
       "[react-native-device-activity] Required 'appGroup' property missing from Config Plugin",
     );
   }
