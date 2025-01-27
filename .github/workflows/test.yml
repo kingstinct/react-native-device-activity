@@ -11,53 +11,53 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: yarn
 
-      - run: yarn install
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
       
-      - run: yarn lint
+      - run: bun lint
   
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: yarn
 
-      - run: yarn install
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
       
-      - run: yarn typecheck
+      - run: bun typecheck
 
   typecheck-example:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          bun-version: latest
 
-      - run: yarn install
+      - run: bun install
 
-      - run: npm install
+      - run: bun install
         working-directory: example
-      - run: yarn typecheck
+
+      - run: bun typecheck
         working-directory: example
 
   swift-lint:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: example/package-lock.json
+          bun-version: latest
 
       - uses: actions/cache@v4
         with:
@@ -66,7 +66,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
       
-      - run: npm install
+      - run: bun install
         working-directory: example
       
       - run: pod install
@@ -79,18 +79,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          bun-version: latest
 
-      - run: yarn install
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: example/package-lock.json
+      - run: bun install
 
       - uses: actions/cache@v4
         with:
@@ -113,7 +106,7 @@ jobs:
       - name: Set up Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
       
-      - run: npm install
+      - run: bun install
         working-directory: example
       
       - run: pod install

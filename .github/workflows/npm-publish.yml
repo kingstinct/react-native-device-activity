@@ -26,39 +26,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          bun-version: latest
 
-      - run: yarn install
+      - run: bun install
       
-      - run: yarn lint
+      - run: bun lint
       
-      - run: yarn typecheck
+      - run: bun typecheck
 
   publish-to-npm:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - uses: actions/setup-node@v3
         with:
-          node-version-file: .nvmrc
-          cache: yarn
+          cache: bun
           registry-url: https://registry.npmjs.org/
           scope: '@kingstinct'
 
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
       - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
-      - run: yarn install
+      - run: bun install
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
       - run: git push --follow-tags
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
