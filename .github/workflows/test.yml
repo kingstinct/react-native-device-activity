@@ -66,7 +66,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
 
-      - run: yarn install
+      - run: bun install
       
       - run: bun install
         working-directory: example
