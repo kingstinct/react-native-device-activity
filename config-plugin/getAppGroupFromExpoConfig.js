@@ -8,8 +8,9 @@ const getAppGroupFromExpoConfig = (config) => {
     if (Array.isArray(plugin)) {
       const [pluginName] = plugin;
       return (
-        pluginName === "react-native-device-activity"
-        // || pluginName === "../app.plugin.js" // only for trying it out locally
+        pluginName === "react-native-device-activity" ||
+        (process.env.INTERNALLY_TEST_PREBUILD &&
+          pluginName === "../app.plugin.js")
       );
     }
 
