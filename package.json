@@ -54,5 +54,6 @@
     "expo": "*",
     "react": "*",
     "react-native": "*"
-  }
+  },
+  "packageManager": "bun@1.2.1"
 }
