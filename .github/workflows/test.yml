@@ -8,9 +8,10 @@ on:
 
 jobs:
   lint:
+    name: eslint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -21,9 +22,10 @@ jobs:
       - run: bun lint
   
   typecheck:
+    name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -34,9 +36,10 @@ jobs:
       - run: bun typecheck
 
   typecheck-example:
+    name: Typecheck (example project)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:
@@ -51,9 +54,10 @@ jobs:
         working-directory: example
 
   bundle-example:
+    name: Expo Bundle (example project)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:
@@ -68,9 +72,10 @@ jobs:
         working-directory: example
 
   config-example:
+    name: Expo Config (example project)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:
@@ -85,9 +90,10 @@ jobs:
         working-directory: example
 
   swift-lint:
+    name: SwiftLint (example project)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:
@@ -111,11 +117,12 @@ jobs:
       - run: example/ios/Pods/SwiftLint/swiftlint lint
 
   swift-test:
+    name: Swift Test (example project)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
