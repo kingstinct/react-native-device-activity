@@ -89,6 +89,24 @@ jobs:
       - run: bunx expo config
         working-directory: example
 
+  prebuild-example:
+    name: Expo Prebuild (example project)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - run: bun install
+        working-directory: example
+
+      - run: bunx expo prebuild
+        working-directory: example
+
   swift-lint:
     name: SwiftLint (example project)
     runs-on: macos-latest
