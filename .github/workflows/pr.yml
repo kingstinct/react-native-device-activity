@@ -5,9 +5,10 @@ on:
 
 jobs:
   preview:
+    name: Preview (pkg-pr-new)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:

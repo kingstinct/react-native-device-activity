@@ -5,7 +5,7 @@ import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
   DeviceActivityEvent,
   DeviceActivitySelectionEvent,
-} from "react-native-device-activity/ReactNativeDeviceActivity.types";
+} from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
 import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
 
 const trackEveryXMinutes = 10;

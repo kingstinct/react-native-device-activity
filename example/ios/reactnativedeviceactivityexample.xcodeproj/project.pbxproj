@@ -11,14 +11,14 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		24076609638B40C29AD3691D /* ShieldAction.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 2A3C8096FCD54C04AD745FB6 /* ShieldAction.entitlements */; };
+		24076609638B40C29AD3691D /* generated.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 2A3C8096FCD54C04AD745FB6 /* generated.entitlements */; };
 		35FEA156B28F4E06B56A39C6 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E01EDC40AAA54847A43C3F99 /* DeviceActivity.framework */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		3EC70A358F3D42C69DFBA42F /* ActivityMonitorExtension.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */; };
+		3EC70A358F3D42C69DFBA42F /* generated.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 98E197012252434F88CCEEB4 /* generated.entitlements */; };
 		588D2F5C6FA8454AA654A3C3 /* ShieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55BEF032CC20441DA94ED74D /* ShieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7196272736B8369F7352BB3C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */; };
 		96905EF65AED1B983A6B3ABC /* libPods-reactnativedeviceactivityexample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */; };
-		984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */; };
+		984C7C2718574054BF6481E3 /* generated.entitlements in Sources */ = {isa = PBXBuildFile; fileRef = 630F9328E9134A4D9F0874A2 /* generated.entitlements */; };
 		A9A0307C2CFF148E00D9E7E8 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBE82CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
 		A9B2DBE92CECAE610001BBAF /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B2DBE72CECAE610001BBAF /* Shared.swift */; };
@@ -92,15 +92,15 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = main.m; path = reactnativedeviceactivityexample/main.m; sourceTree = "<group>"; };
 		1413C6DF9E3E4F8795DD1144 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; fileEncoding = 4; includeInIndex = 1; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
 		22B2DFD666844CC6A73BAB9B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2A3C8096FCD54C04AD745FB6 /* ShieldAction.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ShieldAction.entitlements; sourceTree = "<group>"; };
+		2A3C8096FCD54C04AD745FB6 /* generated.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = generated.entitlements; sourceTree = "<group>"; };
 		55BEF032CC20441DA94ED74D /* ShieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ShieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-reactnativedeviceactivityexample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; fileEncoding = 4; includeInIndex = 0; path = "libPods-reactnativedeviceactivityexample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
+		630F9328E9134A4D9F0874A2 /* generated.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = generated.entitlements; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-reactnativedeviceactivityexample.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.debug.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-reactnativedeviceactivityexample.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactnativedeviceactivityexample.release.xcconfig"; path = "Target Support Files/Pods-reactnativedeviceactivityexample/Pods-reactnativedeviceactivityexample.release.xcconfig"; sourceTree = "<group>"; };
 		84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		86C617632690A9F3C5D768FE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../targets/ShieldConfiguration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		98E197012252434F88CCEEB4 /* generated.entitlements */ = {isa = PBXFileReference; explicitFileType = text.plist.entitlements; fileEncoding = 4; includeInIndex = 0; path = generated.entitlements; sourceTree = "<group>"; };
 		A9A030712CFF142000D9E7E8 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; fileEncoding = 4; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B2DBE72CECAE610001BBAF /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = Shared.swift; path = ../../ios/Shared.swift; sourceTree = "<absolute>"; };
 		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = ../../targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift; sourceTree = "<absolute>"; };
@@ -125,27 +125,6 @@
 			exceptions = (
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		XX39D67B16C97D546C2A68XX /* ShieldAction */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = ShieldAction;
-			sourceTree = "<group>";
-		};
-		XXBEF4732D652A763B01C2XX /* ShieldConfiguration */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = ShieldConfiguration;
-			sourceTree = "<group>";
-		};
-		XXC76190DB8B2D90600E9FXX /* ActivityMonitorExtension */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = ActivityMonitorExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -214,7 +193,7 @@
 		2CA754293FC5430EBFCBDD04 /* ShieldAction */ = {
 			isa = PBXGroup;
 			children = (
-				2A3C8096FCD54C04AD745FB6 /* ShieldAction.entitlements */,
+				2A3C8096FCD54C04AD745FB6 /* generated.entitlements */,
 				22B2DFD666844CC6A73BAB9B /* Info.plist */,
 				A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */,
 			);
@@ -284,7 +263,7 @@
 		AE110DB5899B4D8887B5B8C9 /* ActivityMonitorExtension */ = {
 			isa = PBXGroup;
 			children = (
-				98E197012252434F88CCEEB4 /* ActivityMonitorExtension.entitlements */,
+				98E197012252434F88CCEEB4 /* generated.entitlements */,
 				10F48954B51344E7AF350E1B /* Info.plist */,
 				A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */,
 			);
@@ -314,9 +293,6 @@
 				D0AD29FCE88C41BC90BA7D10 /* ShieldConfiguration */,
 				2CA754293FC5430EBFCBDD04 /* ShieldAction */,
 				AE110DB5899B4D8887B5B8C9 /* ActivityMonitorExtension */,
-				XXC76190DB8B2D90600E9FXX /* ActivityMonitorExtension */,
-				XX39D67B16C97D546C2A68XX /* ShieldAction */,
-				XXBEF4732D652A763B01C2XX /* ShieldConfiguration */,
 			);
 			name = "expo:targets";
 			sourceTree = "<group>";
@@ -324,7 +300,7 @@
 		D0AD29FCE88C41BC90BA7D10 /* ShieldConfiguration */ = {
 			isa = PBXGroup;
 			children = (
-				630F9328E9134A4D9F0874A2 /* ShieldConfiguration.entitlements */,
+				630F9328E9134A4D9F0874A2 /* generated.entitlements */,
 				AEB321985C804DE4AB33EC69 /* Info.plist */,
 				A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */,
 			);
@@ -363,9 +339,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				XX39D67B16C97D546C2A68XX /* ShieldAction */,
 			);
 			name = ShieldAction;
 			productName = ShieldAction;
@@ -412,9 +385,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				XXBEF4732D652A763B01C2XX /* ShieldConfiguration */,
-			);
 			name = ShieldConfiguration;
 			productName = ShieldConfiguration;
 			productReference = EEEB0A38EA724033BF060181 /* ShieldConfiguration.appex */;
@@ -453,9 +423,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				XXC76190DB8B2D90600E9FXX /* ActivityMonitorExtension */,
-			);
 			name = ActivityMonitorExtension;
 			productName = ActivityMonitorExtension;
 			productReference = 84457EAD9B9F41CDA5B58B4E /* ActivityMonitorExtension.appex */;
@@ -489,7 +456,6 @@
 					};
 					B020639A1E02498DA97B7121 = {
 						CreatedOnToolsVersion = 14.3;
-						DevelopmentTeam = 34SE8X7Q58;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -709,7 +675,7 @@
 			files = (
 				A9B2DBE92CECAE610001BBAF /* Shared.swift in Sources */,
 				A9B2DC002CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift in Sources */,
-				3EC70A358F3D42C69DFBA42F /* ActivityMonitorExtension.entitlements in Sources */,
+				3EC70A358F3D42C69DFBA42F /* generated.entitlements in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -726,7 +692,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B2DBE82CECAE610001BBAF /* Shared.swift in Sources */,
-				24076609638B40C29AD3691D /* ShieldAction.entitlements in Sources */,
+				24076609638B40C29AD3691D /* generated.entitlements in Sources */,
 				A9B2DC042CECB9600001BBAF /* ShieldActionExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -736,7 +702,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B2DBEA2CECAE610001BBAF /* Shared.swift in Sources */,
-				984C7C2718574054BF6481E3 /* ShieldConfiguration.entitlements in Sources */,
+				984C7C2718574054BF6481E3 /* generated.entitlements in Sources */,
 				A9B2DC022CECB9430001BBAF /* ShieldConfigurationExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1055,7 +1021,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1098,7 +1064,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ActivityMonitorExtension/ActivityMonitorExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ActivityMonitorExtension/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1142,7 +1108,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1184,7 +1150,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldConfiguration/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1228,7 +1194,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ActivityMonitorExtension/ActivityMonitorExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ActivityMonitorExtension/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1270,7 +1236,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ../targets/ShieldAction/generated.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;

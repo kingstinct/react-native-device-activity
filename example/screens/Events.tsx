@@ -7,7 +7,7 @@ import {
   RefreshControl,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { EventParsed } from "react-native-device-activity/ReactNativeDeviceActivity.types";
+import { EventParsed } from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
 
 export function EventsTab() {
   const [events, setEvents] = React.useState<EventParsed[]>([]);
