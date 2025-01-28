@@ -13,7 +13,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+          
+      - uses: actions/setup-node@v4
+        with:
+          cache: bun
+          registry-url: https://registry.npmjs.org/
+          scope: '@kingstinct'
 
       - run: bun install
       
-      - run: bunx pkg-pr-new publish
+      - run: npx pkg-pr-new publish
