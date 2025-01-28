@@ -50,6 +50,40 @@ jobs:
       - run: bun typecheck
         working-directory: example
 
+  bundle-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - run: bun install
+        working-directory: example
+
+      - run: bunx expo export
+        working-directory: example
+
+  config-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - run: bun install
+        working-directory: example
+
+      - run: bunx expo config
+        working-directory: example
+
   swift-lint:
     runs-on: macos-latest
     steps:
