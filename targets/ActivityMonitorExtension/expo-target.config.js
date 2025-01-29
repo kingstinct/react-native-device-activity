@@ -1,6 +1,5 @@
-/** @type {import('@kingstinct/expo-apple-targets/build/config-plugin').Config} */
-const config = {
-  type: "device-activity-monitor",
-};
+const {
+  createConfig,
+} = require("react-native-device-activity/config-plugin/createExpoTargetConfig");
 
-module.exports = config;
+module.exports = createConfig("device-activity-monitor");

@@ -5,9 +5,6 @@ const { createRunOncePlugin } = require("expo/config-plugins");
 const withCopyTargetFolder = require("./config-plugin/withCopyTargetFolder");
 const withEntitlementsPlugin = require("./config-plugin/withEntitlements");
 const withInfoPlistAppGroup = require("./config-plugin/withInfoPlistAppGroup");
-const {
-  withTargetEntitlements,
-} = require("./config-plugin/withTargetEntitlements");
 const withXcodeSettings = require("./config-plugin/withXCodeSettings");
 const pkg = require("./package.json");
 
@@ -20,12 +17,9 @@ const withActivityMonitorExtensionPlugin = (config, props) => {
   }
 
   return withXcodeSettings(
-    withEntitlementsPlugin(
-      withInfoPlistAppGroup(
-        withTargetsDir(
-          withTargetEntitlements(withCopyTargetFolder(config, props), props),
-        ),
-        props,
+    withInfoPlistAppGroup(
+      withTargetsDir(
+        withEntitlementsPlugin(withCopyTargetFolder(config, props), props),
       ),
       props,
     ),

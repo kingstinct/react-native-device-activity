@@ -1205,7 +1205,7 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
-  - ReactNativeDeviceActivity (0.1.10):
+  - ReactNativeDeviceActivity (0.2.2):
     - ExpoModulesCore
   - RNVectorIcons (10.2.0):
     - DoubleConversion
@@ -1507,7 +1507,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
-  ReactNativeDeviceActivity: 8558b7f3ec440273f91519cac62ae8e5800de5bc
+  ReactNativeDeviceActivity: 209e3900dcfd7516b60b1655becc53a8b5e8d1bf
   RNVectorIcons: 845eda5c7819bd29699cafd0fc98c9d4afe28c96
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftLint: 92196976e597b9afec5dbe374810103e6c1d9d7c

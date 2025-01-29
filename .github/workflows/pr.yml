@@ -5,14 +5,22 @@ on:
 
 jobs:
   preview:
+    name: Preview (pkg-pr-new)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
+      - uses: actions/setup-node@v4
+        with:
+          registry-url: https://registry.npmjs.org/
+          scope: '@kingstinct'
+
       - run: bun install
+
+      - run: bun run prepublishOnly
       
-      - run: bunx pkg-pr-new publish
+      - run: npx pkg-pr-new publish
