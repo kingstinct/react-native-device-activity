@@ -23,7 +23,7 @@ import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
 export async function requestAuthorization(
   forIndividualOrChild: "individual" | "child" = "individual",
-): Promise<AuthorizationStatusType> {
+) {
   try {
     await ReactNativeDeviceActivityModule?.requestAuthorization(
       forIndividualOrChild,
@@ -32,7 +32,6 @@ export async function requestAuthorization(
     // seems like we get a promise rejection if the user denies the authorization, but we can still request again
     console.error(error);
   }
-  return getAuthorizationStatus();
 }
 
 export async function revokeAuthorization(): Promise<AuthorizationStatusType> {
