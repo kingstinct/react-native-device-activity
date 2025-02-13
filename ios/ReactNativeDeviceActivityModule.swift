@@ -181,7 +181,7 @@ public class ReactNativeDeviceActivityModule: Module {
     // The module will be accessible from `requireNativeModule('ReactNativeDeviceActivity')` in JavaScript.
     Name("ReactNativeDeviceActivity")
 
-    let center = DeviceActivityCenter()
+    var center = DeviceActivityCenter()
 
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants([
@@ -433,6 +433,13 @@ public class ReactNativeDeviceActivityModule: Module {
       )
       logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
 
+    }
+
+    Function("reloadDeviceActivityCenter") {
+      // probably should be done, but is not entirely intuitive so doing it in userland
+      // center.stopMonitoring()
+
+      center = DeviceActivityCenter()
     }
 
     Function("stopMonitoring") { (activityNames: [String]?) in
