@@ -261,6 +261,7 @@ export type ReactNativeDeviceActivityNativeModule = {
   activities: () => string[];
   authorizationStatus: () => AuthorizationStatusType;
   stopMonitoring: (activityNames?: string[]) => void;
+  reloadDeviceActivityCenter: () => void;
   startMonitoring: (
     activityName: string,
     deviceActivitySchedule: DeviceActivitySchedule,

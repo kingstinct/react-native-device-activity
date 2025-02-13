@@ -43,6 +43,7 @@ const mockModule:
   blockApps: warnFn,
   activities: warnFnArray,
   authorizationStatus: warnFnNumber,
+  reloadDeviceActivityCenter: warnFn,
   getEvents: () => {
     console.warn(warnText);
     return {};

@@ -17,3 +17,5 @@ __tests__
 *.spec.tsx
 __tests__/
 
+# seems like something is causing example to get installed recursively (bun bug?)
+example

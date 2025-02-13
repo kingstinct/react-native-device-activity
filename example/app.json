@@ -6,6 +6,7 @@
     "scheme": "device-activity",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "platforms": ["ios"],
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -21,11 +22,7 @@
       "assets/*"
     ],
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "expo.modules.deviceactivity.example"
+      "package": "expo.modules.deviceactivity.example",
     },
     "web": {
       "favicon": "./assets/favicon.png"
