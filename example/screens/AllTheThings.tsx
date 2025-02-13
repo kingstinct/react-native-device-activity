@@ -142,7 +142,8 @@ export function AllTheThings() {
 
   const requestAuthorization = useCallback(async () => {
     if (authorizationStatus === AuthorizationStatus.notDetermined) {
-      const status = await ReactNativeDeviceActivity.requestAuthorization();
+      await ReactNativeDeviceActivity.requestAuthorization();
+      const status = ReactNativeDeviceActivity.getAuthorizationStatus();
       setAuthorizationStatus(status);
     } else if (authorizationStatus === AuthorizationStatus.denied) {
       Alert.alert(
