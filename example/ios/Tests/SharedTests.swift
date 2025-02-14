@@ -78,7 +78,81 @@ class SharedTests: XCTestCase {
 }
 
 class SharedTests2: XCTestCase {
-  func isHigherEventNumTest() {
+  func testGetLastTriggeredTimeFromUserDefaults() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    userDefaults?.set(1000, forKey: key)
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: 999,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: 1000,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testSkipIfAlreadyTriggeredWithinMS() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: 100,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: 10000,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testIsHigherEventNum() {
     let isLower = isHigherEvent(eventName: "5", higherThan: "10")
     let isEqual = isHigherEvent(eventName: "10", higherThan: "10")
     let isHigher = isHigherEvent(eventName: "15", higherThan: "10")
@@ -88,17 +162,17 @@ class SharedTests2: XCTestCase {
     XCTAssertFalse(isLower)
   }
 
-  func isHigherEventStringTest() {
+  func testIsHigherEventString() {
     let isHigherBecauseString = isHigherEvent(eventName: "prefix_5", higherThan: "prefix_10")
     let isEqual = isHigherEvent(eventName: "prefix_10", higherThan: "prefix_10")
     let isHigher = isHigherEvent(eventName: "prefix_15", higherThan: "prefix_10")
 
     XCTAssertTrue(isHigher)
     XCTAssertFalse(isEqual)
-    XCTAssertFalse(isHigherBecauseString)
+    XCTAssertTrue(isHigherBecauseString)
   }
 
-  func replaceTest() {
+  func testReplaceText() {
     let five = replace(
       key: "event_with_prefix_5",
       prefix: "event_with_prefix_"

@@ -11,68 +11,7 @@ import Foundation
 import ManagedSettings
 import os
 
-func shouldExecuteAction(
-  skipIfAlreadyTriggeredAfter: Double?,
-  skipIfLargerEventRecordedAfter: Double?,
-  skipIfAlreadyTriggeredWithinMS: Double?,
-  skipIfLargerEventRecordedWithinMS: Double?,
-  activityName: String,
-  callbackName: String,
-  eventName: String? = nil
-) -> Bool {
-  if let skipIfAlreadyTriggeredAfter = skipIfAlreadyTriggeredAfter {
-    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
-      activityName: activityName,
-      callbackName: callbackName,
-      eventName: eventName
-    ) {
-      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
-        return false
-      }
-    }
-  }
 
-  if let skipIfLargerEventRecordedAfter = skipIfLargerEventRecordedAfter {
-    if hasHigherTriggeredEvent(
-      activityName: activityName,
-      callbackName: callbackName,
-      eventName: eventName,
-      afterDate: skipIfLargerEventRecordedAfter
-    ) {
-      return false
-    }
-  }
-
-  if let skipIfAlreadyTriggeredWithinMS = skipIfAlreadyTriggeredWithinMS {
-    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
-      activityName: activityName,
-      callbackName: callbackName,
-      eventName: eventName
-    ) {
-      let skipIfAlreadyTriggeredAfter =
-        Date.now.addingTimeInterval(
-          -skipIfAlreadyTriggeredWithinMS
-        ).timeIntervalSince1970 * 1000
-      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
-        return false
-      }
-    }
-  }
-
-  if let skipIfLargerEventRecordedWithinMS = skipIfLargerEventRecordedWithinMS {
-    if hasHigherTriggeredEvent(
-      activityName: activityName,
-      callbackName: callbackName,
-      eventName: eventName,
-      afterDate: Date.now
-        .addingTimeInterval(-skipIfLargerEventRecordedWithinMS).timeIntervalSince1970 * 1000
-    ) {
-      return false
-    }
-  }
-
-  return true
-}
 
 // Optionally override any of the functions below.
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.

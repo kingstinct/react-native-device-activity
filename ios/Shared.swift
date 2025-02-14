@@ -570,7 +570,7 @@ func isHigherEvent(eventName: String, higherThan: String) -> Bool {
   if let eventNameNum = Double(eventName), let higherThanNum = Double(higherThan) {
     return eventNameNum > higherThanNum
   } else {
-    return eventName > higherThan
+    return eventName.localizedCompare(higherThan) == .orderedDescending
   }
 }
 
@@ -617,6 +617,70 @@ func hasHigherTriggeredEvent(
   return false
 }
 
+@available(iOS 15.0, *)
+func shouldExecuteAction(
+  skipIfAlreadyTriggeredAfter: Double?,
+  skipIfLargerEventRecordedAfter: Double?,
+  skipIfAlreadyTriggeredWithinMS: Double?,
+  skipIfLargerEventRecordedWithinMS: Double?,
+  activityName: String,
+  callbackName: String,
+  eventName: String?
+) -> Bool {
+  if let skipIfAlreadyTriggeredAfter = skipIfAlreadyTriggeredAfter {
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        return false
+      }
+    }
+  }
+
+  if let skipIfLargerEventRecordedAfter = skipIfLargerEventRecordedAfter {
+    if hasHigherTriggeredEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName,
+      afterDate: skipIfLargerEventRecordedAfter
+    ) {
+      return false
+    }
+  }
+
+  if let skipIfAlreadyTriggeredWithinMS = skipIfAlreadyTriggeredWithinMS {
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      let skipIfAlreadyTriggeredAfter =
+      Date.now.addingTimeInterval(
+        -skipIfAlreadyTriggeredWithinMS / 1000
+      ).timeIntervalSince1970 * 1000
+      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        return false
+      }
+    }
+  }
+
+  if let skipIfLargerEventRecordedWithinMS = skipIfLargerEventRecordedWithinMS {
+    if hasHigherTriggeredEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName,
+      afterDate: Date.now
+        .addingTimeInterval(-skipIfLargerEventRecordedWithinMS).timeIntervalSince1970 * 1000
+    ) {
+      return false
+    }
+  }
+
+  return true
+}
+
 func getLastTriggeredTimeFromUserDefaults(
   activityName: String, callbackName: String, eventName: String? = nil
 ) -> Double? {
@@ -627,7 +691,9 @@ func getLastTriggeredTimeFromUserDefaults(
     eventName: eventName
   )
 
-  return userDefaults?.double(forKey: fullEventName)
+  let val = userDefaults?.object(forKey: fullEventName)
+
+  return val as? Double
 }
 
 func traverseDirectory(at path: String) {
