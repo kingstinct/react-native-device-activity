@@ -168,6 +168,31 @@ class NativeEventObserver {
 }
 
 @available(iOS 15.0, *)
+func tokenSetsAreEqual<T>(
+  tokenSetOne: Set<Token<T>>?,
+  tokenSetTwo: Set<Token<T>>
+) -> Bool {
+  if tokenSetOne == tokenSetTwo {
+    return true
+  }
+
+  if let tokenSetOne = tokenSetOne {
+    if tokenSetOne.count == tokenSetTwo.count {
+      if tokenSetOne.count == 0 {
+        return true
+      }
+      return tokenSetOne.allSatisfy { token in
+        tokenSetTwo.contains(token)
+      }
+    }
+  } else {
+    return tokenSetTwo.isEmpty
+  }
+
+  return false
+}
+
+@available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
 
   let store = ManagedSettingsStore()
@@ -485,33 +510,30 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
-      let areAnyApplicationsEqual =
-        store.shield.applications?.map({ token in
-          token
-        })
-        == selection.applicationTokens.map({ token in
-          token
-        })
-      let areAnyWebDomainsEqual =
-        store.shield.webDomains?.map({ token in
-          token
-        })
-        == selection.webDomainTokens.map({ token in
-          token
-        })
+      let shield = store.shield
+
+      let areApplicationsEqual = tokenSetsAreEqual(
+        tokenSetOne: shield.applications,
+        tokenSetTwo: selection.applicationTokens
+      )
+
+      let areWebDomainsEqual = tokenSetsAreEqual(
+        tokenSetOne: shield.webDomains,
+        tokenSetTwo: selection.webDomainTokens
+      )
 
       let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(
         selection.categoryTokens, except: Set())
 
-      let areAnyApplicationCategoriesEqual = store.shield.applicationCategories == appCategoryPolicy
+      let areAnyApplicationCategoriesEqual = shield.applicationCategories == appCategoryPolicy
 
       let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(
         selection.categoryTokens, except: Set())
 
       let areAnyWebDomainCategoriesEqual =
-        webDomainCategoryPolicy == store.shield.webDomainCategories
+        webDomainCategoryPolicy == shield.webDomainCategories
 
-      return areAnyApplicationsEqual && areAnyWebDomainsEqual && areAnyApplicationCategoriesEqual
+      return areApplicationsEqual && areWebDomainsEqual && areAnyApplicationCategoriesEqual
         && areAnyWebDomainCategoriesEqual
     }
 
