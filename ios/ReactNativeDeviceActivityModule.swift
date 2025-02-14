@@ -55,6 +55,13 @@ struct ScheduleFromJS: ExpoModulesCore.Record {
   var warningTime: DateComponentsFromJS?
 }
 
+struct ActivitySelectionWithMetadata {
+  var familyActivitySelection: String?
+  var applicationCount: Int
+  var categoryCount: Int
+  var webdomainCount: Int
+}
+
 struct DeviceActivityEventFromJS: ExpoModulesCore.Record {
   @Field
   var familyActivitySelectionIndex: Int
@@ -470,6 +477,169 @@ public class ReactNativeDeviceActivityModule: Module {
       } else {
         logger.log("⚠️ iOS 16.0 or later is required to request authorization.")
       }
+    }
+
+    Function("intersection") {
+      (familyActivitySelectionStr: String, _: String)
+        -> ActivitySelectionWithMetadata in
+      let selection1 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let selection2 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let applicationTokens = selection1.applicationTokens.intersection(
+        selection2.applicationTokens
+      )
+
+      let domainTokens = selection1.webDomainTokens.intersection(
+        selection2.webDomainTokens
+      )
+
+      let categoryTokens = selection1.categoryTokens.intersection(
+        selection2.categoryTokens
+      )
+
+      var selection = FamilyActivitySelection()
+
+      selection.applicationTokens = applicationTokens
+      selection.webDomainTokens = domainTokens
+      selection.categoryTokens = categoryTokens
+
+      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+
+      return ActivitySelectionWithMetadata(
+        familyActivitySelection: serializedActivitySelection,
+        applicationCount: applicationTokens.count,
+        categoryCount: categoryTokens.count,
+        webdomainCount: domainTokens.count
+      )
+    }
+
+    Function("union") {
+      (familyActivitySelectionStr: String, _: String)
+        -> ActivitySelectionWithMetadata in
+      let selection1 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let selection2 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let applicationTokens = selection1.applicationTokens.union(
+        selection2.applicationTokens
+      )
+
+      let domainTokens = selection1.webDomainTokens.union(
+        selection2.webDomainTokens
+      )
+
+      let categoryTokens = selection1.categoryTokens.union(
+        selection2.categoryTokens
+      )
+
+      var selection = FamilyActivitySelection()
+
+      selection.applicationTokens = applicationTokens
+      selection.webDomainTokens = domainTokens
+      selection.categoryTokens = categoryTokens
+
+      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+
+      return ActivitySelectionWithMetadata(
+        familyActivitySelection: serializedActivitySelection,
+        applicationCount: applicationTokens.count,
+        categoryCount: categoryTokens.count,
+        webdomainCount: domainTokens.count
+      )
+    }
+
+    Function("difference") {
+      (familyActivitySelectionStr: String, _: String)
+        -> ActivitySelectionWithMetadata in
+      let selection1 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let selection2 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let applicationTokens = selection1.applicationTokens.subtracting(
+        selection2.applicationTokens
+      )
+
+      let domainTokens = selection1.webDomainTokens.subtracting(
+        selection2.webDomainTokens
+      )
+
+      let categoryTokens = selection1.categoryTokens.subtracting(
+        selection2.categoryTokens
+      )
+
+      var selection = FamilyActivitySelection()
+
+      selection.applicationTokens = applicationTokens
+      selection.webDomainTokens = domainTokens
+      selection.categoryTokens = categoryTokens
+
+      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+
+      return ActivitySelectionWithMetadata(
+        familyActivitySelection: serializedActivitySelection,
+        applicationCount: applicationTokens.count,
+        categoryCount: categoryTokens.count,
+        webdomainCount: domainTokens.count
+      )
+    }
+
+    Function("symmetricDifference") {
+      (familyActivitySelectionStr: String, _: String)
+        -> ActivitySelectionWithMetadata in
+      let selection1 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let selection2 = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let applicationTokens = selection1.applicationTokens.symmetricDifference(
+        selection2.applicationTokens
+      )
+
+      let domainTokens = selection1.webDomainTokens.symmetricDifference(
+        selection2.webDomainTokens
+      )
+
+      let categoryTokens = selection1.categoryTokens.symmetricDifference(
+        selection2.categoryTokens
+      )
+
+      var selection = FamilyActivitySelection()
+
+      selection.applicationTokens = applicationTokens
+      selection.webDomainTokens = domainTokens
+      selection.categoryTokens = categoryTokens
+
+      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+
+      return ActivitySelectionWithMetadata(
+        familyActivitySelection: serializedActivitySelection,
+        applicationCount: applicationTokens.count,
+        categoryCount: categoryTokens.count,
+        webdomainCount: domainTokens.count
+      )
+    }
+
+    Function("activitySelectionMetadata") {
+      (familyActivitySelectionStr: String) -> ActivitySelectionWithMetadata in
+      let selection = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr)
+
+      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+
+      return ActivitySelectionWithMetadata(
+        familyActivitySelection: serializedActivitySelection,
+        applicationCount: selection.applicationTokens.count,
+        categoryCount: selection.categoryTokens.count,
+        webdomainCount: selection.webDomainTokens.count
+      )
     }
 
     Function("isShieldActive") {

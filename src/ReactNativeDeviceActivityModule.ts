@@ -23,6 +23,16 @@ const warnFnBoolean = () => {
   return false;
 };
 
+const warnFnActivitySelectionWithMetadata = () => {
+  console.warn(warnText);
+  return {
+    familyActivitySelection: null,
+    applicationCount: 0,
+    categoryCount: 0,
+    webDomainCount: 0,
+  };
+};
+
 const mockModule:
   | (ReactNativeDeviceActivityNativeModule & ProxyNativeModule)
   | null = {
@@ -33,6 +43,11 @@ const mockModule:
   userDefaultsRemove: warnFn,
   userDefaultsSet: warnFn,
   userDefaultsClear: warnFn,
+  activitySelectionMetadata: warnFnActivitySelectionWithMetadata,
+  intersection: warnFnActivitySelectionWithMetadata,
+  union: warnFnActivitySelectionWithMetadata,
+  difference: warnFnActivitySelectionWithMetadata,
+  symmetricDifference: warnFnActivitySelectionWithMetadata,
   revokeAuthorization: warnFn,
   isShieldActive: warnFnBoolean,
   getAppGroupFileDirectory: warnFn,
