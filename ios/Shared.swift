@@ -562,6 +562,8 @@ func persistToUserDefaults(activityName: String, callbackName: String, eventName
   )
 
   userDefaults?.set(now, forKey: fullEventName)
+
+  CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 }
 
 func isHigherEvent(eventName: String, higherThan: String) -> Bool {

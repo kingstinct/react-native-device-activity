@@ -111,8 +111,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       callbackName: "intervalDidEnd"
     )
 
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
-
     notifyAppWithName(name: "intervalDidEnd")
   }
 
@@ -131,6 +129,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       "callbackName": callbackName,
       "eventName": eventName
     ]
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
     if let actions = userDefaults?.array(forKey: key) {
       actions.forEach { actionRaw in
@@ -152,7 +152,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           ) {
             executeAction(action: action, placeholders: placeholders)
           }
-
         }
       }
     }
