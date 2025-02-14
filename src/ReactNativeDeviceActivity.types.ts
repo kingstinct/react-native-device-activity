@@ -176,33 +176,57 @@ export type Action =
       shieldId?: string;
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "unblockAllApps";
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "resetUnblockedSelection";
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "blockAllApps";
       shieldId?: string;
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "sendNotification";
       payload: NotificationPayload;
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "openApp";
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     }
   | {
       type: "sendHttpRequest";
@@ -214,6 +238,10 @@ export type Action =
       };
       sleepBefore?: number;
       sleepAfter?: number;
+      skipIfAlreadyTriggeredAfter?: Date;
+      skipIfLargerEventRecordedAfter?: Date;
+      skipIfAlreadyTriggeredWithinMS?: number;
+      skipIfLargerEventRecordedWithinMS?: number;
     };
 
 export type DeviceActivityEventRaw = Omit<

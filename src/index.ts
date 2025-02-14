@@ -148,7 +148,18 @@ export const configureActions = ({
     ? `actions_for_${activityName}_${callbackName}_${eventName}`
     : `actions_for_${activityName}_${callbackName}`;
 
-  userDefaultsSet(key, actions);
+  userDefaultsSet(
+    key,
+    actions.map((action) => ({
+      ...action,
+      skipIfLargerEventRecordedAfter: action.skipIfLargerEventRecordedAfter
+        ? action.skipIfLargerEventRecordedAfter.getTime()
+        : undefined,
+      skipIfAlreadyTriggeredAfter: action.skipIfAlreadyTriggeredAfter
+        ? action.skipIfAlreadyTriggeredAfter.getTime()
+        : undefined,
+    })),
+  );
 };
 
 export const cleanUpAfterActivity = (activityName: string) => {

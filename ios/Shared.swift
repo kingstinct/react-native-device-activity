@@ -541,13 +541,91 @@ func getColor(color: [String: Double]?) -> UIColor? {
   return nil
 }
 
-func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
-  let now = (Date().timeIntervalSince1970 * 1000).rounded()
+func userDefaultKeyForEvent(activityName: String, callbackName: String, eventName: String? = nil)
+  -> String {
+
   let fullEventName =
     eventName == nil
     ? "events_\(activityName)_\(callbackName)"
     : "events_\(activityName)_\(callbackName)_\(eventName!)"
+
+  return fullEventName
+}
+
+func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
+  let now = (Date().timeIntervalSince1970 * 1000).rounded()
+
+  let fullEventName = userDefaultKeyForEvent(
+    activityName: activityName,
+    callbackName: callbackName,
+    eventName: eventName
+  )
+
   userDefaults?.set(now, forKey: fullEventName)
+}
+
+func isHigherEvent(eventName: String, higherThan: String) -> Bool {
+  if let eventNameNum = Double(eventName), let higherThanNum = Double(higherThan) {
+    return eventNameNum > higherThanNum
+  } else {
+    return eventName > higherThan
+  }
+}
+
+func replace(key: String, prefix: String) -> String {
+  if key.hasPrefix(prefix) {
+    return String(key.dropFirst(prefix.count))
+  }
+
+  return key
+}
+
+func hasHigherTriggeredEvent(
+  activityName: String,
+  callbackName: String,
+  eventName: String?,
+  afterDate: Double
+) -> Bool {
+  let prefix = "events_\(activityName)_"
+
+  if let actualDict = userDefaults?.dictionaryRepresentation() {
+    let higherEvent = actualDict.first(where: { (key: String, value: Any) in
+      if let triggeredAt = value as? Double {
+        return
+          key
+          .starts(
+            with: prefix
+          )
+          && triggeredAt > afterDate
+          && (eventName != nil
+            ? isHigherEvent(
+              eventName: replace(key: key, prefix: prefix),
+              higherThan: eventName!
+            ) : true)
+      }
+      return false
+
+    })
+
+    if higherEvent != nil {
+      return true
+    }
+  }
+
+  return false
+}
+
+func getLastTriggeredTimeFromUserDefaults(
+  activityName: String, callbackName: String, eventName: String? = nil
+) -> Double? {
+
+  let fullEventName = userDefaultKeyForEvent(
+    activityName: activityName,
+    callbackName: callbackName,
+    eventName: eventName
+  )
+
+  return userDefaults?.double(forKey: fullEventName)
 }
 
 func traverseDirectory(at path: String) {

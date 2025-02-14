@@ -76,3 +76,46 @@ class SharedTests: XCTestCase {
     XCTAssertEqual(result["score"] as? String, "{asNumber:missingValue}")
   }
 }
+
+class SharedTests2: XCTestCase {
+  func isHigherEventNumTest() {
+    let isLower = isHigherEvent(eventName: "5", higherThan: "10")
+    let isEqual = isHigherEvent(eventName: "10", higherThan: "10")
+    let isHigher = isHigherEvent(eventName: "15", higherThan: "10")
+
+    XCTAssertTrue(isHigher)
+    XCTAssertFalse(isEqual)
+    XCTAssertFalse(isLower)
+  }
+
+  func isHigherEventStringTest() {
+    let isHigherBecauseString = isHigherEvent(eventName: "prefix_5", higherThan: "prefix_10")
+    let isEqual = isHigherEvent(eventName: "prefix_10", higherThan: "prefix_10")
+    let isHigher = isHigherEvent(eventName: "prefix_15", higherThan: "prefix_10")
+
+    XCTAssertTrue(isHigher)
+    XCTAssertFalse(isEqual)
+    XCTAssertFalse(isHigherBecauseString)
+  }
+
+  func replaceTest() {
+    let five = replace(
+      key: "event_with_prefix_5",
+      prefix: "event_with_prefix_"
+    )
+
+    let empty = replace(
+      key: "event_with_prefix_",
+      prefix: "event_with_prefix_"
+    )
+
+    let nonmatching = replace(
+      key: "dfgsfgsdfgsdfg",
+      prefix: "event_with_prefix_"
+    )
+
+    XCTAssertEqual(five, "5")
+    XCTAssertEqual(empty, "")
+    XCTAssertEqual(nonmatching, "dfgsfgsdfgsdfg")
+  }
+}
