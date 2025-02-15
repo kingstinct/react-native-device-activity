@@ -79,7 +79,7 @@ class SharedTests: XCTestCase {
 
 class SkipActionTests: XCTestCase {
   func testShouldSkipIfAlreadyTriggeredAfter() {
-    let activityName = "myActivity"
+    let activityName = "myActivityWithSkipIfAlreadyTriggeredAfter"
     let callbackName = "eventDidReachThreshold"
     let eventName = "10"
     let key = userDefaultKeyForEvent(
@@ -198,7 +198,7 @@ class SkipActionTests: XCTestCase {
   }
 
   func testSkipIfLargerTriggeredWithinMS() {
-    let activityName = "myActivity"
+    let activityName = "myActivitySkipIfLargerEventRecordedWithinMS"
     let callbackName = "eventDidReachThreshold"
     let eventName = "10"
     let higherThanEventName = "15"
