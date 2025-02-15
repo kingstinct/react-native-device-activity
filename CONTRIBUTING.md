@@ -10,4 +10,4 @@ The example project is linked specifically to simplify development. This means i
 
 ## Prebuild
 
-To try out prebuild functionality (i.e. the config plugin) run `npm run prebuild` in the example project (it uses the `INTERNALLY_TEST_EXAMPLE_PROJECT` env variable to behave like a published package). This should be used to verify changes are expected, but the result should not in it's full state be commited to the example project, since it will break the DX of the example project as explained above.
+To try out prebuild functionality (i.e. the config plugin) run `bun run prebuild` in the example project (it uses the `INTERNALLY_TEST_EXAMPLE_PROJECT` and `COPY_TO_TARGET_FOLDER` env variables to behave like a published package). This should be used to verify changes are expected, but the result should not in it's full state be commited to the example project, since it will break the DX of the example project as explained above.
