@@ -180,6 +180,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "unblockAllApps";
@@ -189,6 +190,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "resetUnblockedSelection";
@@ -198,6 +200,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "blockAllApps";
@@ -208,6 +211,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "sendNotification";
@@ -218,6 +222,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "openApp";
@@ -227,6 +232,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     }
   | {
       type: "sendHttpRequest";
@@ -242,6 +248,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
+      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
     };
 
 export type DeviceActivityEventRaw = Omit<

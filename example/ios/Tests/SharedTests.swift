@@ -95,6 +95,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -105,6 +106,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -133,6 +135,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: 100,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -143,6 +146,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: 10000,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -172,6 +176,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: 999,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -182,6 +187,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: 1000,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -213,6 +219,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: 100,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -223,9 +230,59 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: nil,
       skipIfLargerEventRecordedWithinMS: 10000,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: false,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testSkipIfLargerTriggeredAfterIntervalStarted() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "10"
+    )
+
+    let keyForMonitoringStarted = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: "intervalDidStart"
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+    let intervalStartTime = Date.now.addingTimeInterval(-2)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+    userDefaults?.set(intervalStartTime.timeIntervalSince1970 * 1000, forKey: keyForMonitoringStarted)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: true,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "15"
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      skipIfLargerEventRecordedSinceStartOfMonitoring: true,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "5"
     )
 
     XCTAssertTrue(shouldExecute)

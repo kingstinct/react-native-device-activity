@@ -620,6 +620,7 @@ func shouldExecuteAction(
   skipIfLargerEventRecordedAfter: Double?,
   skipIfAlreadyTriggeredWithinMS: Double?,
   skipIfLargerEventRecordedWithinMS: Double?,
+  skipIfLargerEventRecordedSinceStartOfMonitoring: Bool?,
   activityName: String,
   callbackName: String,
   eventName: String?
@@ -684,6 +685,25 @@ func shouldExecuteAction(
         "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
       )
       return false
+    }
+  }
+
+  if let skipIfLargerEventRecordedSinceStartOfMonitoring = skipIfLargerEventRecordedSinceStartOfMonitoring, let eventName = eventName {
+    if let skipIfLargerEventRecordedAfter = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: "intervalDidStart"
+    ) {
+      if hasHigherTriggeredEvent(
+        activityName: activityName,
+        callbackName: callbackName,
+        eventName: eventName,
+        afterDate: skipIfLargerEventRecordedAfter
+      ) {
+        logger.log(
+          "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+        )
+        return false
+      }
     }
   }
 
