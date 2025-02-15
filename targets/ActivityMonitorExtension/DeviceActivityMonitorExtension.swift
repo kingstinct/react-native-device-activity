@@ -11,8 +11,6 @@ import Foundation
 import ManagedSettings
 import os
 
-
-
 // Optionally override any of the functions below.
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 @available(iOS 15.0, *)

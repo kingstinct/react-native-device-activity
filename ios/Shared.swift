@@ -585,13 +585,13 @@ func replace(key: String, prefix: String) -> String {
 func hasHigherTriggeredEvent(
   activityName: String,
   callbackName: String,
-  eventName: String?,
+  eventName: String,
   afterDate: Double
 ) -> Bool {
-  let prefix = "events_\(activityName)_"
+  let prefix = "events_\(activityName)_\(callbackName)_"
 
   if let actualDict = userDefaults?.dictionaryRepresentation() {
-    let higherEvent = actualDict.first(where: { (key: String, value: Any) in
+    let foundHigherEvent = actualDict.contains(where: { (key: String, value: Any) in
       if let triggeredAt = value as? Double {
         return
           key
@@ -599,17 +599,15 @@ func hasHigherTriggeredEvent(
             with: prefix
           )
           && triggeredAt > afterDate
-          && (eventName != nil
-            ? isHigherEvent(
-              eventName: replace(key: key, prefix: prefix),
-              higherThan: eventName!
-            ) : true)
+          && isHigherEvent(
+            eventName: replace(key: key, prefix: prefix),
+            higherThan: eventName
+          )
       }
       return false
-
     })
 
-    if higherEvent != nil {
+    if foundHigherEvent {
       return true
     }
   }
@@ -617,7 +615,6 @@ func hasHigherTriggeredEvent(
   return false
 }
 
-@available(iOS 15.0, *)
 func shouldExecuteAction(
   skipIfAlreadyTriggeredAfter: Double?,
   skipIfLargerEventRecordedAfter: Double?,
@@ -634,18 +631,24 @@ func shouldExecuteAction(
       eventName: eventName
     ) {
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
         return false
       }
     }
   }
 
-  if let skipIfLargerEventRecordedAfter = skipIfLargerEventRecordedAfter {
+  if let skipIfLargerEventRecordedAfter = skipIfLargerEventRecordedAfter, let eventName = eventName {
     if hasHigherTriggeredEvent(
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName,
       afterDate: skipIfLargerEventRecordedAfter
     ) {
+      logger.log(
+        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+      )
       return false
     }
   }
@@ -657,23 +660,29 @@ func shouldExecuteAction(
       eventName: eventName
     ) {
       let skipIfAlreadyTriggeredAfter =
-      Date.now.addingTimeInterval(
-        -skipIfAlreadyTriggeredWithinMS / 1000
-      ).timeIntervalSince1970 * 1000
+        Date().timeIntervalSince1970 * 1000 - skipIfAlreadyTriggeredWithinMS
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
         return false
       }
     }
   }
 
-  if let skipIfLargerEventRecordedWithinMS = skipIfLargerEventRecordedWithinMS {
+  if let skipIfLargerEventRecordedWithinMS = skipIfLargerEventRecordedWithinMS,
+    let eventName = eventName {
+    let skipIfLargerEventRecordedAfter =
+      Date().timeIntervalSince1970 * 1000 - skipIfLargerEventRecordedWithinMS
     if hasHigherTriggeredEvent(
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName,
-      afterDate: Date.now
-        .addingTimeInterval(-skipIfLargerEventRecordedWithinMS).timeIntervalSince1970 * 1000
+      afterDate: skipIfLargerEventRecordedAfter
     ) {
+      logger.log(
+        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+      )
       return false
     }
   }

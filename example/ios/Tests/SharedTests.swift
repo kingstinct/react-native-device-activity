@@ -77,8 +77,8 @@ class SharedTests: XCTestCase {
   }
 }
 
-class SharedTests2: XCTestCase {
-  func testGetLastTriggeredTimeFromUserDefaults() {
+class SkipActionTests: XCTestCase {
+  func testShouldSkipIfAlreadyTriggeredAfter() {
     let activityName = "myActivity"
     let callbackName = "eventDidReachThreshold"
     let eventName = "10"
@@ -143,6 +143,86 @@ class SharedTests2: XCTestCase {
       skipIfLargerEventRecordedAfter: nil,
       skipIfAlreadyTriggeredWithinMS: 10000,
       skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testShouldSkipIfLargerTriggeredAfter() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let higherThanEventName = "15"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: higherThanEventName
+    )
+
+    userDefaults?.set(1000, forKey: key)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: 999,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: 1000,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testSkipIfLargerTriggeredWithinMS() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let higherThanEventName = "15"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: higherThanEventName
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: 100,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: 10000,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
