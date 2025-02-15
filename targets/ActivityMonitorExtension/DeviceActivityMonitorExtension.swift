@@ -77,15 +77,16 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           let skipIfAlreadyTriggeredWithinMS = action["skipIfAlreadyTriggeredWithinMS"] as? Double
           let skipIfLargerEventRecordedWithinMS =
             action["skipIfLargerEventRecordedWithinMS"] as? Double
-          let skipIfLargerEventRecordedSinceStartOfMonitoring =
-          action["skipIfLargerEventRecordedSinceStartOfMonitoring"] as? Bool
+          let skipIfLargerEventRecordedSinceIntervalStarted =
+            action["skipIfLargerEventRecordedSinceIntervalStarted"] as? Bool
 
           if shouldExecuteAction(
             skipIfAlreadyTriggeredAfter: skipIfAlreadyTriggeredAfter,
             skipIfLargerEventRecordedAfter: skipIfLargerEventRecordedAfter,
             skipIfAlreadyTriggeredWithinMS: skipIfAlreadyTriggeredWithinMS,
             skipIfLargerEventRecordedWithinMS: skipIfLargerEventRecordedWithinMS,
-            skipIfLargerEventRecordedSinceStartOfMonitoring: skipIfLargerEventRecordedSinceStartOfMonitoring,
+            skipIfLargerEventRecordedSinceIntervalStarted:
+              skipIfLargerEventRecordedSinceIntervalStarted,
             activityName: activityName,
             callbackName: callbackName,
             eventName: eventName

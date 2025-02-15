@@ -180,7 +180,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "unblockAllApps";
@@ -190,7 +190,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "resetUnblockedSelection";
@@ -200,7 +200,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "blockAllApps";
@@ -211,7 +211,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "sendNotification";
@@ -222,7 +222,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "openApp";
@@ -232,7 +232,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     }
   | {
       type: "sendHttpRequest";
@@ -248,7 +248,7 @@ export type Action =
       skipIfLargerEventRecordedAfter?: Date;
       skipIfAlreadyTriggeredWithinMS?: number;
       skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceMonitoringStarted?: boolean;
+      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
     };
 
 export type DeviceActivityEventRaw = Omit<

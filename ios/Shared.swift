@@ -620,7 +620,7 @@ func shouldExecuteAction(
   skipIfLargerEventRecordedAfter: Double?,
   skipIfAlreadyTriggeredWithinMS: Double?,
   skipIfLargerEventRecordedWithinMS: Double?,
-  skipIfLargerEventRecordedSinceStartOfMonitoring: Bool?,
+  skipIfLargerEventRecordedSinceIntervalStarted: Bool?,
   activityName: String,
   callbackName: String,
   eventName: String?
@@ -688,7 +688,8 @@ func shouldExecuteAction(
     }
   }
 
-  if let skipIfLargerEventRecordedSinceStartOfMonitoring = skipIfLargerEventRecordedSinceStartOfMonitoring, let eventName = eventName {
+  if let skipIfLargerEventRecordedSinceIntervalStarted =
+    skipIfLargerEventRecordedSinceIntervalStarted, let eventName = eventName {
     if let skipIfLargerEventRecordedAfter = getLastTriggeredTimeFromUserDefaults(
       activityName: activityName,
       callbackName: "intervalDidStart"
