@@ -133,6 +133,10 @@ export async function startMonitoring(
   );
 }
 
+export const reloadDeviceActivityCenter = () => {
+  return ReactNativeDeviceActivityModule?.reloadDeviceActivityCenter();
+};
+
 export const configureActions = ({
   activityName,
   callbackName,
