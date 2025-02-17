@@ -25,6 +25,7 @@ let logger = Logger(
 
 var task: URLSessionDataTask?
 
+@available(iOS 15.0, *)
 func updateShield(shieldId: String?, triggeredBy: String?) {
   let shieldId = shieldId ?? "default"
 
@@ -33,7 +34,7 @@ func updateShield(shieldId: String?, triggeredBy: String?) {
 
     shieldConfiguration["shieldId"] = shieldId
     shieldConfiguration["triggeredBy"] = triggeredBy
-    shieldConfiguration["updatedAt"] = Date.now.ISO8601Format()
+    shieldConfiguration["updatedAt"] = Date().ISO8601Format()
 
     // update default shield
     userDefaults?.set(shieldConfiguration, forKey: SHIELD_CONFIGURATION_KEY)
@@ -44,7 +45,7 @@ func updateShield(shieldId: String?, triggeredBy: String?) {
 
     shieldActions["shieldId"] = shieldId
     shieldActions["triggeredBy"] = triggeredBy
-    shieldActions["updatedAt"] = Date.now.ISO8601Format()
+    shieldActions["updatedAt"] = Date().ISO8601Format()
 
     userDefaults?.set(shieldActions, forKey: SHIELD_ACTIONS_KEY)
   }
