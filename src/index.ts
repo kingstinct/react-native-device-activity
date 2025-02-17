@@ -393,10 +393,12 @@ export function updateShield(
   userDefaultsSet(SHIELD_CONFIGURATION_KEY, {
     ...shieldConfiguration,
     triggeredBy,
+    updatedAt: new Date().toISOString(),
   });
   userDefaultsSet(SHIELD_ACTIONS_KEY, {
     ...shieldActions,
     triggeredBy,
+    updatedAt: new Date().toISOString(),
   });
 }
 
