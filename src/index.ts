@@ -162,6 +162,9 @@ export const configureActions = ({
       skipIfAlreadyTriggeredAfter: action.skipIfAlreadyTriggeredAfter
         ? action.skipIfAlreadyTriggeredAfter.getTime()
         : undefined,
+      neverTriggerBefore: action.neverTriggerBefore
+        ? action.neverTriggerBefore.getTime()
+        : undefined,
     })),
   );
 };

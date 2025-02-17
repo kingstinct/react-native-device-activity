@@ -620,11 +620,19 @@ func shouldExecuteAction(
   skipIfLargerEventRecordedAfter: Double?,
   skipIfAlreadyTriggeredWithinMS: Double?,
   skipIfLargerEventRecordedWithinMS: Double?,
+  neverTriggerBefore: Double?,
   skipIfLargerEventRecordedSinceIntervalStarted: Bool?,
   activityName: String,
   callbackName: String,
   eventName: String?
 ) -> Bool {
+  if let neverTriggerBefore = neverTriggerBefore {
+    let now = Date().timeIntervalSince1970 * 1000
+    if now < neverTriggerBefore {
+      return false
+    }
+  }
+
   if let skipIfAlreadyTriggeredAfter = skipIfAlreadyTriggeredAfter {
     if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
       activityName: activityName,

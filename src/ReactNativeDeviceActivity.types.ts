@@ -169,72 +169,41 @@ export type NotificationPayload = {
   subtitle?: string;
 };
 
+type CommonTypeParams = {
+  sleepBefore?: number;
+  sleepAfter?: number;
+  skipIfAlreadyTriggeredAfter?: Date;
+  skipIfLargerEventRecordedAfter?: Date;
+  skipIfAlreadyTriggeredWithinMS?: number;
+  skipIfLargerEventRecordedWithinMS?: number;
+  skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
+  neverTriggerBefore?: Date;
+};
+
 export type Action =
-  | {
+  | ({
       type: "blockSelection";
       familyActivitySelectionId: string;
       shieldId?: string;
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "unblockAllApps";
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "resetUnblockedSelection";
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "blockAllApps";
       shieldId?: string;
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "sendNotification";
       payload: NotificationPayload;
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "openApp";
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "sendHttpRequest";
       url: string;
       options?: {
@@ -242,14 +211,7 @@ export type Action =
         body?: Record<string, any>;
         headers?: Record<string, string>;
       };
-      sleepBefore?: number;
-      sleepAfter?: number;
-      skipIfAlreadyTriggeredAfter?: Date;
-      skipIfLargerEventRecordedAfter?: Date;
-      skipIfAlreadyTriggeredWithinMS?: number;
-      skipIfLargerEventRecordedWithinMS?: number;
-      skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
-    };
+    } & CommonTypeParams);
 
 export type DeviceActivityEventRaw = Omit<
   DeviceActivityEvent,
