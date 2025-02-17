@@ -439,6 +439,15 @@ public class ReactNativeDeviceActivityModule: Module {
       // center.stopMonitoring()
 
       center = DeviceActivityCenter()
+
+      watchActivitiesHandle?.cancel()
+      watchActivitiesHandle = center.activities.publisher.sink { activity in
+        self.sendEvent(
+          "onDeviceActivityDetected" as String,
+          [
+            "activityName": activity.rawValue
+          ])
+      }
     }
 
     Function("stopMonitoring") { (activityNames: [String]?) in
