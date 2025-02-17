@@ -295,14 +295,28 @@ export function isShieldActiveWithSelection(
   );
 }
 
-export function blockApps(
-  familyActivitySelectionStr?: string,
-): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule?.blockApps(familyActivitySelectionStr);
+export function blockAppsWithSelectionId(
+  familyActivitySelectionId: string,
+  triggeredBy?: string,
+): void {
+  return ReactNativeDeviceActivityModule?.blockAppsWithSelectionId(
+    familyActivitySelectionId,
+    triggeredBy,
+  );
 }
 
-export function unblockApps(): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule?.unblockApps();
+export function blockApps(
+  familyActivitySelectionStr?: string,
+  triggeredBy?: string,
+): void {
+  return ReactNativeDeviceActivityModule?.blockApps(
+    familyActivitySelectionStr,
+    triggeredBy,
+  );
+}
+
+export function unblockApps(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.unblockApps(triggeredBy);
 }
 
 export function getAuthorizationStatus(): AuthorizationStatusType {
