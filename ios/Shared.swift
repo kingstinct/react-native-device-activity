@@ -75,7 +75,9 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
 
         blockSelectedApps(
           blockSelection: activitySelection,
-          unblockedSelection: nil
+          unblockedSelection: nil,
+          triggeredBy: eventKey,
+          blockedFamilyActivitySelectionId: familyActivitySelectionId
         )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
@@ -84,7 +86,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
   } else if type == "resetUnblockedSelection" {
     userDefaults?.removeObject(forKey: "unblockedSelection")
   } else if type == "unblockAllApps" {
-    unblockAllApps()
+    unblockAllApps(triggeredBy: eventKey)
   } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
@@ -96,7 +98,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
     // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
 
-    blockAllApps()
+    blockAllApps(triggeredBy: eventKey)
   } else if type == "sendNotification" {
     if let notification = action["payload"] as? [String: Any] {
       sendNotification(contents: notification, placeholders: placeholders)
@@ -482,24 +484,38 @@ func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> Str
 }
 
 @available(iOS 15.0, *)
-func unblockAllApps() {
+func unblockAllApps(triggeredBy: String) {
   store.shield.applicationCategories = nil
   store.shield.webDomainCategories = nil
 
   store.shield.applications = .none
   store.shield.webDomains = .none
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "unblockedAt": Date.now.ISO8601Format()
+    ], forKey: "lastUnblock")
 }
 
 @available(iOS 15.0, *)
-func blockAllApps() {
+func blockAllApps(triggeredBy: String) {
   store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
   store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "blockedAt": Date.now.ISO8601Format()
+    ], forKey: "lastBlock")
 }
 
 @available(iOS 15.0, *)
 func blockSelectedApps(
   blockSelection: FamilyActivitySelection?,
-  unblockedSelection: FamilyActivitySelection?
+  unblockedSelection: FamilyActivitySelection?,
+  triggeredBy: String,
+  blockedFamilyActivitySelectionId: String?
 ) {
   store.shield.applications = blockSelection?.applicationTokens.filter({ token in
     if let match = unblockedSelection?.applicationTokens.contains(where: { $0 == token }) {
@@ -535,6 +551,13 @@ func blockSelectedApps(
       except: unblockedWebDomains
     )
   }
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "blockedAt": Date.now.ISO8601Format(),
+      "blockedFamilyActivitySelectionId": blockedFamilyActivitySelectionId
+    ], forKey: "lastBlock")
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {

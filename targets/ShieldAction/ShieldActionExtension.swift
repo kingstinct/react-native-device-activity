@@ -17,7 +17,7 @@ func handleAction(
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
     if type == "unblockAll" {
-      unblockAllApps()
+      unblockAllApps(triggeredBy: "shieldAction")
     }
 
     if type == "sendNotification" {

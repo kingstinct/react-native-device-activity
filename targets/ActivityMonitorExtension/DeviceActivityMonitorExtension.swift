@@ -93,7 +93,11 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             callbackName: callbackName,
             eventName: eventName
           ) {
-            executeAction(action: action, placeholders: placeholders)
+            executeAction(
+              action: action,
+              placeholders: placeholders,
+              eventKey: key
+            )
           }
         }
       }

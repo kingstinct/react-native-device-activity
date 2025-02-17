@@ -247,8 +247,15 @@ export type ReactNativeDeviceActivityNativeModule = {
     forIndividualOrChild: "individual" | "child",
   ) => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
-  blockApps: (familyActivitySelectionStr?: string) => PromiseLike<void> | void;
-  unblockApps: () => PromiseLike<void> | void;
+  blockApps: (
+    familyActivitySelectionStr?: string,
+    triggeredBy?: string,
+  ) => void;
+  blockAppsWithSelectionId: (
+    familyActivitySelectionId: string,
+    triggeredBy?: string,
+  ) => void;
+  unblockApps: (triggeredBy?: string) => void;
   isShieldActive: () => boolean;
   isShieldActiveWithSelection: (familyActivitySelectionStr: string) => boolean;
   doesSelectionHaveOverlap: (
