@@ -614,7 +614,7 @@ func isHigherEvent(eventName: String, higherThan: String) -> Bool {
   }
 }
 
-func replace(key: String, prefix: String) -> String {
+func removePrefixIfPresent(key: String, prefix: String) -> String {
   if key.hasPrefix(prefix) {
     return String(key.dropFirst(prefix.count))
   }
@@ -640,7 +640,7 @@ func hasHigherTriggeredEvent(
           )
           && triggeredAt > afterDate
           && isHigherEvent(
-            eventName: replace(key: key, prefix: prefix),
+            eventName: removePrefixIfPresent(key: key, prefix: prefix),
             higherThan: eventName
           )
       }

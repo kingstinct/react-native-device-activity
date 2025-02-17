@@ -357,17 +357,17 @@ class SkipActionTests: XCTestCase {
   }
 
   func testReplaceText() {
-    let five = replace(
+    let five = removePrefixIfPresent(
       key: "event_with_prefix_5",
       prefix: "event_with_prefix_"
     )
 
-    let empty = replace(
+    let empty = removePrefixIfPresent(
       key: "event_with_prefix_",
       prefix: "event_with_prefix_"
     )
 
-    let nonmatching = replace(
+    let nonmatching = removePrefixIfPresent(
       key: "dfgsfgsdfgsdfg",
       prefix: "event_with_prefix_"
     )
