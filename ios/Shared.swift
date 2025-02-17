@@ -488,37 +488,37 @@ func blockSelectedApps(
   unblockedSelection: FamilyActivitySelection?
 ) {
   store.shield.applications = blockSelection?.applicationTokens.filter({ token in
-    if let match = unblockedSelection?.applicationTokens.first(where: { $0 == token }) {
-      return match == nil
+    if let match = unblockedSelection?.applicationTokens.contains(where: { $0 == token }) {
+      return match
     }
     return true
   })
 
   store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
-    if let match = unblockedSelection?.webDomainTokens.first(where: { $0 == token }) {
-      return match == nil
+    if let match = unblockedSelection?.webDomainTokens.contains(where: { $0 == token }) {
+      return match
     }
     return true
   })
 
-  let applications = unblockedSelection?.applicationTokens ?? Set()
-  let webDomains = unblockedSelection?.webDomainTokens ?? Set()
+  let unblockedApplications = unblockedSelection?.applicationTokens ?? Set()
+  let unblockedWebDomains = unblockedSelection?.webDomainTokens ?? Set()
 
   if let blockSelection = blockSelection {
     store.shield.applicationCategories = .specific(
       blockSelection.categoryTokens,
-      except: applications
+      except: unblockedApplications
     )
     store.shield.webDomainCategories = .specific(
       blockSelection.categoryTokens,
-      except: webDomains
+      except: unblockedWebDomains
     )
   } else {
     store.shield.applicationCategories = .all(
-      except: applications
+      except: unblockedApplications
     )
     store.shield.webDomainCategories = .all(
-      except: webDomains
+      except: unblockedWebDomains
     )
   }
 }
