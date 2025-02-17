@@ -74,7 +74,9 @@ func handleAction(
 ) {
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-  if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
+  if let shieldActionConfig = userDefaults?.dictionary(
+    forKey: SHIELD_ACTIONS_KEY
+  ) {
     if let configForSelectedAction = shieldActionConfig[
       action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
       let response = handleAction(

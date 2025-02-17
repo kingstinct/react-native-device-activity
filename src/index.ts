@@ -382,12 +382,22 @@ export function onDeviceActivityMonitorEvent(
   );
 }
 
+export const SHIELD_ACTIONS_KEY = "shieldActions";
+export const SHIELD_CONFIGURATION_KEY = "shieldConfiguration";
+
 export function updateShield(
   shieldConfiguration: ShieldConfiguration,
   shieldActions: ShieldActions,
+  triggeredBy = "updateShieldCalledManually",
 ) {
-  userDefaultsSet(`shieldConfiguration`, shieldConfiguration);
-  userDefaultsSet(`shieldActions`, shieldActions);
+  userDefaultsSet(SHIELD_CONFIGURATION_KEY, {
+    ...shieldConfiguration,
+    triggeredBy,
+  });
+  userDefaultsSet(SHIELD_ACTIONS_KEY, {
+    ...shieldActions,
+    triggeredBy,
+  });
 }
 
 export function useShieldWithId(shieldId: string = "default") {

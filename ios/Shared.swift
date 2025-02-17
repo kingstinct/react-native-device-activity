@@ -12,6 +12,9 @@ import UIKit
 import WebKit
 import os
 
+let SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
+let SHIELD_ACTIONS_KEY = "shieldActions"
+
 let appGroup =
   Bundle.main.object(forInfoDictionaryKey: "REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP") as? String
 var userDefaults = UserDefaults(suiteName: appGroup)
@@ -22,18 +25,26 @@ let logger = Logger(
 
 var task: URLSessionDataTask?
 
-func updateShield(shieldId: String?) {
+func updateShield(shieldId: String?, triggeredBy: String?) {
   let shieldId = shieldId ?? "default"
 
-  if let shieldConfiguration = userDefaults?.dictionary(
+  if var shieldConfiguration = userDefaults?.dictionary(
     forKey: "shieldConfiguration_\(shieldId)") {
+
+    shieldConfiguration["shieldId"] = shieldId
+    shieldConfiguration["triggeredBy"] = triggeredBy
+
     // update default shield
-    userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+    userDefaults?.set(shieldConfiguration, forKey: SHIELD_CONFIGURATION_KEY)
   }
 
-  if let shieldActions = userDefaults?.dictionary(
+  if var shieldActions = userDefaults?.dictionary(
     forKey: "shieldActions_\(shieldId)") {
-    userDefaults?.set(shieldActions, forKey: "shieldActions")
+
+    shieldActions["shieldId"] = shieldId
+    shieldActions["triggeredBy"] = triggeredBy
+
+    userDefaults?.set(shieldActions, forKey: SHIELD_ACTIONS_KEY)
   }
 }
 
@@ -45,7 +56,7 @@ func sleep(ms: Int) {
 }
 
 @available(iOS 15.0, *)
-func executeAction(action: [String: Any], placeholders: [String: String?]) {
+func executeAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
   let type = action["type"] as? String
 
   if let sleepBefore = action["sleepBefore"] as? Int {
@@ -55,7 +66,10 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   if type == "blockSelection" {
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        updateShield(shieldId: action["shieldId"] as? String)
+        updateShield(
+          shieldId: action["shieldId"] as? String,
+          triggeredBy: eventKey
+        )
 
         sleep(ms: 50)
 
@@ -77,7 +91,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
 
     sleep(ms: 1000)
   } else if type == "blockAllApps" {
-    updateShield(shieldId: action["shieldId"] as? String)
+    updateShield(shieldId: action["shieldId"] as? String, triggeredBy: eventKey)
 
     // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
