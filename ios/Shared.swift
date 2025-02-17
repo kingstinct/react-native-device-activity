@@ -503,14 +503,14 @@ func blockSelectedApps(
 ) {
   store.shield.applications = blockSelection?.applicationTokens.filter({ token in
     if let match = unblockedSelection?.applicationTokens.contains(where: { $0 == token }) {
-      return match
+      return !match
     }
     return true
   })
 
   store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
     if let match = unblockedSelection?.webDomainTokens.contains(where: { $0 == token }) {
-      return match
+      return !match
     }
     return true
   })
