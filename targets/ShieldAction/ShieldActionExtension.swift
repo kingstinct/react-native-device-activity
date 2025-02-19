@@ -17,7 +17,7 @@ func handleAction(
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
     if type == "unblockAll" {
-      unblockAllApps()
+      unblockAllApps(triggeredBy: "shieldAction")
     }
 
     if type == "sendNotification" {
@@ -74,7 +74,9 @@ func handleAction(
 ) {
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-  if let shieldActionConfig = userDefaults?.dictionary(forKey: "shieldActions") {
+  if let shieldActionConfig = userDefaults?.dictionary(
+    forKey: SHIELD_ACTIONS_KEY
+  ) {
     if let configForSelectedAction = shieldActionConfig[
       action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
       let response = handleAction(

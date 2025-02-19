@@ -133,6 +133,10 @@ export async function startMonitoring(
   );
 }
 
+export const reloadDeviceActivityCenter = () => {
+  return ReactNativeDeviceActivityModule?.reloadDeviceActivityCenter();
+};
+
 export const configureActions = ({
   activityName,
   callbackName,
@@ -148,7 +152,21 @@ export const configureActions = ({
     ? `actions_for_${activityName}_${callbackName}_${eventName}`
     : `actions_for_${activityName}_${callbackName}`;
 
-  userDefaultsSet(key, actions);
+  userDefaultsSet(
+    key,
+    actions.map((action) => ({
+      ...action,
+      skipIfLargerEventRecordedAfter: action.skipIfLargerEventRecordedAfter
+        ? action.skipIfLargerEventRecordedAfter.getTime()
+        : undefined,
+      skipIfAlreadyTriggeredAfter: action.skipIfAlreadyTriggeredAfter
+        ? action.skipIfAlreadyTriggeredAfter.getTime()
+        : undefined,
+      neverTriggerBefore: action.neverTriggerBefore
+        ? action.neverTriggerBefore.getTime()
+        : undefined,
+    })),
+  );
 };
 
 export const cleanUpAfterActivity = (activityName: string) => {
@@ -277,14 +295,28 @@ export function isShieldActiveWithSelection(
   );
 }
 
-export function blockApps(
-  familyActivitySelectionStr?: string,
-): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule?.blockApps(familyActivitySelectionStr);
+export function blockAppsWithSelectionId(
+  familyActivitySelectionId: string,
+  triggeredBy?: string,
+): void {
+  return ReactNativeDeviceActivityModule?.blockAppsWithSelectionId(
+    familyActivitySelectionId,
+    triggeredBy,
+  );
 }
 
-export function unblockApps(): PromiseLike<void> | void {
-  return ReactNativeDeviceActivityModule?.unblockApps();
+export function blockApps(
+  familyActivitySelectionStr?: string,
+  triggeredBy?: string,
+): void {
+  return ReactNativeDeviceActivityModule?.blockApps(
+    familyActivitySelectionStr,
+    triggeredBy,
+  );
+}
+
+export function unblockApps(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.unblockApps(triggeredBy);
 }
 
 export function getAuthorizationStatus(): AuthorizationStatusType {
@@ -364,12 +396,24 @@ export function onDeviceActivityMonitorEvent(
   );
 }
 
+export const SHIELD_ACTIONS_KEY = "shieldActions";
+export const SHIELD_CONFIGURATION_KEY = "shieldConfiguration";
+
 export function updateShield(
   shieldConfiguration: ShieldConfiguration,
   shieldActions: ShieldActions,
+  triggeredBy = "updateShieldCalledManually",
 ) {
-  userDefaultsSet(`shieldConfiguration`, shieldConfiguration);
-  userDefaultsSet(`shieldActions`, shieldActions);
+  userDefaultsSet(SHIELD_CONFIGURATION_KEY, {
+    ...shieldConfiguration,
+    triggeredBy,
+    updatedAt: new Date().toISOString(),
+  });
+  userDefaultsSet(SHIELD_ACTIONS_KEY, {
+    ...shieldActions,
+    triggeredBy,
+    updatedAt: new Date().toISOString(),
+  });
 }
 
 export function useShieldWithId(shieldId: string = "default") {

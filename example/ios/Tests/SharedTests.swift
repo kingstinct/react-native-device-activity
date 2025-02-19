@@ -76,3 +76,304 @@ class SharedTests: XCTestCase {
     XCTAssertEqual(result["score"] as? String, "{asNumber:missingValue}")
   }
 }
+
+class SkipActionTests: XCTestCase {
+  func testNeverTriggerBefore() {
+    let activityName = "myActivityWithSkipIfAlreadyTriggeredAfter"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+
+    let shouldTriggerTime = Date().timeIntervalSince1970 * 1000 - 10000
+    let shouldNotTriggerTime = Date().timeIntervalSince1970 * 1000 + 10000
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: shouldNotTriggerTime,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: shouldTriggerTime,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testShouldSkipIfAlreadyTriggeredAfter() {
+    let activityName = "myActivityWithSkipIfAlreadyTriggeredAfter"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    userDefaults?.set(1000, forKey: key)
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: 999,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: 1000,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testSkipIfAlreadyTriggeredWithinMS() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: 100,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: 10000,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testShouldSkipIfLargerTriggeredAfter() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let higherThanEventName = "15"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: higherThanEventName
+    )
+
+    userDefaults?.set(1000, forKey: key)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: 999,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: 1000,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testSkipIfLargerTriggeredWithinMS() {
+    let activityName = "myActivitySkipIfLargerEventRecordedWithinMS"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let higherThanEventName = "15"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: higherThanEventName
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: 100,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: 10000,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testSkipIfLargerTriggeredAfterIntervalStarted() {
+    let activityName = "myActivity"
+    let callbackName = "eventDidReachThreshold"
+
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "10"
+    )
+
+    let keyForMonitoringStarted = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: "intervalDidStart"
+    )
+
+    let time = Date.now.addingTimeInterval(-1)
+    let intervalStartTime = Date.now.addingTimeInterval(-2)
+
+    userDefaults?.set(time.timeIntervalSince1970 * 1000, forKey: key)
+    userDefaults?.set(
+      intervalStartTime.timeIntervalSince1970 * 1000, forKey: keyForMonitoringStarted)
+
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: true,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "15"
+    )
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: true,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: "5"
+    )
+
+    XCTAssertTrue(shouldExecute)
+    XCTAssertFalse(shouldNotExecute)
+  }
+
+  func testIsHigherEventNum() {
+    let isLower = isHigherEvent(eventName: "5", higherThan: "10")
+    let isEqual = isHigherEvent(eventName: "10", higherThan: "10")
+    let isHigher = isHigherEvent(eventName: "15", higherThan: "10")
+
+    XCTAssertTrue(isHigher)
+    XCTAssertFalse(isEqual)
+    XCTAssertFalse(isLower)
+  }
+
+  func testIsHigherEventString() {
+    let isHigherBecauseString = isHigherEvent(eventName: "prefix_5", higherThan: "prefix_10")
+    let isEqual = isHigherEvent(eventName: "prefix_10", higherThan: "prefix_10")
+    let isHigher = isHigherEvent(eventName: "prefix_15", higherThan: "prefix_10")
+
+    XCTAssertTrue(isHigher)
+    XCTAssertFalse(isEqual)
+    XCTAssertTrue(isHigherBecauseString)
+  }
+
+  func testReplaceText() {
+    let five = removePrefixIfPresent(
+      key: "event_with_prefix_5",
+      prefix: "event_with_prefix_"
+    )
+
+    let empty = removePrefixIfPresent(
+      key: "event_with_prefix_",
+      prefix: "event_with_prefix_"
+    )
+
+    let nonmatching = removePrefixIfPresent(
+      key: "dfgsfgsdfgsdfg",
+      prefix: "event_with_prefix_"
+    )
+
+    XCTAssertEqual(five, "5")
+    XCTAssertEqual(empty, "")
+    XCTAssertEqual(nonmatching, "dfgsfgsdfgsdfg")
+  }
+}

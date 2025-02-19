@@ -12,6 +12,9 @@ import UIKit
 import WebKit
 import os
 
+let SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
+let SHIELD_ACTIONS_KEY = "shieldActions"
+
 let appGroup =
   Bundle.main.object(forInfoDictionaryKey: "REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP") as? String
 var userDefaults = UserDefaults(suiteName: appGroup)
@@ -22,18 +25,29 @@ let logger = Logger(
 
 var task: URLSessionDataTask?
 
-func updateShield(shieldId: String?) {
+@available(iOS 15.0, *)
+func updateShield(shieldId: String?, triggeredBy: String?) {
   let shieldId = shieldId ?? "default"
 
-  if let shieldConfiguration = userDefaults?.dictionary(
+  if var shieldConfiguration = userDefaults?.dictionary(
     forKey: "shieldConfiguration_\(shieldId)") {
+
+    shieldConfiguration["shieldId"] = shieldId
+    shieldConfiguration["triggeredBy"] = triggeredBy
+    shieldConfiguration["updatedAt"] = Date().ISO8601Format()
+
     // update default shield
-    userDefaults?.set(shieldConfiguration, forKey: "shieldConfiguration")
+    userDefaults?.set(shieldConfiguration, forKey: SHIELD_CONFIGURATION_KEY)
   }
 
-  if let shieldActions = userDefaults?.dictionary(
+  if var shieldActions = userDefaults?.dictionary(
     forKey: "shieldActions_\(shieldId)") {
-    userDefaults?.set(shieldActions, forKey: "shieldActions")
+
+    shieldActions["shieldId"] = shieldId
+    shieldActions["triggeredBy"] = triggeredBy
+    shieldActions["updatedAt"] = Date().ISO8601Format()
+
+    userDefaults?.set(shieldActions, forKey: SHIELD_ACTIONS_KEY)
   }
 }
 
@@ -45,7 +59,7 @@ func sleep(ms: Int) {
 }
 
 @available(iOS 15.0, *)
-func executeAction(action: [String: Any], placeholders: [String: String?]) {
+func executeAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
   let type = action["type"] as? String
 
   if let sleepBefore = action["sleepBefore"] as? Int {
@@ -55,13 +69,18 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   if type == "blockSelection" {
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        updateShield(shieldId: action["shieldId"] as? String)
+        updateShield(
+          shieldId: action["shieldId"] as? String,
+          triggeredBy: eventKey
+        )
 
         sleep(ms: 50)
 
         blockSelectedApps(
           blockSelection: activitySelection,
-          unblockedSelection: nil
+          unblockedSelection: nil,
+          triggeredBy: eventKey,
+          blockedFamilyActivitySelectionId: familyActivitySelectionId
         )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
@@ -70,19 +89,19 @@ func executeAction(action: [String: Any], placeholders: [String: String?]) {
   } else if type == "resetUnblockedSelection" {
     userDefaults?.removeObject(forKey: "unblockedSelection")
   } else if type == "unblockAllApps" {
-    unblockAllApps()
+    unblockAllApps(triggeredBy: eventKey)
   } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
 
     sleep(ms: 1000)
   } else if type == "blockAllApps" {
-    updateShield(shieldId: action["shieldId"] as? String)
+    updateShield(shieldId: action["shieldId"] as? String, triggeredBy: eventKey)
 
     // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
 
-    blockAllApps()
+    blockAllApps(triggeredBy: eventKey)
   } else if type == "sendNotification" {
     if let notification = action["payload"] as? [String: Any] {
       sendNotification(contents: notification, placeholders: placeholders)
@@ -468,59 +487,80 @@ func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> Str
 }
 
 @available(iOS 15.0, *)
-func unblockAllApps() {
+func unblockAllApps(triggeredBy: String) {
   store.shield.applicationCategories = nil
   store.shield.webDomainCategories = nil
 
   store.shield.applications = .none
   store.shield.webDomains = .none
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "unblockedAt": Date.now.ISO8601Format()
+    ], forKey: "lastUnblock")
 }
 
 @available(iOS 15.0, *)
-func blockAllApps() {
+func blockAllApps(triggeredBy: String) {
   store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
   store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "blockedAt": Date.now.ISO8601Format()
+    ], forKey: "lastBlock")
 }
 
 @available(iOS 15.0, *)
 func blockSelectedApps(
   blockSelection: FamilyActivitySelection?,
-  unblockedSelection: FamilyActivitySelection?
+  unblockedSelection: FamilyActivitySelection?,
+  triggeredBy: String,
+  blockedFamilyActivitySelectionId: String?
 ) {
   store.shield.applications = blockSelection?.applicationTokens.filter({ token in
-    if let match = unblockedSelection?.applicationTokens.first(where: { $0 == token }) {
-      return match == nil
+    if let match = unblockedSelection?.applicationTokens.contains(where: { $0 == token }) {
+      return !match
     }
     return true
   })
 
   store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
-    if let match = unblockedSelection?.webDomainTokens.first(where: { $0 == token }) {
-      return match == nil
+    if let match = unblockedSelection?.webDomainTokens.contains(where: { $0 == token }) {
+      return !match
     }
     return true
   })
 
-  let applications = unblockedSelection?.applicationTokens ?? Set()
-  let webDomains = unblockedSelection?.webDomainTokens ?? Set()
+  let unblockedApplications = unblockedSelection?.applicationTokens ?? Set()
+  let unblockedWebDomains = unblockedSelection?.webDomainTokens ?? Set()
 
   if let blockSelection = blockSelection {
     store.shield.applicationCategories = .specific(
       blockSelection.categoryTokens,
-      except: applications
+      except: unblockedApplications
     )
     store.shield.webDomainCategories = .specific(
       blockSelection.categoryTokens,
-      except: webDomains
+      except: unblockedWebDomains
     )
   } else {
     store.shield.applicationCategories = .all(
-      except: applications
+      except: unblockedApplications
     )
     store.shield.webDomainCategories = .all(
-      except: webDomains
+      except: unblockedWebDomains
     )
   }
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "blockedAt": Date.now.ISO8601Format(),
+      "blockedFamilyActivitySelectionId": blockedFamilyActivitySelectionId
+    ], forKey: "lastBlock")
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {
@@ -541,13 +581,197 @@ func getColor(color: [String: Double]?) -> UIColor? {
   return nil
 }
 
-func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
-  let now = (Date().timeIntervalSince1970 * 1000).rounded()
+func userDefaultKeyForEvent(activityName: String, callbackName: String, eventName: String? = nil)
+  -> String {
+
   let fullEventName =
     eventName == nil
     ? "events_\(activityName)_\(callbackName)"
     : "events_\(activityName)_\(callbackName)_\(eventName!)"
+
+  return fullEventName
+}
+
+func persistToUserDefaults(activityName: String, callbackName: String, eventName: String? = nil) {
+  let now = (Date().timeIntervalSince1970 * 1000).rounded()
+
+  let fullEventName = userDefaultKeyForEvent(
+    activityName: activityName,
+    callbackName: callbackName,
+    eventName: eventName
+  )
+
   userDefaults?.set(now, forKey: fullEventName)
+
+  CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+}
+
+func isHigherEvent(eventName: String, higherThan: String) -> Bool {
+  if let eventNameNum = Double(eventName), let higherThanNum = Double(higherThan) {
+    return eventNameNum > higherThanNum
+  } else {
+    return eventName.localizedCompare(higherThan) == .orderedDescending
+  }
+}
+
+func removePrefixIfPresent(key: String, prefix: String) -> String {
+  if key.hasPrefix(prefix) {
+    return String(key.dropFirst(prefix.count))
+  }
+
+  return key
+}
+
+func hasHigherTriggeredEvent(
+  activityName: String,
+  callbackName: String,
+  eventName: String,
+  afterDate: Double
+) -> Bool {
+  let prefix = "events_\(activityName)_\(callbackName)_"
+
+  if let actualDict = userDefaults?.dictionaryRepresentation() {
+    let foundHigherEvent = actualDict.contains(where: { (key: String, value: Any) in
+      if let triggeredAt = value as? Double {
+        return
+          key
+          .starts(
+            with: prefix
+          )
+          && triggeredAt > afterDate
+          && isHigherEvent(
+            eventName: removePrefixIfPresent(key: key, prefix: prefix),
+            higherThan: eventName
+          )
+      }
+      return false
+    })
+
+    if foundHigherEvent {
+      return true
+    }
+  }
+
+  return false
+}
+
+func shouldExecuteAction(
+  skipIfAlreadyTriggeredAfter: Double?,
+  skipIfLargerEventRecordedAfter: Double?,
+  skipIfAlreadyTriggeredWithinMS: Double?,
+  skipIfLargerEventRecordedWithinMS: Double?,
+  neverTriggerBefore: Double?,
+  skipIfLargerEventRecordedSinceIntervalStarted: Bool?,
+  activityName: String,
+  callbackName: String,
+  eventName: String?
+) -> Bool {
+  if let neverTriggerBefore = neverTriggerBefore {
+    let now = Date().timeIntervalSince1970 * 1000
+    if now < neverTriggerBefore {
+      return false
+    }
+  }
+
+  if let skipIfAlreadyTriggeredAfter = skipIfAlreadyTriggeredAfter {
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
+        return false
+      }
+    }
+  }
+
+  if let skipIfLargerEventRecordedAfter = skipIfLargerEventRecordedAfter, let eventName = eventName {
+    if hasHigherTriggeredEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName,
+      afterDate: skipIfLargerEventRecordedAfter
+    ) {
+      logger.log(
+        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+      )
+      return false
+    }
+  }
+
+  if let skipIfAlreadyTriggeredWithinMS = skipIfAlreadyTriggeredWithinMS {
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      let skipIfAlreadyTriggeredAfter =
+        Date().timeIntervalSince1970 * 1000 - skipIfAlreadyTriggeredWithinMS
+      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
+        return false
+      }
+    }
+  }
+
+  if let skipIfLargerEventRecordedWithinMS = skipIfLargerEventRecordedWithinMS,
+    let eventName = eventName {
+    let skipIfLargerEventRecordedAfter =
+      Date().timeIntervalSince1970 * 1000 - skipIfLargerEventRecordedWithinMS
+    if hasHigherTriggeredEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName,
+      afterDate: skipIfLargerEventRecordedAfter
+    ) {
+      logger.log(
+        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+      )
+      return false
+    }
+  }
+
+  if let skipIfLargerEventRecordedSinceIntervalStarted =
+    skipIfLargerEventRecordedSinceIntervalStarted, let eventName = eventName {
+    if let skipIfLargerEventRecordedAfter = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: "intervalDidStart"
+    ) {
+      if hasHigherTriggeredEvent(
+        activityName: activityName,
+        callbackName: callbackName,
+        eventName: eventName,
+        afterDate: skipIfLargerEventRecordedAfter
+      ) {
+        logger.log(
+          "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+        )
+        return false
+      }
+    }
+  }
+
+  return true
+}
+
+func getLastTriggeredTimeFromUserDefaults(
+  activityName: String, callbackName: String, eventName: String? = nil
+) -> Double? {
+
+  let fullEventName = userDefaultKeyForEvent(
+    activityName: activityName,
+    callbackName: callbackName,
+    eventName: eventName
+  )
+
+  let val = userDefaults?.object(forKey: fullEventName)
+
+  return val as? Double
 }
 
 func traverseDirectory(at path: String) {

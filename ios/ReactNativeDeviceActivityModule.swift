@@ -259,7 +259,6 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
-
       let dict = userDefaults?.dictionaryRepresentation()
 
       guard let actualDict = dict else {
@@ -440,6 +439,15 @@ public class ReactNativeDeviceActivityModule: Module {
       // center.stopMonitoring()
 
       center = DeviceActivityCenter()
+
+      watchActivitiesHandle?.cancel()
+      watchActivitiesHandle = center.activities.publisher.sink { activity in
+        self.sendEvent(
+          "onDeviceActivityDetected" as String,
+          [
+            "activityName": activity.rawValue
+          ])
+      }
     }
 
     Function("stopMonitoring") { (activityNames: [String]?) in
@@ -515,21 +523,41 @@ public class ReactNativeDeviceActivityModule: Module {
         && areAnyWebDomainCategoriesEqual
     }
 
-    Function("blockApps") { (familyActivitySelectionStr: String?) in
+    Function("blockAppsWithSelectionId") {
+      (familyActivitySelectionId: String, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockAppsWithSelectionId called manually"
+
+      let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId)
+
+      blockSelectedApps(
+        blockSelection: activitySelection,
+        unblockedSelection: nil,
+        triggeredBy: triggeredBy,
+        blockedFamilyActivitySelectionId: familyActivitySelectionId
+      )
+    }
+
+    Function("blockApps") { (familyActivitySelectionStr: String?, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockApps called manually"
       if let familyActivitySelectionStr {
         let selection = deserializeFamilyActivitySelection(
           familyActivitySelectionStr: familyActivitySelectionStr
         )
 
-        blockSelectedApps(blockSelection: selection, unblockedSelection: nil)
+        blockSelectedApps(
+          blockSelection: selection,
+          unblockedSelection: nil,
+          triggeredBy: triggeredBy,
+          blockedFamilyActivitySelectionId: nil
+        )
       } else {
         // block all apps
-        blockAllApps()
+        blockAllApps(triggeredBy: triggeredBy)
       }
     }
 
-    Function("unblockApps") {
-      unblockAllApps()
+    Function("unblockApps") { (triggeredBy: String?) in
+      unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
     }
 
     AsyncFunction("revokeAuthorization") { () async throws in

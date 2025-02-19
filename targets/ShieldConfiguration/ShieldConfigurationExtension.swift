@@ -63,7 +63,7 @@ func getShieldConfiguration(placeholders: [String: String?])
 
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-  if let config = userDefaults?.dictionary(forKey: "shieldConfiguration") {
+  if let config = userDefaults?.dictionary(forKey: SHIELD_CONFIGURATION_KEY) {
     let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
 
     let title = config["title"] as? String
