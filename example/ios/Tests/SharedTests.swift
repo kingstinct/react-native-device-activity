@@ -93,6 +93,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: shouldNotTriggerTime,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -105,6 +106,49 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: shouldTriggerTime,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    XCTAssertFalse(shouldNotExecute)
+    XCTAssertTrue(shouldExecute)
+  }
+
+  func testSkipIfAlreadyTriggeredBefore() {
+    let activityName = "myActivityWithSkipIfAlreadyTriggeredBefore"
+    let callbackName = "eventDidReachThreshold"
+    let eventName = "10"
+    let key = userDefaultKeyForEvent(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    userDefaults?.set(1000, forKey: key)
+
+    let shouldNotExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: 999,
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    )
+
+    let shouldExecute = shouldExecuteAction(
+      skipIfAlreadyTriggeredAfter: nil,
+      skipIfLargerEventRecordedAfter: nil,
+      skipIfAlreadyTriggeredWithinMS: nil,
+      skipIfLargerEventRecordedWithinMS: nil,
+      neverTriggerBefore: nil,
+      skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: 1000,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -133,6 +177,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -145,6 +190,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -175,6 +221,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -187,6 +234,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -218,6 +266,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -230,6 +279,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -263,6 +313,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: 100,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -275,6 +326,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: 10000,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -315,6 +367,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: true,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: "15"
@@ -327,6 +380,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: true,
+      skipIfAlreadyTriggeredBefore: nil,
       activityName: activityName,
       callbackName: callbackName,
       eventName: "5"
