@@ -662,6 +662,7 @@ func shouldExecuteAction(
   skipIfLargerEventRecordedWithinMS: Double?,
   neverTriggerBefore: Double?,
   skipIfLargerEventRecordedSinceIntervalStarted: Bool?,
+  skipIfAlreadyTriggeredSinceIntervalStarted: Bool?,
   activityName: String,
   callbackName: String,
   eventName: String?
@@ -679,6 +680,25 @@ func shouldExecuteAction(
       callbackName: callbackName,
       eventName: eventName
     ) {
+      if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
+        return false
+      }
+    }
+  }
+
+  if let skipIfAlreadyTriggeredSinceIntervalStarted = skipIfAlreadyTriggeredSinceIntervalStarted {
+    if let skipIfAlreadyTriggeredAfter = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: "intervalDidStart"
+    ),
+      let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+        activityName: activityName,
+        callbackName: callbackName,
+        eventName: eventName
+      ) {
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
         logger.log(
           "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
