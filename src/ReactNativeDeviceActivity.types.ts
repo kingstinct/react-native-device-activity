@@ -176,7 +176,7 @@ type CommonTypeParams = {
   skipIfLargerEventRecordedAfter?: Date;
   skipIfAlreadyTriggeredWithinMS?: number;
   skipIfLargerEventRecordedWithinMS?: number;
-  skipIfAlreadyTriggeredSinceIntervalStarted?: boolean;
+  skipIfAlreadyTriggeredBefore?: Date;
   skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
   neverTriggerBefore?: Date;
 };

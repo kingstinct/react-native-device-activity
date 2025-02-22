@@ -165,6 +165,9 @@ export const configureActions = ({
       neverTriggerBefore: action.neverTriggerBefore
         ? action.neverTriggerBefore.getTime()
         : undefined,
+      skipIfAlreadyTriggeredBefore: action.skipIfAlreadyTriggeredBefore
+        ? action.skipIfAlreadyTriggeredBefore.getTime()
+        : undefined,
     })),
   );
 };
