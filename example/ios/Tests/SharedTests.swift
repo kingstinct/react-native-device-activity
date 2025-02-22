@@ -135,7 +135,7 @@ class SkipActionTests: XCTestCase {
       skipIfLargerEventRecordedWithinMS: nil,
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
-      skipIfAlreadyTriggeredBefore: 999,
+      skipIfAlreadyTriggeredBefore: 1001,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
