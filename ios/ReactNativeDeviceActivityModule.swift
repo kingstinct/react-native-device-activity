@@ -187,7 +187,7 @@ public class ReactNativeDeviceActivityModule: Module {
     ])
     let fileManager = FileManager.default
 
-    _ = NativeEventObserver(module: self)
+    let observer = NativeEventObserver(module: self)
 
     var watchActivitiesHandle: Cancellable?
     var onDeviceActivityDetectedHandle: Cancellable?
@@ -369,7 +369,9 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("clearAllManagedSettingsStoreSettings") {
-      clearAllManagedSettingsStoreSettings()
+      if #available(iOS 16, *) {
+        clearAllManagedSettingsStoreSettings()
+      }
     }
 
     AsyncFunction("startMonitoring") {
