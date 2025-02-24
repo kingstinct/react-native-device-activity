@@ -384,7 +384,17 @@ func replacePlaceholders(_ text: String, with placeholders: [String: String?]) -
 }
 
 @available(iOS 15.0, *)
-let store = ManagedSettingsStore()
+var store = ManagedSettingsStore()
+
+@available(iOS 15.0, *)
+func refreshManagedSettingsStore() {
+  store = ManagedSettingsStore()
+}
+
+@available(iOS 15.0, *)
+func clearAllManagedSettingsStoreSettings() {
+  store.clearAllSettings()
+}
 
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {

@@ -170,8 +170,6 @@ class NativeEventObserver {
 @available(iOS 15.0, *)
 public class ReactNativeDeviceActivityModule: Module {
 
-  let store = ManagedSettingsStore()
-
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
   // See https://docs.expo.dev/modules/module-api for more details about available components.
@@ -189,7 +187,7 @@ public class ReactNativeDeviceActivityModule: Module {
     ])
     let fileManager = FileManager.default
 
-    let observer = NativeEventObserver(module: self)
+    _ = NativeEventObserver(module: self)
 
     var watchActivitiesHandle: Cancellable?
     var onDeviceActivityDetectedHandle: Cancellable?
@@ -364,6 +362,14 @@ public class ReactNativeDeviceActivityModule: Module {
       let currentStatus = AuthorizationCenter.shared.authorizationStatus
 
       return currentStatus.rawValue
+    }
+
+    Function("refreshManagedSettingsStore") {
+      refreshManagedSettingsStore()
+    }
+
+    Function("clearAllManagedSettingsStoreSettings") {
+      clearAllManagedSettingsStoreSettings()
     }
 
     AsyncFunction("startMonitoring") {
