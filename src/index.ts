@@ -156,15 +156,17 @@ export const configureActions = ({
     key,
     actions.map((action) => ({
       ...action,
-      skipIfLargerEventRecordedAfter: action.skipIfLargerEventRecordedAfter
-        ? action.skipIfLargerEventRecordedAfter.getTime()
-        : undefined,
-      skipIfAlreadyTriggeredAfter: action.skipIfAlreadyTriggeredAfter
-        ? action.skipIfAlreadyTriggeredAfter.getTime()
-        : undefined,
-      neverTriggerBefore: action.neverTriggerBefore
-        ? action.neverTriggerBefore.getTime()
-        : undefined,
+      skipIfLargerEventRecordedAfter:
+        action.skipIfLargerEventRecordedAfter?.getTime(),
+      skipIfAlreadyTriggeredAfter:
+        action.skipIfAlreadyTriggeredAfter?.getTime(),
+      neverTriggerBefore: action.neverTriggerBefore?.getTime(),
+      skipIfAlreadyTriggeredBefore:
+        action.skipIfAlreadyTriggeredBefore?.getTime(),
+      skipIfAlreadyTriggeredBetweenFromDate:
+        action.skipIfAlreadyTriggeredBetween?.fromDate?.getTime(),
+      skipIfAlreadyTriggeredBetweenToDate:
+        action.skipIfAlreadyTriggeredBetween?.toDate?.getTime(),
     })),
   );
 };

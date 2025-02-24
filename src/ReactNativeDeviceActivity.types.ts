@@ -172,10 +172,15 @@ export type NotificationPayload = {
 type CommonTypeParams = {
   sleepBefore?: number;
   sleepAfter?: number;
+  skipIfAlreadyTriggeredBetween?: {
+    fromDate?: Date;
+    toDate?: Date;
+  };
   skipIfAlreadyTriggeredAfter?: Date;
   skipIfLargerEventRecordedAfter?: Date;
   skipIfAlreadyTriggeredWithinMS?: number;
   skipIfLargerEventRecordedWithinMS?: number;
+  skipIfAlreadyTriggeredBefore?: Date;
   skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
   neverTriggerBefore?: Date;
 };

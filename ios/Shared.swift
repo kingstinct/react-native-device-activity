@@ -662,6 +662,9 @@ func shouldExecuteAction(
   skipIfLargerEventRecordedWithinMS: Double?,
   neverTriggerBefore: Double?,
   skipIfLargerEventRecordedSinceIntervalStarted: Bool?,
+  skipIfAlreadyTriggeredBefore: Double?,
+  skipIfAlreadyTriggeredBetweenFromDate: Double?,
+  skipIfAlreadyTriggeredBetweenToDate: Double?,
   activityName: String,
   callbackName: String,
   eventName: String?
@@ -682,6 +685,42 @@ func shouldExecuteAction(
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
         logger.log(
           "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+        )
+        return false
+      }
+    }
+  }
+
+  if skipIfAlreadyTriggeredBetweenFromDate != nil || skipIfAlreadyTriggeredBetweenToDate != nil {
+    let skipIfAlreadyTriggeredBetweenFromDate =
+      skipIfAlreadyTriggeredBetweenFromDate ?? Date.distantPast.timeIntervalSince1970 * 1000
+    let skipIfAlreadyTriggeredBetweenToDate =
+      skipIfAlreadyTriggeredBetweenToDate ?? Date.distantFuture.timeIntervalSince1970 * 1000
+
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      if lastTriggeredAt >= skipIfAlreadyTriggeredBetweenFromDate
+        && lastTriggeredAt <= skipIfAlreadyTriggeredBetweenToDate {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is between \(skipIfAlreadyTriggeredBetweenFromDate) and \(skipIfAlreadyTriggeredBetweenToDate)"
+        )
+        return false
+      }
+    }
+  }
+
+  if let skipIfAlreadyTriggeredBefore = skipIfAlreadyTriggeredBefore {
+    if let lastTriggeredAt = getLastTriggeredTimeFromUserDefaults(
+      activityName: activityName,
+      callbackName: callbackName,
+      eventName: eventName
+    ) {
+      if lastTriggeredAt < skipIfAlreadyTriggeredBefore {
+        logger.log(
+          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredBefore)"
         )
         return false
       }
