@@ -204,7 +204,7 @@ class MoreSkipActionTests: XCTestCase {
       neverTriggerBefore: nil,
       skipIfLargerEventRecordedSinceIntervalStarted: false,
       skipIfAlreadyTriggeredBefore: nil,
-      skipIfAlreadyTriggeredBetweenFromDate: 1000,
+      skipIfAlreadyTriggeredBetweenFromDate: 1001,
       skipIfAlreadyTriggeredBetweenToDate: 1500,
       activityName: activityName,
       callbackName: callbackName,
@@ -220,7 +220,7 @@ class MoreSkipActionTests: XCTestCase {
       skipIfLargerEventRecordedSinceIntervalStarted: false,
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: 500,
-      skipIfAlreadyTriggeredBetweenToDate: 1000,
+      skipIfAlreadyTriggeredBetweenToDate: 999,
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
