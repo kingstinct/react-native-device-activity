@@ -702,8 +702,8 @@ func shouldExecuteAction(
       callbackName: callbackName,
       eventName: eventName
     ) {
-      if lastTriggeredAt > skipIfAlreadyTriggeredBetweenFromDate
-        && lastTriggeredAt < skipIfAlreadyTriggeredBetweenToDate {
+      if lastTriggeredAt >= skipIfAlreadyTriggeredBetweenFromDate
+        && lastTriggeredAt <= skipIfAlreadyTriggeredBetweenToDate {
         logger.log(
           "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is between \(skipIfAlreadyTriggeredBetweenFromDate) and \(skipIfAlreadyTriggeredBetweenToDate)"
         )
