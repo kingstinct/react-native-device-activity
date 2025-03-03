@@ -1205,7 +1205,7 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
-  - ReactNativeDeviceActivity (0.4.9):
+  - ReactNativeDeviceActivity (0.4.13):
     - ExpoModulesCore
   - RNVectorIcons (10.2.0):
     - DoubleConversion
@@ -1229,7 +1229,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.0)
-  - SwiftLint (0.57.1)
+  - SwiftLint (0.58.1)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1507,10 +1507,10 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
-  ReactNativeDeviceActivity: b00c7803cc397e2f5fe73cf82a6cbaa38a5a359e
+  ReactNativeDeviceActivity: b13205e3ec728466ebaea74de05430ab0a538296
   RNVectorIcons: 845eda5c7819bd29699cafd0fc98c9d4afe28c96
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  SwiftLint: 92196976e597b9afec5dbe374810103e6c1d9d7c
+  SwiftLint: 6c8820d22c8f74baadd5684e00bb7356c34610a1
   Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
 
 PODFILE CHECKSUM: b8b40c46183fad3b03c145dfc75dd8fc64203c70
