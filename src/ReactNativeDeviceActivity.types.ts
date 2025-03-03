@@ -171,42 +171,46 @@ export type NotificationPayload = {
   subtitle?: string;
 };
 
+type CommonTypeParams = {
+  sleepBefore?: number;
+  sleepAfter?: number;
+  skipIfAlreadyTriggeredBetween?: {
+    fromDate?: Date;
+    toDate?: Date;
+  };
+  skipIfAlreadyTriggeredAfter?: Date;
+  skipIfLargerEventRecordedAfter?: Date;
+  skipIfAlreadyTriggeredWithinMS?: number;
+  skipIfLargerEventRecordedWithinMS?: number;
+  skipIfAlreadyTriggeredBefore?: Date;
+  skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
+  neverTriggerBefore?: Date;
+};
+
 export type Action =
-  | {
+  | ({
       type: "blockSelection";
       familyActivitySelectionId: string;
       shieldId?: string;
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "unblockAllApps";
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "resetUnblockedSelection";
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "blockAllApps";
       shieldId?: string;
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "sendNotification";
       payload: NotificationPayload;
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "openApp";
-      sleepBefore?: number;
-      sleepAfter?: number;
-    }
-  | {
+    } & CommonTypeParams)
+  | ({
       type: "sendHttpRequest";
       url: string;
       options?: {
@@ -214,9 +218,7 @@ export type Action =
         body?: Record<string, any>;
         headers?: Record<string, string>;
       };
-      sleepBefore?: number;
-      sleepAfter?: number;
-    };
+    } & CommonTypeParams);
 
 export type DeviceActivityEventRaw = Omit<
   DeviceActivityEvent,
@@ -271,8 +273,15 @@ export type ReactNativeDeviceActivityNativeModule = {
     forIndividualOrChild: "individual" | "child",
   ) => PromiseLike<void> | void;
   revokeAuthorization: () => PromiseLike<void> | void;
-  blockApps: (familyActivitySelectionStr?: string) => PromiseLike<void> | void;
-  unblockApps: () => PromiseLike<void> | void;
+  blockApps: (
+    familyActivitySelectionStr?: string,
+    triggeredBy?: string,
+  ) => void;
+  blockAppsWithSelectionId: (
+    familyActivitySelectionId: string,
+    triggeredBy?: string,
+  ) => void;
+  unblockApps: (triggeredBy?: string) => void;
   isShieldActive: () => boolean;
   isShieldActiveWithSelection: (familyActivitySelectionStr: string) => boolean;
   doesSelectionHaveOverlap: (

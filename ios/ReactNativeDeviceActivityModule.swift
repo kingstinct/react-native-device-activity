@@ -175,9 +175,32 @@ class NativeEventObserver {
 }
 
 @available(iOS 15.0, *)
-public class ReactNativeDeviceActivityModule: Module {
+func tokenSetsAreEqual<T>(
+  tokenSetOne: Set<Token<T>>?,
+  tokenSetTwo: Set<Token<T>>
+) -> Bool {
+  if tokenSetOne == tokenSetTwo {
+    return true
+  }
 
-  let store = ManagedSettingsStore()
+  if let tokenSetOne = tokenSetOne {
+    if tokenSetOne.count == tokenSetTwo.count {
+      if tokenSetOne.count == 0 {
+        return true
+      }
+      return tokenSetOne.allSatisfy { token in
+        tokenSetTwo.contains(token)
+      }
+    }
+  } else {
+    return tokenSetTwo.isEmpty
+  }
+
+  return false
+}
+
+@available(iOS 15.0, *)
+public class ReactNativeDeviceActivityModule: Module {
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -266,7 +289,6 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("getEvents") { (activityName: String?) -> [AnyHashable: Any] in
-
       let dict = userDefaults?.dictionaryRepresentation()
 
       guard let actualDict = dict else {
@@ -374,6 +396,16 @@ public class ReactNativeDeviceActivityModule: Module {
       return currentStatus.rawValue
     }
 
+    Function("refreshManagedSettingsStore") {
+      refreshManagedSettingsStore()
+    }
+
+    Function("clearAllManagedSettingsStoreSettings") {
+      if #available(iOS 16, *) {
+        clearAllManagedSettingsStoreSettings()
+      }
+    }
+
     AsyncFunction("startMonitoring") {
       (
         activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS],
@@ -447,6 +479,15 @@ public class ReactNativeDeviceActivityModule: Module {
       // center.stopMonitoring()
 
       center = DeviceActivityCenter()
+
+      watchActivitiesHandle?.cancel()
+      watchActivitiesHandle = center.activities.publisher.sink { activity in
+        self.sendEvent(
+          "onDeviceActivityDetected" as String,
+          [
+            "activityName": activity.rawValue
+          ])
+      }
     }
 
     Function("stopMonitoring") { (activityNames: [String]?) in
@@ -655,51 +696,68 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
-      let areAnyApplicationsEqual =
-        store.shield.applications?.map({ token in
-          token
-        })
-        == selection.applicationTokens.map({ token in
-          token
-        })
-      let areAnyWebDomainsEqual =
-        store.shield.webDomains?.map({ token in
-          token
-        })
-        == selection.webDomainTokens.map({ token in
-          token
-        })
+      let shield = store.shield
+
+      let areApplicationsEqual = tokenSetsAreEqual(
+        tokenSetOne: shield.applications,
+        tokenSetTwo: selection.applicationTokens
+      )
+
+      let areWebDomainsEqual = tokenSetsAreEqual(
+        tokenSetOne: shield.webDomains,
+        tokenSetTwo: selection.webDomainTokens
+      )
 
       let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(
         selection.categoryTokens, except: Set())
 
-      let areAnyApplicationCategoriesEqual = store.shield.applicationCategories == appCategoryPolicy
+      let areAnyApplicationCategoriesEqual = shield.applicationCategories == appCategoryPolicy
 
       let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(
         selection.categoryTokens, except: Set())
 
       let areAnyWebDomainCategoriesEqual =
-        webDomainCategoryPolicy == store.shield.webDomainCategories
+        webDomainCategoryPolicy == shield.webDomainCategories
 
-      return areAnyApplicationsEqual && areAnyWebDomainsEqual && areAnyApplicationCategoriesEqual
+      return areApplicationsEqual && areWebDomainsEqual && areAnyApplicationCategoriesEqual
         && areAnyWebDomainCategoriesEqual
     }
 
-    Function("blockApps") { (familyActivitySelectionStr: String?) in
+    Function("blockAppsWithSelectionId") {
+      (familyActivitySelectionId: String, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockAppsWithSelectionId called manually"
+
+      let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId)
+
+      blockSelectedApps(
+        blockSelection: activitySelection,
+        unblockedSelection: nil,
+        triggeredBy: triggeredBy,
+        blockedFamilyActivitySelectionId: familyActivitySelectionId
+      )
+    }
+
+    Function("blockApps") { (familyActivitySelectionStr: String?, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockApps called manually"
       if let familyActivitySelectionStr {
         let selection = deserializeFamilyActivitySelection(
           familyActivitySelectionStr: familyActivitySelectionStr
         )
 
-        blockSelectedApps(blockSelection: selection, unblockedSelection: nil)
+        blockSelectedApps(
+          blockSelection: selection,
+          unblockedSelection: nil,
+          triggeredBy: triggeredBy,
+          blockedFamilyActivitySelectionId: nil
+        )
       } else {
         // block all apps
-        blockAllApps()
+        blockAllApps(triggeredBy: triggeredBy)
       }
     }
 
-    Function("unblockApps") {
-      unblockAllApps()
+    Function("unblockApps") { (triggeredBy: String?) in
+      unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
     }
 
     AsyncFunction("revokeAuthorization") { () async throws in

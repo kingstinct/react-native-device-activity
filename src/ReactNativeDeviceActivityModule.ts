@@ -38,6 +38,7 @@ const mockModule:
   | null = {
   isAvailable: () => false,
   requestAuthorization: warnFn,
+  blockAppsWithSelectionId: warnFn,
   userDefaultsAll: warnFn,
   userDefaultsGet: warnFn,
   userDefaultsRemove: warnFn,
