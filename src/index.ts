@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import {
   Action,
+  ActivitySelectionWithMetadata,
   AuthorizationStatus,
   AuthorizationStatusType,
   CallbackEventName,
@@ -135,6 +136,54 @@ export async function startMonitoring(
 
 export const reloadDeviceActivityCenter = () => {
   return ReactNativeDeviceActivityModule?.reloadDeviceActivityCenter();
+};
+
+export const intersection = (
+  familyActivitySelections: FamilyActivitySelection,
+  familyActivitySelections2: FamilyActivitySelection,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.intersection(
+    familyActivitySelections,
+    familyActivitySelections2,
+  );
+};
+
+export const union = (
+  familyActivitySelections: FamilyActivitySelection,
+  familyActivitySelections2: FamilyActivitySelection,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.union(
+    familyActivitySelections,
+    familyActivitySelections2,
+  );
+};
+
+export const difference = (
+  familyActivitySelections: FamilyActivitySelection,
+  familyActivitySelections2: FamilyActivitySelection,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.difference(
+    familyActivitySelections,
+    familyActivitySelections2,
+  );
+};
+
+export const symmetricDifference = (
+  familyActivitySelections: FamilyActivitySelection,
+  familyActivitySelections2: FamilyActivitySelection,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.symmetricDifference(
+    familyActivitySelections,
+    familyActivitySelections2,
+  );
+};
+
+export const activitySelectionMetadata = (
+  familyActivitySelectionStr: string,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.activitySelectionMetadata(
+    familyActivitySelectionStr,
+  );
 };
 
 export const configureActions = ({

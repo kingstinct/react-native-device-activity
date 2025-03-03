@@ -55,10 +55,14 @@ struct ScheduleFromJS: ExpoModulesCore.Record {
   var warningTime: DateComponentsFromJS?
 }
 
-struct ActivitySelectionWithMetadata {
+struct ActivitySelectionWithMetadata: ExpoModulesCore.Record {
+  @Field
   var familyActivitySelection: String?
+  @Field
   var applicationCount: Int
+  @Field
   var categoryCount: Int
+  @Field
   var webdomainCount: Int
 }
 
@@ -521,13 +525,13 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("intersection") {
-      (familyActivitySelectionStr: String, _: String)
+      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
         -> ActivitySelectionWithMetadata in
       let selection1 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
       let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+        familyActivitySelectionStr: familyActivitySelectionStr2)
 
       let applicationTokens = selection1.applicationTokens.intersection(
         selection2.applicationTokens
@@ -550,21 +554,23 @@ public class ReactNativeDeviceActivityModule: Module {
       let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: serializedActivitySelection,
-        applicationCount: applicationTokens.count,
-        categoryCount: categoryTokens.count,
-        webdomainCount: domainTokens.count
+        familyActivitySelection: Field(
+          wrappedValue: serializedActivitySelection
+        ),
+        applicationCount: Field(wrappedValue: applicationTokens.count),
+        categoryCount: Field(wrappedValue: categoryTokens.count),
+        webdomainCount: Field(wrappedValue: domainTokens.count)
       )
     }
 
     Function("union") {
-      (familyActivitySelectionStr: String, _: String)
+      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
         -> ActivitySelectionWithMetadata in
       let selection1 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
       let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+        familyActivitySelectionStr: familyActivitySelectionStr2)
 
       let applicationTokens = selection1.applicationTokens.union(
         selection2.applicationTokens
@@ -587,21 +593,23 @@ public class ReactNativeDeviceActivityModule: Module {
       let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: serializedActivitySelection,
-        applicationCount: applicationTokens.count,
-        categoryCount: categoryTokens.count,
-        webdomainCount: domainTokens.count
+        familyActivitySelection: Field(
+          wrappedValue: serializedActivitySelection
+        ),
+        applicationCount: Field(wrappedValue: applicationTokens.count),
+        categoryCount: Field(wrappedValue: categoryTokens.count),
+        webdomainCount: Field(wrappedValue: domainTokens.count)
       )
     }
 
     Function("difference") {
-      (familyActivitySelectionStr: String, _: String)
+      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
         -> ActivitySelectionWithMetadata in
       let selection1 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
       let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+        familyActivitySelectionStr: familyActivitySelectionStr2)
 
       let applicationTokens = selection1.applicationTokens.subtracting(
         selection2.applicationTokens
@@ -624,21 +632,23 @@ public class ReactNativeDeviceActivityModule: Module {
       let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: serializedActivitySelection,
-        applicationCount: applicationTokens.count,
-        categoryCount: categoryTokens.count,
-        webdomainCount: domainTokens.count
+        familyActivitySelection: Field(
+          wrappedValue: serializedActivitySelection
+        ),
+        applicationCount: Field(wrappedValue: applicationTokens.count),
+        categoryCount: Field(wrappedValue: categoryTokens.count),
+        webdomainCount: Field(wrappedValue: domainTokens.count)
       )
     }
 
     Function("symmetricDifference") {
-      (familyActivitySelectionStr: String, _: String)
+      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
         -> ActivitySelectionWithMetadata in
       let selection1 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
       let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+        familyActivitySelectionStr: familyActivitySelectionStr2)
 
       let applicationTokens = selection1.applicationTokens.symmetricDifference(
         selection2.applicationTokens
@@ -661,10 +671,12 @@ public class ReactNativeDeviceActivityModule: Module {
       let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: serializedActivitySelection,
-        applicationCount: applicationTokens.count,
-        categoryCount: categoryTokens.count,
-        webdomainCount: domainTokens.count
+        familyActivitySelection: Field(
+          wrappedValue: serializedActivitySelection
+        ),
+        applicationCount: Field(wrappedValue: applicationTokens.count),
+        categoryCount: Field(wrappedValue: categoryTokens.count),
+        webdomainCount: Field(wrappedValue: domainTokens.count)
       )
     }
 
@@ -676,10 +688,12 @@ public class ReactNativeDeviceActivityModule: Module {
       let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: serializedActivitySelection,
-        applicationCount: selection.applicationTokens.count,
-        categoryCount: selection.categoryTokens.count,
-        webdomainCount: selection.webDomainTokens.count
+        familyActivitySelection: Field(
+          wrappedValue: serializedActivitySelection
+        ),
+        applicationCount: Field(wrappedValue: selection.applicationTokens.count),
+        categoryCount: Field(wrappedValue: selection.categoryTokens.count),
+        webdomainCount: Field(wrappedValue: selection.webDomainTokens.count)
       )
     }
 
