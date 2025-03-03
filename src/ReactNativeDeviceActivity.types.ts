@@ -22,12 +22,14 @@ export type EventParsed = {
 
 export type EventsLookup = Record<string, number>;
 
-export type DeviceActivitySelectionEvent = {
-  familyActivitySelection: string;
+export type ActivitySelectionWithMetadata = {
+  familyActivitySelection: string | null;
   applicationCount: number;
   categoryCount: number;
   webDomainCount: number;
 };
+
+export type DeviceActivitySelectionEvent = ActivitySelectionWithMetadata;
 
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   style: StyleProp<ViewStyle>;
@@ -248,6 +250,25 @@ export type ReactNativeDeviceActivityNativeModule = {
   userDefaultsRemove: (key: string) => void;
   userDefaultsClear: () => void;
   userDefaultsAll: () => any;
+  activitySelectionMetadata: (
+    familyActivitySelectionStr: string,
+  ) => ActivitySelectionWithMetadata;
+  intersection: (
+    familyActivitySelectionOne: FamilyActivitySelection,
+    familyActivitySelectionTwo: FamilyActivitySelection,
+  ) => ActivitySelectionWithMetadata;
+  union: (
+    familyActivitySelectionOne: FamilyActivitySelection,
+    familyActivitySelectionTwo: FamilyActivitySelection,
+  ) => ActivitySelectionWithMetadata;
+  difference: (
+    familyActivitySelectionOne: FamilyActivitySelection,
+    familyActivitySelectionTwo: FamilyActivitySelection,
+  ) => ActivitySelectionWithMetadata;
+  symmetricDifference: (
+    familyActivitySelectionOne: FamilyActivitySelection,
+    familyActivitySelectionTwo: FamilyActivitySelection,
+  ) => ActivitySelectionWithMetadata;
   requestAuthorization: (
     forIndividualOrChild: "individual" | "child",
   ) => PromiseLike<void> | void;
