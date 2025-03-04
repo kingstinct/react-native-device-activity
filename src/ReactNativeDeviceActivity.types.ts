@@ -22,12 +22,15 @@ export type EventParsed = {
 
 export type EventsLookup = Record<string, number>;
 
-export type ActivitySelectionWithMetadata = {
-  familyActivitySelection: string | null;
+export type ActivitySelectionMetadata = {
   applicationCount: number;
   categoryCount: number;
   webDomainCount: number;
 };
+
+export type ActivitySelectionWithMetadata = {
+  familyActivitySelection: string | null;
+} & ActivitySelectionMetadata;
 
 export type DeviceActivitySelectionEvent = ActivitySelectionWithMetadata;
 
@@ -39,6 +42,17 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   familyActivitySelection?: string | null;
   headerText?: string | null;
   footerText?: string | null;
+}>;
+
+export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
+  style: StyleProp<ViewStyle>;
+  onSelectionChange?: (
+    selection: NativeSyntheticEvent<ActivitySelectionMetadata>,
+  ) => void;
+  familyActivitySelectionId: string;
+  headerText?: string | null;
+  footerText?: string | null;
+  includeEntireCategory?: boolean;
 }>;
 
 /**
@@ -194,10 +208,11 @@ export type Action =
       shieldId?: string;
     } & CommonTypeParams)
   | ({
-      type: "unblockAllApps";
+      type: "unblockSelection";
+      familyActivitySelectionId: string;
     } & CommonTypeParams)
   | ({
-      type: "resetUnblockedSelection";
+      type: "unblockAllApps";
     } & CommonTypeParams)
   | ({
       type: "blockAllApps";
@@ -248,6 +263,10 @@ export type ReactNativeDeviceActivityNativeModule = {
   userDefaultsSet: (dict: any) => void;
   userDefaultsGet: (key: string) => any;
   userDefaultsRemove: (key: string) => void;
+  unblockSelectedApps: (
+    familyActivitySelectionId: string,
+    triggeredBy?: string,
+  ) => void;
   userDefaultsClear: () => void;
   userDefaultsAll: () => any;
   activitySelectionMetadata: (
@@ -277,11 +296,13 @@ export type ReactNativeDeviceActivityNativeModule = {
     familyActivitySelectionStr?: string,
     triggeredBy?: string,
   ) => void;
+  blockAllApps: (triggeredBy?: string) => void;
   blockAppsWithSelectionId: (
     familyActivitySelectionId: string,
     triggeredBy?: string,
   ) => void;
   unblockApps: (triggeredBy?: string) => void;
+  unblockAllApps: (triggeredBy?: string) => void;
   isShieldActive: () => boolean;
   isShieldActiveWithSelection: (familyActivitySelectionStr: string) => boolean;
   doesSelectionHaveOverlap: (

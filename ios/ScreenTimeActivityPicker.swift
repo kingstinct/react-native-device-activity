@@ -18,26 +18,23 @@ class ScreenTimeSelectAppsModel: ObservableObject {
 
   @Published public var headerText: String?
 
+  // just used with "controlled" picker
+  @Published public var activitySelectionId: String?
+
+  @Published public var includeEntireCategory: Bool?
+
   init() {}
 }
 
-struct InnerView: View {
-  var body: some View {
-    Color.clear
-      .contentShape(Rectangle())
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
-  }
-}
-
 @available(iOS 15.0, *)
-struct Picker: View {
+struct ActivityPicker: View {
   @ObservedObject var model: ScreenTimeSelectAppsModel
 
   var body: some View {
     if #available(iOS 16.0, *) {
       FamilyActivityPicker(
-        headerText: $model.headerText.wrappedValue,
-        footerText: $model.footerText.wrappedValue,
+        headerText: model.headerText,
+        footerText: model.footerText,
         selection: $model.activitySelection
       )
       .allowsHitTesting(false)
@@ -48,26 +45,6 @@ struct Picker: View {
       )
       .allowsHitTesting(false)
       .background(Color.clear)
-    }
-  }
-}
-
-@available(iOS 15.0, *)
-struct ScreenTimeSelectAppsContentView: View {
-  @ObservedObject var model: ScreenTimeSelectAppsModel
-
-  var body: some View {
-    if #available(iOS 16.0, *) {
-      FamilyActivityPicker(
-        headerText: $model.headerText.wrappedValue,
-        footerText: $model.footerText.wrappedValue,
-        selection: $model.activitySelection
-      )
-      .allowsHitTesting(false)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .edgesIgnoringSafeArea(.all)
-    } else {
-      // ... iOS 15 implementation ...
     }
   }
 }

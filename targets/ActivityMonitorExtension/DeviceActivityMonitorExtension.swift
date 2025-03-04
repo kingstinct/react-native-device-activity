@@ -11,9 +11,86 @@ import Foundation
 import ManagedSettings
 import os
 
-// Optionally override any of the functions below.
-// Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
-@available(iOS 15.0, *)
+func executeAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
+  let type = action["type"] as? String
+
+  if let sleepBefore = action["sleepBefore"] as? Int {
+    sleep(ms: sleepBefore)
+  }
+
+  if type == "blockSelection" {
+    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
+      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
+        updateShield(
+          shieldId: action["shieldId"] as? String,
+          triggeredBy: eventKey,
+          activitySelectionId: familyActivitySelectionId
+        )
+
+        sleep(ms: 50)
+
+        blockSelectedApps(
+          blockSelection: activitySelection,
+          triggeredBy: eventKey,
+          blockedFamilyActivitySelectionId: familyActivitySelectionId
+        )
+      } else {
+        logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
+      }
+    }
+  } else if type == "unblockAllApps" {
+    unblockAllApps(triggeredBy: eventKey)
+  } else if type == "unblockSelectedApps" {
+    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
+      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
+
+        unblockSelectedApps(
+          unblockSelection: activitySelection,
+          triggeredBy: eventKey
+        )
+        userDefaults?
+          .removeObject(
+            forKey: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX + "_" + familyActivitySelectionId)
+      }
+    }
+  } else if type == "unblockAllApps" {
+    unblockAllApps(triggeredBy: eventKey)
+  } else if type == "openApp" {
+    // todo: replace with general string
+    openUrl(urlString: "device-activity://")
+
+    sleep(ms: 1000)
+  } else if type == "blockAllApps" {
+    updateShield(
+      shieldId: action["shieldId"] as? String,
+      triggeredBy: eventKey,
+      activitySelectionId: nil
+    )
+
+    // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
+    sleep(ms: 50)
+
+    blockAllApps(triggeredBy: eventKey)
+  } else if type == "sendNotification" {
+    if let notification = action["payload"] as? [String: Any] {
+      sendNotification(contents: notification, placeholders: placeholders)
+    }
+  } else if type == "sendHttpRequest" {
+    if let url = action["url"] as? String {
+      let config = action["options"] as? [String: Any] ?? [:]
+
+      task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
+
+      // required for it to have time to trigger before process/callback ends
+      sleep(ms: 1000)
+    }
+  }
+
+  if let sleepAfter = action["sleepAfter"] as? Int {
+    sleep(ms: sleepAfter)
+  }
+}
+
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)

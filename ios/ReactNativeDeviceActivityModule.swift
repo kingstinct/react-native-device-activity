@@ -7,6 +7,26 @@ import ManagedSettings
 import ManagedSettingsUI
 import os
 
+@available(iOS 15.0, *)
+func isShieldActive() -> Bool {
+  let areAnyApplicationsShielded =
+    store.shield.applications != nil && store.shield.applications!.count > 0
+  let areAnyWebDomainsShielded =
+    store.shield.webDomains != nil && store.shield.webDomains!.count > 0
+  let areAnyApplicationCategoriesShielded =
+    store.shield.applicationCategories != nil
+    && store.shield.applicationCategories
+      != ShieldSettings.ActivityCategoryPolicy<Application>.none
+  let areAnyWebDomainCategoriesShielded =
+    store.shield.webDomainCategories != nil
+    && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+
+  return areAnyApplicationsShielded
+    || areAnyWebDomainsShielded
+    || areAnyApplicationCategoriesShielded
+    || areAnyWebDomainCategoriesShielded
+}
+
 struct DateComponentsFromJS: ExpoModulesCore.Record {
   @Field
   var era: Int?
@@ -55,7 +75,23 @@ struct ScheduleFromJS: ExpoModulesCore.Record {
   var warningTime: DateComponentsFromJS?
 }
 
+@available(iOS 15.0, *)
 struct ActivitySelectionWithMetadata: ExpoModulesCore.Record {
+  init() {
+
+  }
+
+  init(
+    activitySelection: FamilyActivitySelection
+  ) {
+    self.familyActivitySelection = serializeFamilyActivitySelection(
+      selection: activitySelection
+    )
+    self.applicationCount = activitySelection.applicationTokens.count
+    self.categoryCount = activitySelection.categoryTokens.count
+    self.webdomainCount = activitySelection.webDomainTokens.count
+  }
+
   @Field
   var familyActivitySelection: String?
   @Field
@@ -410,6 +446,15 @@ public class ReactNativeDeviceActivityModule: Module {
       }
     }
 
+    Function("unblockSelectedApps") {
+      (familyActivitySelectionId: String, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "called manually"
+
+      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
+        unblockSelectedApps(unblockSelection: activitySelection, triggeredBy: triggeredBy)
+      }
+    }
+
     AsyncFunction("startMonitoring") {
       (
         activityName: String, schedule: ScheduleFromJS, events: [DeviceActivityEventFromJS],
@@ -533,33 +578,10 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection2 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr2)
 
-      let applicationTokens = selection1.applicationTokens.intersection(
-        selection2.applicationTokens
-      )
-
-      let domainTokens = selection1.webDomainTokens.intersection(
-        selection2.webDomainTokens
-      )
-
-      let categoryTokens = selection1.categoryTokens.intersection(
-        selection2.categoryTokens
-      )
-
-      var selection = FamilyActivitySelection()
-
-      selection.applicationTokens = applicationTokens
-      selection.webDomainTokens = domainTokens
-      selection.categoryTokens = categoryTokens
-
-      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+      let selection = intersection(selection1, selection2)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: Field(
-          wrappedValue: serializedActivitySelection
-        ),
-        applicationCount: Field(wrappedValue: applicationTokens.count),
-        categoryCount: Field(wrappedValue: categoryTokens.count),
-        webdomainCount: Field(wrappedValue: domainTokens.count)
+        activitySelection: selection
       )
     }
 
@@ -572,33 +594,10 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection2 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr2)
 
-      let applicationTokens = selection1.applicationTokens.union(
-        selection2.applicationTokens
-      )
-
-      let domainTokens = selection1.webDomainTokens.union(
-        selection2.webDomainTokens
-      )
-
-      let categoryTokens = selection1.categoryTokens.union(
-        selection2.categoryTokens
-      )
-
-      var selection = FamilyActivitySelection()
-
-      selection.applicationTokens = applicationTokens
-      selection.webDomainTokens = domainTokens
-      selection.categoryTokens = categoryTokens
-
-      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+      let selection = union(selection1, selection2)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: Field(
-          wrappedValue: serializedActivitySelection
-        ),
-        applicationCount: Field(wrappedValue: applicationTokens.count),
-        categoryCount: Field(wrappedValue: categoryTokens.count),
-        webdomainCount: Field(wrappedValue: domainTokens.count)
+        activitySelection: selection
       )
     }
 
@@ -611,33 +610,10 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection2 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr2)
 
-      let applicationTokens = selection1.applicationTokens.subtracting(
-        selection2.applicationTokens
-      )
-
-      let domainTokens = selection1.webDomainTokens.subtracting(
-        selection2.webDomainTokens
-      )
-
-      let categoryTokens = selection1.categoryTokens.subtracting(
-        selection2.categoryTokens
-      )
-
-      var selection = FamilyActivitySelection()
-
-      selection.applicationTokens = applicationTokens
-      selection.webDomainTokens = domainTokens
-      selection.categoryTokens = categoryTokens
-
-      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+      let selection = difference(selection1, selection2)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: Field(
-          wrappedValue: serializedActivitySelection
-        ),
-        applicationCount: Field(wrappedValue: applicationTokens.count),
-        categoryCount: Field(wrappedValue: categoryTokens.count),
-        webdomainCount: Field(wrappedValue: domainTokens.count)
+        activitySelection: selection
       )
     }
 
@@ -650,33 +626,10 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection2 = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr2)
 
-      let applicationTokens = selection1.applicationTokens.symmetricDifference(
-        selection2.applicationTokens
-      )
-
-      let domainTokens = selection1.webDomainTokens.symmetricDifference(
-        selection2.webDomainTokens
-      )
-
-      let categoryTokens = selection1.categoryTokens.symmetricDifference(
-        selection2.categoryTokens
-      )
-
-      var selection = FamilyActivitySelection()
-
-      selection.applicationTokens = applicationTokens
-      selection.webDomainTokens = domainTokens
-      selection.categoryTokens = categoryTokens
-
-      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
+      let selection = symmetricDifference(selection1, selection2)
 
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: Field(
-          wrappedValue: serializedActivitySelection
-        ),
-        applicationCount: Field(wrappedValue: applicationTokens.count),
-        categoryCount: Field(wrappedValue: categoryTokens.count),
-        webdomainCount: Field(wrappedValue: domainTokens.count)
+        activitySelection: selection
       )
     }
 
@@ -685,15 +638,8 @@ public class ReactNativeDeviceActivityModule: Module {
       let selection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr)
 
-      let serializedActivitySelection = serializeFamilyActivitySelection(selection: selection)
-
       return ActivitySelectionWithMetadata(
-        familyActivitySelection: Field(
-          wrappedValue: serializedActivitySelection
-        ),
-        applicationCount: Field(wrappedValue: selection.applicationTokens.count),
-        categoryCount: Field(wrappedValue: selection.categoryTokens.count),
-        webdomainCount: Field(wrappedValue: selection.webDomainTokens.count)
+        activitySelection: selection
       )
     }
 
@@ -741,36 +687,40 @@ public class ReactNativeDeviceActivityModule: Module {
       (familyActivitySelectionId: String, triggeredBy: String?) in
       let triggeredBy = triggeredBy ?? "blockAppsWithSelectionId called manually"
 
-      let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId)
-
-      blockSelectedApps(
-        blockSelection: activitySelection,
-        unblockedSelection: nil,
-        triggeredBy: triggeredBy,
-        blockedFamilyActivitySelectionId: familyActivitySelectionId
-      )
-    }
-
-    Function("blockApps") { (familyActivitySelectionStr: String?, triggeredBy: String?) in
-      let triggeredBy = triggeredBy ?? "blockApps called manually"
-      if let familyActivitySelectionStr {
-        let selection = deserializeFamilyActivitySelection(
-          familyActivitySelectionStr: familyActivitySelectionStr
-        )
-
+      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
         blockSelectedApps(
-          blockSelection: selection,
-          unblockedSelection: nil,
+          blockSelection: activitySelection,
           triggeredBy: triggeredBy,
-          blockedFamilyActivitySelectionId: nil
+          blockedFamilyActivitySelectionId: familyActivitySelectionId
         )
-      } else {
-        // block all apps
-        blockAllApps(triggeredBy: triggeredBy)
       }
     }
 
+    Function("blockApps") { (familyActivitySelectionStr: String, triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockApps called manually"
+
+      let selection = deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: familyActivitySelectionStr
+      )
+
+      blockSelectedApps(
+        blockSelection: selection,
+        triggeredBy: triggeredBy,
+        blockedFamilyActivitySelectionId: nil
+      )
+    }
+
+    Function("blockAllApps") { (triggeredBy: String?) in
+      // block all apps
+      blockAllApps(triggeredBy: triggeredBy ?? "blockAllApps called manually")
+    }
+
+    // deprecated - but not removing to avoid breaking changes
     Function("unblockApps") { (triggeredBy: String?) in
+      unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
+    }
+
+    Function("unblockAllApps") { (triggeredBy: String?) in
       unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
     }
 
@@ -821,6 +771,55 @@ public class ReactNativeDeviceActivityModule: Module {
 
         view.model.headerText = prop
 
+      }
+    }
+  }
+}
+
+@available(iOS 15.0, *)
+public class ReactNativeDeviceActivityViewPersistedModule: Module {
+  public func definition() -> ExpoModulesCore.ModuleDefinition {
+    Name("ReactNativeDeviceActivityViewPersistedModule")
+    View(ReactNativeDeviceActivityViewPersisted.self) {
+      Events(
+        "onSelectionChange"
+      )
+      // Defines a setter for the `name` prop.
+      Prop("familyActivitySelectionId") {
+        (view: ReactNativeDeviceActivityViewPersisted, prop: String) in
+        let includeEntireCategory = view.model.includeEntireCategory ?? false
+
+        let selection =
+          getFamilyActivitySelectionById(
+            id: prop
+          ) ?? FamilyActivitySelection(includeEntireCategory: includeEntireCategory)
+
+        view.model.activitySelection = selection
+        view.model.activitySelectionId = prop
+      }
+
+      // note: this property will only have an effect on new selections
+      Prop("includeEntireCategory") { (view: ReactNativeDeviceActivityViewPersisted, prop: Bool?) in
+        view.model.includeEntireCategory = prop
+        if let activitySelectionId = view.model.activitySelectionId {
+          let selection =
+            getFamilyActivitySelectionById(
+              id: activitySelectionId
+            )
+            ?? FamilyActivitySelection(
+              includeEntireCategory: prop ?? false
+            )
+
+          view.model.activitySelection = selection
+        }
+      }
+
+      Prop("footerText") { (view: ReactNativeDeviceActivityViewPersisted, prop: String?) in
+        view.model.footerText = prop
+      }
+
+      Prop("headerText") { (view: ReactNativeDeviceActivityViewPersisted, prop: String?) in
+        view.model.headerText = prop
       }
     }
   }

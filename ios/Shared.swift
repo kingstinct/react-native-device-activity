@@ -13,7 +13,13 @@ import WebKit
 import os
 
 let SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
+let SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX = "shieldConfigurationForSelection"
+let SHIELD_ACTIONS_FOR_SELECTION_PREFIX = "shieldActionsForSelection"
 let SHIELD_ACTIONS_KEY = "shieldActions"
+let CURRENT_BLOCKED_SELECTION = "currentBlockedSelection"
+let CURRENT_UNBLOCKED_SELECTION = "currentUnblockedSelection"
+let IS_BLOCKING_ALL = "isBlockingAll"
+let FAMILY_ACTIVITY_SELECTION_ID_KEY = "familyActivitySelectionIds"
 
 let appGroup =
   Bundle.main.object(forInfoDictionaryKey: "REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP") as? String
@@ -26,7 +32,7 @@ let logger = Logger(
 var task: URLSessionDataTask?
 
 @available(iOS 15.0, *)
-func updateShield(shieldId: String?, triggeredBy: String?) {
+func updateShield(shieldId: String?, triggeredBy: String?, activitySelectionId: String?) {
   let shieldId = shieldId ?? "default"
 
   if var shieldConfiguration = userDefaults?.dictionary(
@@ -38,6 +44,11 @@ func updateShield(shieldId: String?, triggeredBy: String?) {
 
     // update default shield
     userDefaults?.set(shieldConfiguration, forKey: SHIELD_CONFIGURATION_KEY)
+    if let activitySelectionId = activitySelectionId {
+      userDefaults?.set(
+        shieldConfiguration,
+        forKey: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX + "_" + activitySelectionId)
+    }
   }
 
   if var shieldActions = userDefaults?.dictionary(
@@ -48,6 +59,14 @@ func updateShield(shieldId: String?, triggeredBy: String?) {
     shieldActions["updatedAt"] = Date().ISO8601Format()
 
     userDefaults?.set(shieldActions, forKey: SHIELD_ACTIONS_KEY)
+
+    if let activitySelectionId = activitySelectionId {
+      userDefaults?
+        .set(
+          shieldActions,
+          forKey: SHIELD_ACTIONS_FOR_SELECTION_PREFIX + "_" + activitySelectionId
+        )
+    }
   }
 }
 
@@ -56,88 +75,6 @@ func sleep(ms: Int) {
   let group = DispatchGroup()
   group.enter()
   _ = group.wait(timeout: .now() + delay)
-}
-
-@available(iOS 15.0, *)
-func executeAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
-  let type = action["type"] as? String
-
-  if let sleepBefore = action["sleepBefore"] as? Int {
-    sleep(ms: sleepBefore)
-  }
-
-  if type == "blockSelection" {
-    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
-      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        updateShield(
-          shieldId: action["shieldId"] as? String,
-          triggeredBy: eventKey
-        )
-
-        sleep(ms: 50)
-
-        blockSelectedApps(
-          blockSelection: activitySelection,
-          unblockedSelection: nil,
-          triggeredBy: eventKey,
-          blockedFamilyActivitySelectionId: familyActivitySelectionId
-        )
-      } else {
-        logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
-      }
-    }
-  } else if type == "resetUnblockedSelection" {
-    userDefaults?.removeObject(forKey: "unblockedSelection")
-  } else if type == "unblockAllApps" {
-    unblockAllApps(triggeredBy: eventKey)
-  } else if type == "openApp" {
-    // todo: replace with general string
-    openUrl(urlString: "device-activity://")
-
-    sleep(ms: 1000)
-  } else if type == "blockAllApps" {
-    updateShield(shieldId: action["shieldId"] as? String, triggeredBy: eventKey)
-
-    // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
-    sleep(ms: 50)
-
-    blockAllApps(triggeredBy: eventKey)
-  } else if type == "sendNotification" {
-    if let notification = action["payload"] as? [String: Any] {
-      sendNotification(contents: notification, placeholders: placeholders)
-    }
-  } else if type == "sendHttpRequest" {
-    if let url = action["url"] as? String {
-      let config = action["options"] as? [String: Any] ?? [:]
-
-      task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
-
-      // required for it to have time to trigger before process/callback ends
-      sleep(ms: 1000)
-    }
-  }
-
-  if let sleepAfter = action["sleepAfter"] as? Int {
-    sleep(ms: sleepAfter)
-  }
-}
-
-@available(iOS 15.0, *)
-func isShieldActive() -> Bool {
-  let areAnyApplicationsShielded =
-    store.shield.applications != nil && store.shield.applications!.count > 0
-  let areAnyWebDomainsShielded =
-    store.shield.webDomains != nil && store.shield.webDomains!.count > 0
-  let areAnyApplicationCategoriesShielded =
-    store.shield.applicationCategories != nil
-    && store.shield.applicationCategories
-      != ShieldSettings.ActivityCategoryPolicy<Application>.none
-  let areAnyWebDomainCategoriesShielded =
-    store.shield.webDomainCategories != nil
-    && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
-
-  return areAnyApplicationsShielded || areAnyWebDomainsShielded
-    || areAnyApplicationCategoriesShielded || areAnyWebDomainCategoriesShielded
 }
 
 func openUrl(urlString: String) {
@@ -149,18 +86,6 @@ func openUrl(urlString: String) {
   context.open(url) { _ in
 
   }
-
-  /* let webView = WKWebView()
-  webView.load(URLRequest(url: url))
-*/
-  /*let application =
-    UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as! UIApplication*/
-
-  /*if #available(iOS 10.0, *) {
-    application.open(url, options: [:], completionHandler: nil)
-  } else {
-    application.openURL(url)
-  }*/
 }
 
 let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
@@ -328,19 +253,12 @@ func getTextToReplaceWithOptionalSpecialTreatment(_ stringToReplace: String)
       textToReplace: String(prefixAndPlaceholder[1]),
       specialTreatment: String(prefixAndPlaceholder[0]))
   }
-  return TextToReplaceWithOptionalSpecialTreatment(textToReplace: stringToReplace)
+
+  return TextToReplaceWithOptionalSpecialTreatment(
+    textToReplace: stringToReplace
+  )
 }
 
-/* handles replacements in an entire dictionary as well as two special cases:
- // - userDefaults:any-key-in-user-defaults -> will replace an entire value with the value in userDefaults, could be used as
- "headers": {
- "authorization": "{userDefaults:AUTH_HEADER}"
- }
- // asNumber:eventName -> will instead of a String parse it as a number:
- "data": {
- "minutes": "{asNumber:eventName}"
- }
- */
 func replacePlaceholdersInObject<T: Any>(
   _ object: [String: T], with placeholders: [String: String?]
 ) -> [String: T] {
@@ -397,7 +315,7 @@ func clearAllManagedSettingsStoreSettings() {
 }
 
 @available(iOS 15.0, *)
-func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
+func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId] {
   if let familyActivitySelectionIds = userDefaults?.dictionary(
     forKey: "familyActivitySelectionIds") {
     return familyActivitySelectionIds.compactMap { (key: String, value: Any) in
@@ -415,7 +333,8 @@ func getFamilyActivitySelectionIds() -> [FamilyActivitySelectionWithId?] {
 
 @available(iOS 15.0, *)
 func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
-  if let familyActivitySelectionIds = userDefaults?.dictionary(forKey: "familyActivitySelectionIds") {
+  if let familyActivitySelectionIds = userDefaults?.dictionary(
+    forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
     if let familyActivitySelectionStr = familyActivitySelectionIds[id] as? String {
       let activitySelection = deserializeFamilyActivitySelection(
         familyActivitySelectionStr: familyActivitySelectionStr
@@ -427,38 +346,103 @@ func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
 }
 
 @available(iOS 15.0, *)
-func getPossibleFamilyActivitySelectionId(
-  applicationToken: ApplicationToken?,
-  webDomainToken: WebDomainToken?,
-  categoryToken: ActivityCategoryToken?
-) -> String? {
+func setFamilyActivitySelectionById(id: String, activitySelection: FamilyActivitySelection) {
+  if var familyActivitySelectionIds = userDefaults?.dictionary(
+    forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
+    familyActivitySelectionIds[id] = serializeFamilyActivitySelection(
+      selection: activitySelection
+    )
+
+    userDefaults?
+      .set(familyActivitySelectionIds, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
+  } else {
+    let dict = [
+      id: serializeFamilyActivitySelection(selection: activitySelection)
+    ]
+    userDefaults?.set(dict, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
+  }
+}
+
+@available(iOS 15.0, *)
+func getActivitySelectionPrefixedConfigFromUserDefaults(
+  keyPrefix: String,
+  defaultKey: String,
+  applicationToken: ApplicationToken? = nil,
+  webDomainToken: WebDomainToken? = nil,
+  categoryToken: ActivityCategoryToken? = nil
+) -> [String: Any]? {
   let familyActivitySelectionIds = getFamilyActivitySelectionIds()
 
-  let foundIt = familyActivitySelectionIds.first(where: { (mapping) in
-    if let mapping = mapping {
+  let activitySelection = familyActivitySelectionIds.first(
+    where: { (activitySelectionPair) in
+      guard
+        (userDefaults?.dictionary(
+          forKey: keyPrefix + "_" + activitySelectionPair.id
+        )) != nil
+      else {
+        return false
+      }
+
       if let applicationToken = applicationToken {
-        if mapping.selection.applicationTokens.contains(applicationToken) {
+        if activitySelectionPair.selection.applicationTokens
+          .contains(applicationToken) {
           return true
         }
       }
 
       if let webDomainToken = webDomainToken {
-        if mapping.selection.webDomainTokens.contains(webDomainToken) {
+        if activitySelectionPair.selection.webDomainTokens.contains(webDomainToken) {
           return true
         }
       }
 
       if let categoryToken = categoryToken {
-        if mapping.selection.categoryTokens.contains(categoryToken) {
+        if activitySelectionPair.selection.categoryTokens.contains(categoryToken) {
           return true
         }
+      }
+
+      return false
+    })
+
+  if let activitySelection = activitySelection {
+    return userDefaults?.dictionary(forKey: keyPrefix + "_" + activitySelection.id)
+  }
+
+  return userDefaults?.dictionary(forKey: defaultKey)
+}
+
+@available(iOS 15.0, *)
+func getPossibleFamilyActivitySelectionId(
+  applicationToken: ApplicationToken? = nil,
+  webDomainToken: WebDomainToken? = nil,
+  categoryToken: ActivityCategoryToken? = nil
+) -> String? {
+  let familyActivitySelectionIds = getFamilyActivitySelectionIds()
+
+  let foundIt = familyActivitySelectionIds.first(where: { (activitySelection) in
+    if let applicationToken = applicationToken {
+      if activitySelection.selection.applicationTokens.contains(applicationToken) {
+        return true
+      }
+    }
+
+    if let webDomainToken = webDomainToken {
+      if activitySelection.selection.webDomainTokens.contains(webDomainToken) {
+        return true
+      }
+    }
+
+    if let categoryToken = categoryToken {
+      if activitySelection.selection.categoryTokens.contains(categoryToken) {
+        return true
       }
     }
 
     return false
   })
 
-  return foundIt??.id
+  return foundIt?.id
 }
 
 @available(iOS 15.0, *)
@@ -498,6 +482,14 @@ func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> Str
 
 @available(iOS 15.0, *)
 func unblockAllApps(triggeredBy: String) {
+  userDefaults?
+    .removeObject(forKey: CURRENT_BLOCKED_SELECTION)
+
+  userDefaults?
+    .removeObject(forKey: IS_BLOCKING_ALL)
+
+  userDefaults?.removeObject(forKey: CURRENT_UNBLOCKED_SELECTION)
+
   store.shield.applicationCategories = nil
   store.shield.webDomainCategories = nil
 
@@ -513,8 +505,15 @@ func unblockAllApps(triggeredBy: String) {
 
 @available(iOS 15.0, *)
 func blockAllApps(triggeredBy: String) {
-  store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
-  store.shield.webDomainCategories = ShieldSettings.ActivityCategoryPolicy.all(except: Set())
+  userDefaults?
+    .removeObject(forKey: CURRENT_UNBLOCKED_SELECTION)
+  userDefaults?
+    .removeObject(forKey: CURRENT_BLOCKED_SELECTION)
+
+  userDefaults?.set(true, forKey: IS_BLOCKING_ALL)
+
+  store.shield.applicationCategories = .all(except: Set())
+  store.shield.webDomainCategories = .all(except: Set())
 
   userDefaults?.set(
     [
@@ -524,53 +523,240 @@ func blockAllApps(triggeredBy: String) {
 }
 
 @available(iOS 15.0, *)
+func intersection(_ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySelection)
+  -> FamilyActivitySelection {
+  let applicationTokens = selection1.applicationTokens.intersection(
+    selection2.applicationTokens
+  )
+
+  let domainTokens = selection1.webDomainTokens.intersection(
+    selection2.webDomainTokens
+  )
+
+  let categoryTokens = selection1.categoryTokens.intersection(
+    selection2.categoryTokens
+  )
+
+  var selection = FamilyActivitySelection()
+
+  selection.applicationTokens = applicationTokens
+  selection.webDomainTokens = domainTokens
+  selection.categoryTokens = categoryTokens
+
+  return selection
+}
+
+@available(iOS 15.0, *)
+func symmetricDifference(
+  _ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySelection
+) -> FamilyActivitySelection {
+  let applicationTokens = selection1.applicationTokens.symmetricDifference(
+    selection2.applicationTokens
+  )
+
+  let domainTokens = selection1.webDomainTokens.symmetricDifference(
+    selection2.webDomainTokens
+  )
+
+  let categoryTokens = selection1.categoryTokens.symmetricDifference(
+    selection2.categoryTokens
+  )
+
+  var selection = FamilyActivitySelection()
+
+  selection.applicationTokens = applicationTokens
+  selection.webDomainTokens = domainTokens
+  selection.categoryTokens = categoryTokens
+
+  return selection
+}
+
+@available(iOS 15.0, *)
+func difference(_ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySelection)
+  -> FamilyActivitySelection {
+  let applicationTokens = selection1.applicationTokens.subtracting(
+    selection2.applicationTokens
+  )
+
+  let domainTokens = selection1.webDomainTokens.subtracting(
+    selection2.webDomainTokens
+  )
+
+  let categoryTokens = selection1.categoryTokens.subtracting(
+    selection2.categoryTokens
+  )
+
+  var selection = FamilyActivitySelection()
+
+  selection.applicationTokens = applicationTokens
+  selection.webDomainTokens = domainTokens
+  selection.categoryTokens = categoryTokens
+
+  return selection
+}
+
+@available(iOS 15.0, *)
+func union(_ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySelection)
+  -> FamilyActivitySelection {
+  let applicationTokens = selection1.applicationTokens.union(
+    selection2.applicationTokens
+  )
+
+  let domainTokens = selection1.webDomainTokens.union(
+    selection2.webDomainTokens
+  )
+
+  let categoryTokens = selection1.categoryTokens.union(
+    selection2.categoryTokens
+  )
+
+  var selection = FamilyActivitySelection()
+
+  selection.applicationTokens = applicationTokens
+  selection.webDomainTokens = domainTokens
+  selection.categoryTokens = categoryTokens
+
+  return selection
+}
+
+@available(iOS 15.0, *)
 func blockSelectedApps(
-  blockSelection: FamilyActivitySelection?,
-  unblockedSelection: FamilyActivitySelection?,
+  blockSelection: FamilyActivitySelection,
   triggeredBy: String,
   blockedFamilyActivitySelectionId: String?
 ) {
-  store.shield.applications = blockSelection?.applicationTokens.filter({ token in
-    if let match = unblockedSelection?.applicationTokens.contains(where: { $0 == token }) {
-      return !match
-    }
-    return true
-  })
+  // doesn't work together with blockAll, and doesn't really make sense together
+  userDefaults?
+    .removeObject(forKey: IS_BLOCKING_ALL)
 
-  store.shield.webDomains = blockSelection?.webDomainTokens.filter({ token in
-    if let match = unblockedSelection?.webDomainTokens.contains(where: { $0 == token }) {
-      return !match
-    }
-    return true
-  })
+  let currentBlockedSelection = userDefaults?
+    .string(forKey: CURRENT_BLOCKED_SELECTION)
 
-  let unblockedApplications = unblockedSelection?.applicationTokens ?? Set()
-  let unblockedWebDomains = unblockedSelection?.webDomainTokens ?? Set()
+  let currentUnblockedSelectionSerialized = userDefaults?
+    .string(forKey: CURRENT_UNBLOCKED_SELECTION)
 
-  if let blockSelection = blockSelection {
-    store.shield.applicationCategories = .specific(
-      blockSelection.categoryTokens,
-      except: unblockedApplications
+  let previousSelection =
+    currentBlockedSelection != nil
+    ? deserializeFamilyActivitySelection(familyActivitySelectionStr: currentBlockedSelection!)
+    : nil
+
+  let currentUnblockedSelection =
+    currentUnblockedSelectionSerialized != nil
+    ? difference(
+      deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: currentUnblockedSelectionSerialized!
+      ), blockSelection) : FamilyActivitySelection()
+
+  let combinedSelection =
+    previousSelection != nil
+    ? union(blockSelection, previousSelection!)
+    : blockSelection
+
+  store.shield.applications = combinedSelection.applicationTokens
+
+  store.shield.webDomains = combinedSelection.webDomainTokens
+
+  store.shield.applicationCategories = .specific(
+    combinedSelection.categoryTokens,
+    except: currentUnblockedSelection.applicationTokens
+  )
+
+  store.shield.webDomainCategories = .specific(
+    combinedSelection.categoryTokens,
+    except: currentUnblockedSelection.webDomainTokens
+  )
+
+  userDefaults?
+    .set(
+      serializeFamilyActivitySelection(selection: currentUnblockedSelection),
+      forKey: CURRENT_UNBLOCKED_SELECTION
     )
-    store.shield.webDomainCategories = .specific(
-      blockSelection.categoryTokens,
-      except: unblockedWebDomains
+
+  userDefaults?
+    .set(
+      serializeFamilyActivitySelection(selection: combinedSelection),
+      forKey: CURRENT_BLOCKED_SELECTION
     )
-  } else {
-    store.shield.applicationCategories = .all(
-      except: unblockedApplications
-    )
-    store.shield.webDomainCategories = .all(
-      except: unblockedWebDomains
-    )
-  }
 
   userDefaults?.set(
     [
       "triggeredBy": triggeredBy,
       "blockedAt": Date.now.ISO8601Format(),
-      "blockedFamilyActivitySelectionId": blockedFamilyActivitySelectionId
+      "blockedFamilyActivitySelectionId": blockedFamilyActivitySelectionId as Any,
+      "blockedAppCount": combinedSelection.applicationTokens.count,
+      "blockedWebDomainCount": combinedSelection.webDomainTokens.count,
+      "blockedCategoryCount": combinedSelection.categoryTokens.count
     ], forKey: "lastBlock")
+}
+
+@available(iOS 15.0, *)
+func unblockSelectedApps(
+  unblockSelection: FamilyActivitySelection,
+  triggeredBy: String
+) {
+  let isBlockingAll = userDefaults?.bool(forKey: IS_BLOCKING_ALL) ?? false
+
+  let currentUnblockedSelectionSerialized = userDefaults?
+    .string(forKey: CURRENT_UNBLOCKED_SELECTION)
+
+  let currentUnblockedSelection =
+    currentUnblockedSelectionSerialized != nil
+    ? deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: currentUnblockedSelectionSerialized!
+    ) : FamilyActivitySelection()
+
+  if isBlockingAll {
+    // note: for whitelisting to work with categories, it seems the FamilyActivitySelection needs to be initialized with includeEntireCategory: true - which is not currently exposed by this library (it is probably challenging to make it stable since the selection could get so big)
+    store.shield.applicationCategories = .all(
+      except: currentUnblockedSelection.applicationTokens
+    )
+    store.shield.webDomainCategories = .all(
+      except: currentUnblockedSelection.webDomainTokens
+    )
+
+    return
+  }
+
+  let currentBlockedSelectionStr = userDefaults?
+    .string(forKey: CURRENT_BLOCKED_SELECTION)
+
+  let currentBlockedSelection =
+    currentBlockedSelectionStr != nil
+    ? deserializeFamilyActivitySelection(familyActivitySelectionStr: currentBlockedSelectionStr!)
+    : FamilyActivitySelection()
+
+  let combinedUnblockedSelection = union(currentUnblockedSelection, unblockSelection)
+
+  store.shield.applications = currentBlockedSelection.applicationTokens
+
+  store.shield.webDomains = currentBlockedSelection.webDomainTokens
+
+  store.shield.applicationCategories = .specific(
+    currentBlockedSelection.categoryTokens,
+    except: combinedUnblockedSelection.applicationTokens
+  )
+  store.shield.webDomainCategories = .specific(
+    currentBlockedSelection.categoryTokens,
+    except: combinedUnblockedSelection.webDomainTokens
+  )
+
+  userDefaults?
+    .set(
+      serializeFamilyActivitySelection(selection: combinedUnblockedSelection),
+      forKey: CURRENT_UNBLOCKED_SELECTION
+    )
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "unblockedAt": Date.now.ISO8601Format(),
+      "blockedAppCount": currentBlockedSelection.applicationTokens.count,
+      "blockedWebDomainCount": currentBlockedSelection.webDomainTokens.count,
+      "blockedCategoryCount": currentBlockedSelection.categoryTokens.count,
+      "unblockedAppCount": currentUnblockedSelection.applicationTokens.count,
+      "unblockedWebDomainCount": currentUnblockedSelection.webDomainTokens.count,
+      "unblockedCategoryCount": currentUnblockedSelection.categoryTokens.count
+    ], forKey: "lastUnblock")
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {
@@ -787,20 +973,22 @@ func shouldExecuteAction(
 
   if let skipIfLargerEventRecordedSinceIntervalStarted =
     skipIfLargerEventRecordedSinceIntervalStarted, let eventName = eventName {
-    if let skipIfLargerEventRecordedAfter = getLastTriggeredTimeFromUserDefaults(
-      activityName: activityName,
-      callbackName: "intervalDidStart"
-    ) {
-      if hasHigherTriggeredEvent(
+    if skipIfLargerEventRecordedSinceIntervalStarted {
+      if let skipIfLargerEventRecordedAfter = getLastTriggeredTimeFromUserDefaults(
         activityName: activityName,
-        callbackName: callbackName,
-        eventName: eventName,
-        afterDate: skipIfLargerEventRecordedAfter
+        callbackName: "intervalDidStart"
       ) {
-        logger.log(
-          "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
-        )
-        return false
+        if hasHigherTriggeredEvent(
+          activityName: activityName,
+          callbackName: callbackName,
+          eventName: eventName,
+          afterDate: skipIfLargerEventRecordedAfter
+        ) {
+          logger.log(
+            "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+          )
+          return false
+        }
       }
     }
   }
@@ -823,31 +1011,6 @@ func getLastTriggeredTimeFromUserDefaults(
   return val as? Double
 }
 
-func traverseDirectory(at path: String) {
-  do {
-    let files = try FileManager.default.contentsOfDirectory(atPath: path)
-
-    for file in files {
-      let fullPath = path + "/" + file
-      var isDirectory: ObjCBool = false
-
-      if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) {
-        if isDirectory.boolValue {
-          print("\(fullPath) is a directory")
-          // Recursively traverse subdirectory
-          traverseDirectory(at: fullPath)
-        } else if fullPath.hasSuffix("png") {
-          print("\(fullPath) is a file")
-        }
-      } else {
-        print("\(fullPath) does not exist")
-      }
-    }
-  } catch {
-    print("Error traversing directory at path \(path): \(error.localizedDescription)")
-  }
-}
-
 func getAppGroupDirectory() -> URL? {
   if let appGroup = appGroup {
     let fileManager = FileManager.default
@@ -855,127 +1018,4 @@ func getAppGroupDirectory() -> URL? {
     return container
   }
   return nil
-}
-
-func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {
-  let appGroupDirectory = getAppGroupDirectory()
-
-  let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
-
-  // Load the image data
-  guard let imageData = try? Data(contentsOf: fileURL) else {
-    print("Error: Could not load data from \(fileURL.path)")
-    return nil
-  }
-
-  // Create and return the UIImage
-  return UIImage(data: imageData)
-}
-
-func loadImageFromBundle(assetName: String) -> UIImage? {
-  // Get the main bundle
-  let bundle = Bundle.main
-  // Bundle.main.
-  guard let fURL = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: ".") else {
-    return nil
-  }
-
-  logger.info("Found \(fURL.count) png files in bundle")
-
-  traverseDirectory(at: Bundle.main.bundlePath)
-
-  for url in fURL {
-    logger.info("url: \(url.lastPathComponent)")
-  }
-
-  // Construct the file URL for the asset
-  guard let filePath = bundle.path(forResource: assetName, ofType: "png") else {
-    print("Error: Asset not found in bundle: \(assetName).png")
-    return nil
-  }
-
-  // Load image data
-  guard let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
-    print("Error: Could not load data from \(filePath)")
-    return nil
-  }
-
-  // Create UIImage from data
-  return UIImage(data: imageData)
-}
-
-func loadImageFromFileSystem(filePath: String) -> UIImage? {
-  let fileURL = URL(fileURLWithPath: filePath)
-
-  // Load data from the file URL
-  guard let imageData = try? Data(contentsOf: fileURL) else {
-    print("Error: Could not load data from \(filePath)")
-    return nil
-  }
-
-  // Create UIImage from the data
-  return UIImage(data: imageData)
-}
-
-func loadImageFromRemoteURL(urlString: String, completion: @escaping (UIImage?) -> Void) {
-  guard let url = URL(string: urlString) else {
-    print("Error: Invalid URL string")
-    completion(nil)
-    return
-  }
-
-  let task = URLSession.shared.dataTask(with: url) { data, _, error in
-    // Handle errors
-    if let error = error {
-      print("Error fetching image from URL: \(error)")
-      completion(nil)
-      return
-    }
-
-    // Validate data
-    guard let imageData = data, let image = UIImage(data: imageData) else {
-      print("Error: Invalid image data from \(urlString)")
-      completion(nil)
-      return
-    }
-
-    completion(image)
-  }
-
-  task.resume()
-}
-
-func loadImageFromRemoteURLSynchronously(urlString: String) -> UIImage? {
-  guard let url = URL(string: urlString) else {
-    logger.info("Error: Invalid URL string")
-    return nil
-  }
-
-  var image: UIImage?
-  let semaphore = DispatchSemaphore(value: 0)
-
-  logger.info("Getting image")
-
-  let task = URLSession.shared.dataTask(with: url) { data, _, error in
-    // Handle errors
-    if let error = error {
-      logger.info("Error fetching image: \(error)")
-    }
-
-    // Validate data
-    if let imageData = data {
-      logger.info("Got image")
-      image = UIImage(data: imageData)
-    }
-
-    // Signal the semaphore to release the lock
-    semaphore.signal()
-  }
-
-  task.resume()
-
-  // Wait for the task to complete
-  semaphore.wait()
-
-  return image
 }

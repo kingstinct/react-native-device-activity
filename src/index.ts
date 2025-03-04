@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
+import DeviceActivitySelectionViewPersisted from "./DeviceActivitySelectionViewPersisted";
 import {
   Action,
   ActivitySelectionWithMetadata,
@@ -14,6 +15,7 @@ import {
   DeviceActivityEventRaw,
   DeviceActivityMonitorEventPayload,
   DeviceActivitySchedule,
+  DeviceActivitySelectionViewPersistedProps,
   DeviceActivitySelectionViewProps,
   EventParsed,
   FamilyActivitySelection,
@@ -356,18 +358,23 @@ export function blockAppsWithSelectionId(
   );
 }
 
-export function blockApps(
-  familyActivitySelectionStr?: string,
-  triggeredBy?: string,
-): void {
-  return ReactNativeDeviceActivityModule?.blockApps(
-    familyActivitySelectionStr,
-    triggeredBy,
-  );
+export function blockAllApps(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.blockAllApps(triggeredBy);
 }
 
-export function unblockApps(triggeredBy?: string): void {
+export function unblockAllApps(triggeredBy?: string): void {
+  // deprecated, should be renamed to unblockAllApps
   return ReactNativeDeviceActivityModule?.unblockApps(triggeredBy);
+}
+
+export function unblockSelectedApps(
+  familyActivitySelectionId: string,
+  triggeredBy?: string,
+): void {
+  return ReactNativeDeviceActivityModule?.unblockSelectedApps(
+    familyActivitySelectionId,
+    triggeredBy,
+  );
 }
 
 export function getAuthorizationStatus(): AuthorizationStatusType {
@@ -497,8 +504,11 @@ export function isAvailable(): boolean {
   );
 }
 
-export { DeviceActivitySelectionView };
+export { DeviceActivitySelectionView, DeviceActivitySelectionViewPersisted };
 
-export type { DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps };
+export type {
+  DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
+  DeviceActivitySelectionViewPersistedProps as ReactNativeDeviceActivityViewPersistedProps,
+};
 
 export * from "./ReactNativeDeviceActivity.types";

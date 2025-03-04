@@ -12,6 +12,7 @@ import {
   Alert,
   SafeAreaView,
   TextInput,
+  Pressable,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
@@ -21,9 +22,13 @@ import {
   UIBlurEffectStyle,
 } from "react-native-device-activity";
 
+import { ActivityPickerPersisted } from "../components/ActivityPicker";
+
 // const initialMinutes = 1;
 // const postponeMinutes = 60;
 const trackEveryXMinutes = 1;
+
+const selectionId = "some-id-3";
 
 export function requestPermissionsAsync() {
   return Notifications.requestPermissionsAsync({
@@ -124,10 +129,6 @@ export function AllTheThings() {
     ),
   );*/
 
-  const [familyActivitySelection, setFamilyActivitySelection] = React.useState<
-    string | null
-  >(null);
-
   useEffect(() => {
     const status = ReactNativeDeviceActivity.getAuthorizationStatus();
     console.log("authorization status", authorizationStatusMap[status]);
@@ -183,16 +184,20 @@ export function AllTheThings() {
 
   const refreshIsShieldActive = useCallback(() => {
     setIsShieldActive(ReactNativeDeviceActivity.isShieldActive());
+
+    const familyActivitySelection =
+      ReactNativeDeviceActivity.getFamilyActivitySelectionId(selectionId);
+
     if (familyActivitySelection) {
       setIsShieldActiveWithSelection(
         ReactNativeDeviceActivity.isShieldActiveWithSelection(
           familyActivitySelection,
         ),
       );
-    } else {
-      setIsShieldActiveWithSelection(false);
     }
-  }, [familyActivitySelection]);
+  }, []);
+
+  const [pickerVisible, setPickerVisible] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -225,13 +230,11 @@ export function AllTheThings() {
 
         <Button
           title="Start monitoring"
-          disabled={!familyActivitySelection}
           // onPress={() => startMonitoring(familyActivitySelection!)}
         />
 
         <Button
           title="Stop monitoring"
-          disabled={!familyActivitySelection}
           onPress={() => ReactNativeDeviceActivity.stopMonitoring()}
         />
 
@@ -247,16 +250,30 @@ export function AllTheThings() {
         <Button
           title="Block all apps"
           onPress={async () => {
-            await ReactNativeDeviceActivity.blockApps(
-              familyActivitySelection ?? undefined,
-            );
+            ReactNativeDeviceActivity.blockAllApps();
+            refreshIsShieldActive();
+          }}
+        />
+
+        <Button
+          title="Block selected apps"
+          onPress={async () => {
+            ReactNativeDeviceActivity.blockAppsWithSelectionId(selectionId);
             refreshIsShieldActive();
           }}
         />
         <Button
           title="Unblock all apps"
           onPress={async () => {
-            await ReactNativeDeviceActivity.unblockApps();
+            ReactNativeDeviceActivity.unblockAllApps();
+            refreshIsShieldActive();
+          }}
+        />
+
+        <Button
+          title="Unblock selected apps"
+          onPress={async () => {
+            ReactNativeDeviceActivity.unblockSelectedApps(selectionId);
             refreshIsShieldActive();
           }}
         />
@@ -312,31 +329,12 @@ export function AllTheThings() {
           }
         />
 
-        <ReactNativeDeviceActivity.DeviceActivitySelectionView
-          style={{
-            width: 200,
-            height: 40,
-            alignSelf: "center",
-            borderRadius: 20,
-            borderWidth: 10,
-            borderColor: "rgb(213,85,37)",
+        <Pressable
+          onPress={() => {
+            setPickerVisible(true);
           }}
-          headerText="a header text!"
-          footerText="a footer text!"
-          onSelectionChange={(event) => {
-            if (
-              event.nativeEvent.familyActivitySelection !==
-              familyActivitySelection
-            ) {
-              setFamilyActivitySelection(
-                event.nativeEvent.familyActivitySelection,
-              );
-            }
-          }}
-          familyActivitySelection={familyActivitySelection}
         >
           <View
-            pointerEvents="none"
             style={{
               backgroundColor: "rgb(213,85,37)",
               flex: 1,
@@ -346,7 +344,23 @@ export function AllTheThings() {
           >
             <Text style={{ color: "white" }}>Select apps</Text>
           </View>
-        </ReactNativeDeviceActivity.DeviceActivitySelectionView>
+        </Pressable>
+
+        <ActivityPickerPersisted
+          familyActivitySelectionId={selectionId}
+          includeEntireCategory
+          visible={pickerVisible}
+          onDismiss={() => setPickerVisible(false)}
+          onSelectionChange={(event) => {
+            console.log("selection changed", event.nativeEvent);
+          }}
+          onReload={() => {
+            setPickerVisible(false);
+            setTimeout(() => {
+              setPickerVisible(true);
+            }, 100);
+          }}
+        />
         <Text>{JSON.stringify(events, null, 2)}</Text>
         <Text>{JSON.stringify(activities, null, 2)}</Text>
       </ScrollView>

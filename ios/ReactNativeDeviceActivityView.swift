@@ -11,13 +11,13 @@ class ReactNativeDeviceActivityView: ExpoView {
 
   let model = ScreenTimeSelectAppsModel()
 
-  let contentView: UIHostingController<ScreenTimeSelectAppsContentView>
+  let contentView: UIHostingController<ActivityPicker>
 
   private var cancellables = Set<AnyCancellable>()
 
   required init(appContext: AppContext? = nil) {
     contentView = UIHostingController(
-      rootView: ScreenTimeSelectAppsContentView(
+      rootView: ActivityPicker(
         model: model
       )
     )

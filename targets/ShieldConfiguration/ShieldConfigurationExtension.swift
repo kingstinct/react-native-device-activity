@@ -31,6 +31,21 @@ func buildLabel(text: String?, with color: UIColor?, placeholders: [String: Stri
   return nil
 }
 
+func loadImageFromAppGroupDirectory(relativeFilePath: String) -> UIImage? {
+  let appGroupDirectory = getAppGroupDirectory()
+
+  let fileURL = appGroupDirectory!.appendingPathComponent(relativeFilePath)
+
+  // Load the image data
+  guard let imageData = try? Data(contentsOf: fileURL) else {
+    print("Error: Could not load data from \(fileURL.path)")
+    return nil
+  }
+
+  // Create and return the UIImage
+  return UIImage(data: imageData)
+}
+
 func resolveIcon(dict: [String: Any]) -> UIImage? {
   let iconAppGroupRelativePath = dict["iconAppGroupRelativePath"] as? String
   let iconSystemName = dict["iconSystemName"] as? String
@@ -52,7 +67,7 @@ func resolveIcon(dict: [String: Any]) -> UIImage? {
   return image
 }
 
-func getShieldConfiguration(placeholders: [String: String?])
+func buildShield(placeholders: [String: String?], config: [String: Any]?)
   -> ShieldConfiguration {
 
   if let appGroup = appGroup {
@@ -63,7 +78,7 @@ func getShieldConfiguration(placeholders: [String: String?])
 
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-  if let config = userDefaults?.dictionary(forKey: SHIELD_CONFIGURATION_KEY) {
+  if let config = config {
     let backgroundColor = getColor(color: config["backgroundColor"] as? [String: Double])
 
     let title = config["title"] as? String
@@ -116,13 +131,18 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "token": "\(application.token!.hashValue)",
       "tokenType": "application",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
-        applicationToken: application.token,
-        webDomainToken: nil,
-        categoryToken: nil
+        applicationToken: application.token
       )
     ]
 
-    return getShieldConfiguration(placeholders: placeholders)
+    return buildShield(
+      placeholders: placeholders,
+      config: getActivitySelectionPrefixedConfigFromUserDefaults(
+        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+        defaultKey: SHIELD_CONFIGURATION_KEY,
+        applicationToken: application.token
+      )
+    )
   }
 
   override func configuration(shielding application: Application, in category: ActivityCategory)
@@ -136,12 +156,19 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "tokenType": "application_category",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
         applicationToken: application.token,
-        webDomainToken: nil,
         categoryToken: category.token
       )
     ]
 
-    return getShieldConfiguration(placeholders: placeholders)
+    return buildShield(
+      placeholders: placeholders,
+      config: getActivitySelectionPrefixedConfigFromUserDefaults(
+        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+        defaultKey: SHIELD_CONFIGURATION_KEY,
+        applicationToken: application.token,
+        categoryToken: category.token
+      )
+    )
   }
 
   override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
@@ -152,13 +179,18 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "token": "\(webDomain.token!.hashValue)",
       "tokenType": "web_domain",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
-        applicationToken: nil,
-        webDomainToken: webDomain.token,
-        categoryToken: nil
+        webDomainToken: webDomain.token
       )
     ]
 
-    return getShieldConfiguration(placeholders: placeholders)
+    return buildShield(
+      placeholders: placeholders,
+      config: getActivitySelectionPrefixedConfigFromUserDefaults(
+        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+        defaultKey: SHIELD_CONFIGURATION_KEY,
+        webDomainToken: webDomain.token
+      )
+    )
   }
 
   override func configuration(shielding webDomain: WebDomain, in category: ActivityCategory)
@@ -171,12 +203,19 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "token": "\(category.token!.hashValue)",
       "tokenType": "web_domain_category",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
-        applicationToken: nil,
         webDomainToken: webDomain.token,
         categoryToken: category.token
       )
     ]
 
-    return getShieldConfiguration(placeholders: placeholders)
+    return buildShield(
+      placeholders: placeholders,
+      config: getActivitySelectionPrefixedConfigFromUserDefaults(
+        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+        defaultKey: SHIELD_CONFIGURATION_KEY,
+        webDomainToken: webDomain.token,
+        categoryToken: category.token
+      )
+    )
   }
 }

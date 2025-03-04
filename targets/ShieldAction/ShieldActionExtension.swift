@@ -20,23 +20,26 @@ func handleAction(
       unblockAllApps(triggeredBy: "shieldAction")
     }
 
-    if type == "sendNotification" {
-      // todo: replace with general string
-      /*DispatchQueue.main.async(execute: {
-        openUrl(urlString: "device-activity://")
+    let url = configForSelectedAction["url"] as? String
+
+    if type == "openUrl" {
+      openUrl(urlString: url ?? "device-activity://")
+    }
+
+    if type == "openUrlWithDispatch" {
+      DispatchQueue.main.async(execute: {
+        openUrl(urlString: url ?? "device-activity://")
       })
+    }
 
-      notifyAppWithName(name: "fromShieldExtensions")
-
-      sleep(ms: 1)*/
-
+    if type == "sendNotification" {
       if let payload = configForSelectedAction["payload"] as? [String: Any] {
         sendNotification(contents: payload, placeholders: [:])
       }
     }
 
     if type == "unblockCurrentApp" {
-      let unblockedSelectionStr = userDefaults?.string(forKey: "unblockedSelection")
+      let unblockedSelectionStr = userDefaults?.string(forKey: CURRENT_UNBLOCKED_SELECTION)
 
       var selection =
         unblockedSelectionStr != nil
@@ -53,7 +56,7 @@ func handleAction(
 
       let serialized = serializeFamilyActivitySelection(selection: selection)
 
-      userDefaults?.set(serialized, forKey: "unblockedSelection")
+      userDefaults?.set(serialized, forKey: CURRENT_UNBLOCKED_SELECTION)
     }
   }
 
@@ -74,11 +77,14 @@ func handleAction(
 ) {
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-  if let shieldActionConfig = userDefaults?.dictionary(
-    forKey: SHIELD_ACTIONS_KEY
+  if let shieldActionConfig = getActivitySelectionPrefixedConfigFromUserDefaults(
+    keyPrefix: SHIELD_ACTIONS_FOR_SELECTION_PREFIX,
+    defaultKey: SHIELD_ACTIONS_KEY,
+    applicationToken: applicationToken,
+    webDomainToken: webdomainToken
   ) {
-    if let configForSelectedAction = shieldActionConfig[
-      action == .primaryButtonPressed ? "primary" : "secondary"] as? [String: Any] {
+    let actionKey = action == .primaryButtonPressed ? "primary" : "secondary"
+    if let configForSelectedAction = shieldActionConfig[actionKey] as? [String: Any] {
       let response = handleAction(
         configForSelectedAction: configForSelectedAction,
         applicationToken: applicationToken,

@@ -7,103 +7,28 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Pressable,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import { UIBlurEffectStyle } from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
-import { Button, Modal, Portal, Switch } from "react-native-paper";
+import { Button, Switch } from "react-native-paper";
 
-const ActivityPicker = ({
-  visible,
-  onDismiss,
-  onSelectionChange,
-  familyActivitySelection,
-  onReload,
-}: {
-  visible: boolean;
-  onDismiss: () => void;
-  onSelectionChange: (
-    event: NativeSyntheticEvent<{
-      familyActivitySelection: string;
-      applicationCount: number;
-      categoryCount: number;
-      webDomainCount: number;
-    }>,
-  ) => void;
-  familyActivitySelection: string | undefined;
-  onReload: () => void;
-}) => {
-  return (
-    <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={{
-          height: 600,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            height: 600,
-          }}
-        >
-          <Pressable
-            style={{
-              flex: 1,
-              position: "absolute",
-              height: 600,
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
-            }}
-            onPress={onReload}
-          >
-            <Text>Swift view crash - tap to reload</Text>
-          </Pressable>
-
-          {visible && (
-            <ReactNativeDeviceActivity.DeviceActivitySelectionView
-              style={{
-                flex: 1,
-                height: 600,
-                width: "100%",
-                backgroundColor: "transparent",
-                pointerEvents: "none",
-              }}
-              headerText="a header text!"
-              footerText="a footer text!"
-              onSelectionChange={onSelectionChange}
-              familyActivitySelection={familyActivitySelection}
-            />
-          )}
-        </View>
-      </Modal>
-    </Portal>
-  );
-};
+import { ActivityPicker } from "../components/ActivityPicker";
 
 export function ShieldTab() {
   const [shieldTitle, setShieldTitle] = React.useState<string>("");
 
   const [familyActivitySelectionResult, setFamilyActivitySelectionResult] =
-    React.useState<{
-      applicationCount: number;
-      categoryCount: number;
-      webDomainCount: number;
-      familyActivitySelection: string;
-    } | null>(null);
+    React.useState<ReactNativeDeviceActivity.ActivitySelectionWithMetadata | null>(
+      null,
+    );
 
   const [
     secondFamilyActivitySelectionResult,
     setSecondFamilyActivitySelectionResult,
-  ] = React.useState<{
-    applicationCount: number;
-    categoryCount: number;
-    webDomainCount: number;
-    familyActivitySelection: string;
-  } | null>(null);
+  ] =
+    React.useState<ReactNativeDeviceActivity.ActivitySelectionWithMetadata | null>(
+      null,
+    );
 
   const [isShieldActive, setIsShieldActive] = useState(false);
   const [isShieldActiveWithSelection, setIsShieldActiveWithSelection] =
@@ -124,12 +49,7 @@ export function ShieldTab() {
 
   const onSelectionChange = useCallback(
     (
-      event: NativeSyntheticEvent<{
-        familyActivitySelection: string;
-        applicationCount: number;
-        categoryCount: number;
-        webDomainCount: number;
-      }>,
+      event: NativeSyntheticEvent<ReactNativeDeviceActivity.ActivitySelectionWithMetadata>,
     ) => {
       if (
         event.nativeEvent.familyActivitySelection !==
@@ -147,12 +67,7 @@ export function ShieldTab() {
 
   const onSecondSelectionChange = useCallback(
     (
-      event: NativeSyntheticEvent<{
-        familyActivitySelection: string;
-        applicationCount: number;
-        categoryCount: number;
-        webDomainCount: number;
-      }>,
+      event: NativeSyntheticEvent<ReactNativeDeviceActivity.ActivitySelectionWithMetadata>,
     ) => {
       if (
         event.nativeEvent.familyActivitySelection !==
@@ -295,9 +210,9 @@ export function ShieldTab() {
             value={isShieldActive}
             onValueChange={async () => {
               if (isShieldActive) {
-                await ReactNativeDeviceActivity.unblockApps();
+                ReactNativeDeviceActivity.unblockAllApps();
               } else {
-                await ReactNativeDeviceActivity.blockApps();
+                ReactNativeDeviceActivity.blockAllApps();
               }
               refreshIsShieldActive();
             }}
@@ -317,12 +232,18 @@ export function ShieldTab() {
             value={isShieldActiveWithSelection}
             disabled={!familyActivitySelectionResult}
             onValueChange={async () => {
-              if (isShieldActiveWithSelection) {
-                await ReactNativeDeviceActivity.unblockApps();
-              } else {
-                await ReactNativeDeviceActivity.blockApps(
-                  familyActivitySelectionResult?.familyActivitySelection,
-                );
+              const familyActivitySelectionId =
+                familyActivitySelectionResult?.familyActivitySelection;
+              if (familyActivitySelectionId) {
+                if (isShieldActiveWithSelection) {
+                  ReactNativeDeviceActivity.unblockAppsWithSelectionId(
+                    familyActivitySelectionId,
+                  );
+                } else {
+                  ReactNativeDeviceActivity.blockAppsWithSelectionId(
+                    familyActivitySelectionId,
+                  );
+                }
               }
               refreshIsShieldActive();
             }}
@@ -338,7 +259,7 @@ export function ShieldTab() {
         <ActivityPicker
           onSelectionChange={onSelectionChange}
           familyActivitySelection={
-            familyActivitySelectionResult?.familyActivitySelection
+            familyActivitySelectionResult?.familyActivitySelection ?? undefined
           }
           visible={showSelectionView === "first"}
           onDismiss={onDismiss}
@@ -352,7 +273,8 @@ export function ShieldTab() {
         <ActivityPicker
           onSelectionChange={onSecondSelectionChange}
           familyActivitySelection={
-            secondFamilyActivitySelectionResult?.familyActivitySelection
+            secondFamilyActivitySelectionResult?.familyActivitySelection ??
+            undefined
           }
           visible={showSelectionView === "second"}
           onDismiss={onDismiss}
