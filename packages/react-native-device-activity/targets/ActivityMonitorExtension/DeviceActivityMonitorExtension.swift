@@ -38,8 +38,6 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
     }
-  } else if type == "unblockAllApps" {
-    unblockAllApps(triggeredBy: eventKey)
   } else if type == "unblockSelectedApps" {
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {

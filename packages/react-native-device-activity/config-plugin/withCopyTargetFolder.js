@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const fs = require("fs");
 
 /** @type {import('@expo/config-plugins').ConfigPlugin<{ appGroup: string; copyToTargetFolder?: boolean }>} */
@@ -7,11 +8,10 @@ const withCopyTargetFolder = (config, { copyToTargetFolder = true }) => {
   }
 
   const projectRoot = config._internal.projectRoot;
-  // eslint-disable-next-line no-undef
+
   const packageTargetFolderPath = __dirname + "/../targets";
   const projectTargetFolderPath = projectRoot + "/targets";
 
-  // eslint-disable-next-line no-undef
   const sharedFilePath = __dirname + "/../ios/Shared.swift";
 
   if (!fs.existsSync(projectTargetFolderPath)) {

@@ -8,8 +8,22 @@ import {
   SafeAreaView,
   TextInput,
 } from "react-native";
-import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { UIBlurEffectStyle } from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
+import {
+  UIBlurEffectStyle,
+  ActivitySelectionWithMetadata,
+  isShieldActive,
+  isShieldActiveWithSelection,
+  updateShield,
+  intersection,
+  union,
+  difference,
+  symmetricDifference,
+  activitySelectionMetadata,
+  unblockAllApps,
+  blockAllApps,
+  blockAppsWithSelectionId,
+  unblockSelectedApps,
+} from "react-native-device-activity";
 import { Button, Switch } from "react-native-paper";
 
 import { ActivityPicker } from "../components/ActivityPicker";
@@ -18,39 +32,31 @@ export function ShieldTab() {
   const [shieldTitle, setShieldTitle] = React.useState<string>("");
 
   const [familyActivitySelectionResult, setFamilyActivitySelectionResult] =
-    React.useState<ReactNativeDeviceActivity.ActivitySelectionWithMetadata | null>(
-      null,
-    );
+    React.useState<ActivitySelectionWithMetadata | null>(null);
 
   const [
     secondFamilyActivitySelectionResult,
     setSecondFamilyActivitySelectionResult,
-  ] =
-    React.useState<ReactNativeDeviceActivity.ActivitySelectionWithMetadata | null>(
-      null,
-    );
+  ] = React.useState<ActivitySelectionWithMetadata | null>(null);
 
-  const [isShieldActive, setIsShieldActive] = useState(false);
-  const [isShieldActiveWithSelection, setIsShieldActiveWithSelection] =
-    useState(false);
+  const [isShieldUp, setIsShieldUp] = useState(false);
+  const [isShieldUpWithSelection, setIsShieldUpWithSelection] = useState(false);
 
   const refreshIsShieldActive = useCallback(() => {
-    setIsShieldActive(ReactNativeDeviceActivity.isShieldActive());
+    setIsShieldUp(isShieldActive());
     if (familyActivitySelectionResult?.familyActivitySelection) {
-      setIsShieldActiveWithSelection(
-        ReactNativeDeviceActivity.isShieldActiveWithSelection(
+      setIsShieldUpWithSelection(
+        isShieldActiveWithSelection(
           familyActivitySelectionResult.familyActivitySelection,
         ),
       );
     } else {
-      setIsShieldActiveWithSelection(false);
+      setIsShieldUpWithSelection(false);
     }
   }, [familyActivitySelectionResult?.familyActivitySelection]);
 
   const onSelectionChange = useCallback(
-    (
-      event: NativeSyntheticEvent<ReactNativeDeviceActivity.ActivitySelectionWithMetadata>,
-    ) => {
+    (event: NativeSyntheticEvent<ActivitySelectionWithMetadata>) => {
       if (
         event.nativeEvent.familyActivitySelection !==
         familyActivitySelectionResult?.familyActivitySelection
@@ -66,9 +72,7 @@ export function ShieldTab() {
   );
 
   const onSecondSelectionChange = useCallback(
-    (
-      event: NativeSyntheticEvent<ReactNativeDeviceActivity.ActivitySelectionWithMetadata>,
-    ) => {
+    (event: NativeSyntheticEvent<ActivitySelectionWithMetadata>) => {
       if (
         event.nativeEvent.familyActivitySelection !==
         familyActivitySelectionResult?.familyActivitySelection
@@ -85,7 +89,7 @@ export function ShieldTab() {
 
   const onSubmitEditing = useCallback(
     () =>
-      ReactNativeDeviceActivity.updateShield(
+      updateShield(
         {
           title: shieldTitle,
           backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
@@ -145,55 +149,55 @@ export function ShieldTab() {
     setShowSelectionView(false);
   }, []);
 
-  const intersection = useMemo(() => {
+  const intersectionData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
-      ? ReactNativeDeviceActivity.intersection(
+      ? intersection(
           familyActivitySelectionResult?.familyActivitySelection,
           secondFamilyActivitySelectionResult?.familyActivitySelection,
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
 
-  const union = useMemo(() => {
+  const unionData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
-      ? ReactNativeDeviceActivity.union(
+      ? union(
           familyActivitySelectionResult?.familyActivitySelection,
           secondFamilyActivitySelectionResult?.familyActivitySelection,
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
 
-  const difference = useMemo(() => {
+  const differenceData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
-      ? ReactNativeDeviceActivity.difference(
+      ? difference(
           familyActivitySelectionResult?.familyActivitySelection,
           secondFamilyActivitySelectionResult?.familyActivitySelection,
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
 
-  const symmetricDifference = useMemo(() => {
+  const symmetricDifferenceData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
-      ? ReactNativeDeviceActivity.symmetricDifference(
+      ? symmetricDifference(
           familyActivitySelectionResult?.familyActivitySelection,
           secondFamilyActivitySelectionResult?.familyActivitySelection,
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
 
-  const activitySelectionMetadata = useMemo(() => {
+  const activitySelectionMetadataData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection
-      ? ReactNativeDeviceActivity.activitySelectionMetadata(
+      ? activitySelectionMetadata(
           familyActivitySelectionResult.familyActivitySelection,
         )
       : undefined;
   }, [familyActivitySelectionResult]);
 
-  console.log("activitySelectionMetadata", activitySelectionMetadata);
+  console.log("activitySelectionMetadata", activitySelectionMetadataData);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -207,12 +211,12 @@ export function ShieldTab() {
           }}
         >
           <Switch
-            value={isShieldActive}
+            value={isShieldUp}
             onValueChange={async () => {
-              if (isShieldActive) {
-                ReactNativeDeviceActivity.unblockAllApps();
+              if (isShieldUp) {
+                unblockAllApps();
               } else {
-                ReactNativeDeviceActivity.blockAllApps();
+                blockAllApps();
               }
               refreshIsShieldActive();
             }}
@@ -229,20 +233,16 @@ export function ShieldTab() {
           }}
         >
           <Switch
-            value={isShieldActiveWithSelection}
+            value={isShieldUpWithSelection}
             disabled={!familyActivitySelectionResult}
             onValueChange={async () => {
               const familyActivitySelectionId =
                 familyActivitySelectionResult?.familyActivitySelection;
               if (familyActivitySelectionId) {
-                if (isShieldActiveWithSelection) {
-                  ReactNativeDeviceActivity.unblockAppsWithSelectionId(
-                    familyActivitySelectionId,
-                  );
+                if (isShieldUpWithSelection) {
+                  unblockSelectedApps(familyActivitySelectionId);
                 } else {
-                  ReactNativeDeviceActivity.blockAppsWithSelectionId(
-                    familyActivitySelectionId,
-                  );
+                  blockAppsWithSelectionId(familyActivitySelectionId);
                 }
               }
               refreshIsShieldActive();

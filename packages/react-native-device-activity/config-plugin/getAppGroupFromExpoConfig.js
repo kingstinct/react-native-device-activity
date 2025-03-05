@@ -10,7 +10,8 @@ const getAppGroupFromExpoConfig = (config) => {
       return (
         pluginName === "react-native-device-activity" ||
         (process.env.INTERNALLY_TEST_EXAMPLE_PROJECT &&
-          pluginName === "../app.plugin.js")
+          pluginName ===
+            "../../packages/react-native-device-activity/app.plugin.js")
       );
     }
 

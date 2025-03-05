@@ -34,7 +34,7 @@
           "ios": {
             "deploymentTarget": "15.0"
           }
-        },
+        }
       ],
       
       [
@@ -44,7 +44,7 @@
         }
       ],
       [
-        "../app.plugin.js",
+        "../../packages/react-native-device-activity/app.plugin.js",
         {
           "appGroup": "group.ActivityMonitor",
           "copyToTargetFolder": false

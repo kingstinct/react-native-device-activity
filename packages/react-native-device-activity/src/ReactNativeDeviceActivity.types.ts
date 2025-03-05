@@ -243,13 +243,25 @@ export type DeviceActivityEventRaw = Omit<
 };
 
 export const AuthorizationStatus = {
+  /** Authorization status has not been determined yet */
   notDetermined: 0,
+  /** Authorization has been denied */
   denied: 1,
+  /** Authorization has been approved */
   approved: 2,
 } as const;
 
+/**
+ * Represents the authorization status for device activity monitoring.
+ * Values:
+ * - 0: Authorization not determined yet
+ * - 1: Authorization denied
+ * - 2: Authorization approved
+ */
 export type AuthorizationStatusType =
-  (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+  | typeof AuthorizationStatus.notDetermined
+  | typeof AuthorizationStatus.denied
+  | typeof AuthorizationStatus.approved;
 
 export type CallbackName =
   | "intervalDidStart"

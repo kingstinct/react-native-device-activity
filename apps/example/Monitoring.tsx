@@ -7,7 +7,10 @@ import {
   View,
 } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
-import { DeviceActivityEvent } from "react-native-device-activity";
+import {
+  ActivitySelectionWithMetadata,
+  DeviceActivityEvent,
+} from "react-native-device-activity";
 
 const startMonitoring = (activitySelection: string) => {
   const timeLimitMinutes = 1;
@@ -127,7 +130,7 @@ export default function App() {
             borderColor: "red",
           }}
           onSelectionChange={(
-            event: NativeSyntheticEvent<{ familyActivitySelection: string }>,
+            event: NativeSyntheticEvent<ActivitySelectionWithMetadata>,
           ) => {
             if (
               event.nativeEvent.familyActivitySelection !==
