@@ -52,12 +52,16 @@ class ReactNativeDeviceActivityView: ExpoView {
   var previousSelection: FamilyActivitySelection?
 
   func updateSelection(selection: FamilyActivitySelection) {
+    let isSelectionEmpty =
+      selection.applicationTokens.isEmpty && selection.categoryTokens.isEmpty
+      && selection.webDomainTokens.isEmpty
+
     let familyActivitySelectionString = serializeFamilyActivitySelection(
       selection: selection
     )
 
     onSelectionChange([
-      "familyActivitySelection": familyActivitySelectionString as Any,
+      "familyActivitySelection": (isSelectionEmpty ? nil : familyActivitySelectionString) as Any,
       "applicationCount": selection.applicationTokens.count,
       "categoryCount": selection.categoryTokens.count,
       "webDomainCount": selection.webDomainTokens.count

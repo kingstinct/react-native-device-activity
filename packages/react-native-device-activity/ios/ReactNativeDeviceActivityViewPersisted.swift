@@ -4,16 +4,6 @@ import FamilyControls
 import SwiftUI
 import UIKit
 
-func removeFamilyActivitySelectionById(id: String) {
-  if var familyActivitySelectionIds = userDefaults?.dictionary(
-    forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
-    familyActivitySelectionIds.removeValue(forKey: id)
-
-    userDefaults?
-      .set(familyActivitySelectionIds, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
-  }
-}
-
 // This view will be used as a native component. Make sure to inherit from `ExpoView`
 // to apply the proper styling (e.g. border radius and shadows).
 @available(iOS 15.0, *)

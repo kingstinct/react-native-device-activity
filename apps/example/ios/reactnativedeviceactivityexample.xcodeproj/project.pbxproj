@@ -106,6 +106,7 @@
 		A9B2DBFF2CECB91A0001BBAF /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = "../../../packages/react-native-device-activity/targets/ActivityMonitorExtension/DeviceActivityMonitorExtension.swift"; sourceTree = SOURCE_ROOT; };
 		A9B2DC012CECB9430001BBAF /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = "../../../packages/react-native-device-activity/targets/ShieldConfiguration/ShieldConfigurationExtension.swift"; sourceTree = SOURCE_ROOT; };
 		A9B2DC032CECB9600001BBAF /* ShieldActionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = "../../../packages/react-native-device-activity/targets/ShieldAction/ShieldActionExtension.swift"; sourceTree = SOURCE_ROOT; };
+		A9F920792D7988D400A179B2 /* Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Tests.xctestplan; path = ../Tests.xctestplan; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = reactnativedeviceactivityexample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEB321985C804DE4AB33EC69 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA3FB2A82413462F881AEB5A /* reactnativedeviceactivityexample-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "reactnativedeviceactivityexample-Bridging-Header.h"; path = "reactnativedeviceactivityexample/reactnativedeviceactivityexample-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -222,6 +223,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A9F920792D7988D400A179B2 /* Tests.xctestplan */,
 				A9B2DBE72CECAE610001BBAF /* Shared.swift */,
 				C6BB3FB112304AFCB4071189 /* expo:targets */,
 				13B07FAE1A68108700A75B9A /* reactnativedeviceactivityexample */,

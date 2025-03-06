@@ -345,19 +345,31 @@ func getFamilyActivitySelectionById(id: String) -> FamilyActivitySelection? {
   return nil
 }
 
-@available(iOS 15.0, *)
-func setFamilyActivitySelectionById(id: String, activitySelection: FamilyActivitySelection) {
+func removeFamilyActivitySelectionById(id: String) {
   if var familyActivitySelectionIds = userDefaults?.dictionary(
     forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
-    familyActivitySelectionIds[id] = serializeFamilyActivitySelection(
-      selection: activitySelection
-    )
+    familyActivitySelectionIds.removeValue(forKey: id)
+
+    userDefaults?
+      .set(familyActivitySelectionIds, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
+  }
+}
+
+@available(iOS 15.0, *)
+func setFamilyActivitySelectionById(id: String, activitySelection: FamilyActivitySelection) {
+  let serialized = serializeFamilyActivitySelection(
+    selection: activitySelection
+  )
+
+  if var familyActivitySelectionIds = userDefaults?.dictionary(
+    forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
+    familyActivitySelectionIds[id] = serialized
 
     userDefaults?
       .set(familyActivitySelectionIds, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
   } else {
     let dict = [
-      id: serializeFamilyActivitySelection(selection: activitySelection)
+      id: serialized
     ]
     userDefaults?.set(dict, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
   }
@@ -462,21 +474,15 @@ func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
 }
 
 @available(iOS 15.0, *)
-func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> String? {
+func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> String {
   let encoder = JSONEncoder()
   do {
     let json = try encoder.encode(selection)
     let jsonString = json.base64EncodedString()
 
-    let noneSeleted =
-      selection.applicationTokens.isEmpty && selection.categoryTokens.isEmpty
-      && selection.webDomainTokens.isEmpty
-
-    let familyActivitySelectionString = noneSeleted ? nil : jsonString
-
-    return familyActivitySelectionString
+    return jsonString
   } catch {
-    return nil
+    return ""
   }
 }
 
