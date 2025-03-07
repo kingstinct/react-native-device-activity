@@ -10,7 +10,6 @@
     "lint": "expo-module lint",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
-    "prepare": "husky",
     "prepublishOnly": "expo-module prepublishOnly && tsc",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
