@@ -618,7 +618,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Pods/SwiftLint/swiftlint\n";
+			shellScript = "./Pods/SwiftLint/swiftlint --config ${PROJECT_DIR}/../../../.swiftlint.yml";
 		};
 		A9BF3BE22D0521A900611B0F /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -636,7 +636,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Pods/SwiftLint/swiftlint\n";
+			shellScript = "./Pods/SwiftLint/swiftlint --config ${PROJECT_DIR}/../../../.swiftlint.yml";
 		};
 		DC6C57584D7EC65201A20BD6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
