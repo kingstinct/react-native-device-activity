@@ -16,7 +16,11 @@ jobs:
 
       - run: bun install
 
-      - run: bun run prepublishOnly
-        working-directory: packages/react-native-device-activity
+      - name: Build package
+        run: |
+          cd packages/react-native-device-activity
+          bun run build
+          bun run prepublishOnly
       
-      - run: bunx pkg-pr-new@latest publish './packages/*'
+      - name: Publish preview
+        run: bunx pkg-pr-new@latest publish './packages/*'

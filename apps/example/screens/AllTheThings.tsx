@@ -348,11 +348,19 @@ export function AllTheThings() {
 
         <ActivityPickerPersisted
           familyActivitySelectionId={selectionId}
-          includeEntireCategory
           visible={pickerVisible}
           onDismiss={() => setPickerVisible(false)}
           onSelectionChange={(event) => {
             console.log("selection changed", event.nativeEvent);
+            console.log(
+              JSON.stringify(
+                ReactNativeDeviceActivity.userDefaultsGet(
+                  "familyActivitySelectionIds",
+                ),
+                null,
+                2,
+              ),
+            );
           }}
           onReload={() => {
             setPickerVisible(false);
