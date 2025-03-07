@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
-const path = require("path");
+const path = require("node:path");
 
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, "../..");
@@ -11,9 +11,6 @@ const pathToLibrary = path.resolve(
 );
 
 const config = getDefaultConfig(projectRoot);
-
-// Remove blockList as we want to use workspace dependencies
-// config.resolver.blockList = [...Array.from(config.resolver.blockList ?? [])];
 
 // Make sure Metro can resolve modules from both the project and workspace root
 config.resolver.nodeModulesPaths = [
