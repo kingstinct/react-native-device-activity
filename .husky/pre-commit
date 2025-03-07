@@ -1,2 +1,2 @@
-swift format -i -p -r ./targets ./ios ./example/ios
-example/ios/Pods/SwiftLint/swiftlint lint --fix
+swift format -i -p -r ./packages/react-native-device-activity/ios ./packages/react-native-device-activity/targets ./apps/example/ios
+apps/example/ios/Pods/SwiftLint/swiftlint lint --fix

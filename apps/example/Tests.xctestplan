@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "F9F60FA1-5BDC-4A30-9035-7AFEF15EF1CB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:reactnativedeviceactivityexample.xcodeproj",
+        "identifier" : "A9A030702CFF142000D9E7E8",
+        "name" : "Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

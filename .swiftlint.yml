@@ -11,6 +11,6 @@ disabled_rules:
   - function_parameter_count
 
 included:
-- ios
-- example/ios
-- targets
+- packages/react-native-device-activity/ios
+- apps/example/ios
+- packages/react-native-device-activity/targets
