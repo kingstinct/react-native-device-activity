@@ -25,6 +25,14 @@ class FamilySelectionIdTests: XCTestCase {
     XCTAssertEqual(ids.count, 1)
   }
 
+  func testShouldGetNonExistent() {
+    let empty = getFamilyActivitySelectionById(
+      id: "non-existent"
+    )
+
+    XCTAssertEqual(empty, nil)
+  }
+
   func testShouldHaveTwo() {
     setFamilyActivitySelectionById(
       id: "my-id",

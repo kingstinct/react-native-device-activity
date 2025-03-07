@@ -14,7 +14,8 @@
     "react-native",
     "expo",
     "react-native-device-activity",
-    "ReactNativeDeviceActivity"
+    "device-activity",
+    "screen-time"
   ],
   "repository": {
     "url": "https://github.com/kingstinct/react-native-device-activity"
