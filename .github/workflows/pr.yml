@@ -19,4 +19,4 @@ jobs:
       - run: bun run prepublishOnly
         working-directory: packages/react-native-device-activity
       
-      - run: npx pkg-pr-new publish './packages/*'
+      - run: bunx pkg-pr-new@latest publish './packages/*'

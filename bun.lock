@@ -42,13 +42,10 @@
       },
       "devDependencies": {
         "@types/react": "~18.2.79",
-        "eslint": "8",
         "expo": "~51.0.39",
         "expo-module-scripts": "^3.5.2",
         "expo-modules-core": "^1.12.24",
-        "husky": "^9.1.7",
         "pkg-pr-new": "0",
-        "prettier": "^3.3.3",
         "react": "18.2.0",
         "react-native": "0.74.5",
       },
