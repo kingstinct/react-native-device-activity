@@ -220,6 +220,9 @@ export type Action =
       shieldId?: string; // maybe consider moving to its own action
     } & CommonTypeParams)
   | ({
+      type: "resetBlocks";
+    } & CommonTypeParams)
+  | ({
       type: "disableBlockAllMode";
     } & CommonTypeParams)
   | ({
