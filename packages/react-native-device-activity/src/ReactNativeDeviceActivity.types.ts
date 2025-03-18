@@ -53,6 +53,10 @@ export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
   familyActivitySelectionId: string;
   headerText?: string | null;
   footerText?: string | null;
+  /**
+   * Important for whitelisting, since it will ignore categories otherwise
+   * @link https://developer.apple.com/documentation/familycontrols/familyactivityselection/includeentirecategory
+   */
   includeEntireCategory?: boolean;
 }>;
 
@@ -320,6 +324,10 @@ export type ActivitySelectionInputWithBlocks =
     }
   | ActivitySelectionInput;
 
+/**
+ * @property {boolean} stripToken - if true, the token will be stripped from the resulting selection and not passed back over the bridge
+ * @property {string} persistAsActivitySelectionId - will persist an activity selection id for the resulting selection
+ */
 export type SetOperationOptions = {
   stripToken?: boolean;
   persistAsActivitySelectionId?: string;

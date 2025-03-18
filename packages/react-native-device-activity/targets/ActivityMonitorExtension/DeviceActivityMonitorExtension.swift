@@ -71,7 +71,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
 
       }
     }
-  } else if type == "removeSelectionToWhitelist" {
+  } else if type == "removeSelectionFromWhitelist" {
     if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
       let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
       do {
