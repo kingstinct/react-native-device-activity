@@ -59,6 +59,32 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
             forKey: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX + "_" + familyActivitySelectionId)
       }
     }
+  } else if type == "addSelectionToWhitelist" {
+    if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
+      let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
+      do {
+        try addSelectionToWhitelistAndUpdateBlock(
+          whitelistSelection: selection,
+          triggeredBy: eventKey
+        )
+      } catch {
+
+      }
+    }
+  } else if type == "removeSelectionToWhitelist" {
+    if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
+      let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
+      do {
+        try removeSelectionFromWhitelistAndUpdateBlock(
+          selection: selection,
+          triggeredBy: eventKey
+        )
+      } catch {
+
+      }
+    }
+  } else if type == "clearWhitelist" {
+    clearWhitelist()
   } else if type == "disableBlockAllMode" {
     disableBlockAllMode(triggeredBy: eventKey)
   } else if type == "openApp" {

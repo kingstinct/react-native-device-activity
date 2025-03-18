@@ -156,6 +156,7 @@ export type ShieldActionType =
   | "disableBlockAllMode"
   | "dismiss"
   | "unblockCurrentApp"
+  | "clearBlocklistAndUpdateBlock"
   | "sendNotification"
   | "openApp";
 
@@ -205,12 +206,14 @@ type CommonTypeParams = {
 export type Action =
   | ({
       type: "blockSelection";
-      familyActivitySelection: ActivitySelectionInput;
+      // keeping this for now - since it breaks the shield by sending in a token
+      familyActivitySelectionId: string;
       shieldId?: string; // maybe consider moving to its own action
     } & CommonTypeParams)
   | ({
       type: "unblockSelection";
-      familyActivitySelection: ActivitySelectionInput;
+      // keeping this for now - since it breaks the shield by sending in a token
+      familyActivitySelectionId: string;
     } & CommonTypeParams)
   | ({
       type: "enableBlockAllMode";
