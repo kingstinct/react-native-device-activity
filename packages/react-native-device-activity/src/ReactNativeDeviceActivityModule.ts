@@ -71,7 +71,7 @@ const mockModule:
   refreshManagedSettingsStore: warnFn,
   removeSelectionFromWhitelistAndUpdateBlock: warnFn,
   renameActivitySelection: warnFn,
-  clearBlocklistAndUpdateBlock: warnFn,
+  resetBlocks: warnFn,
   clearWhitelist: warnFn,
   unblockSelection: warnFn,
   revokeAuthorization: warnFn,

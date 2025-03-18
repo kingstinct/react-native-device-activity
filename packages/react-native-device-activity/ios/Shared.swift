@@ -729,9 +729,11 @@ func clearWhitelist() {
 }
 
 @available(iOS 15.0, *)
-func clearBlocklist() {
+func resetBlocks(triggeredBy: String) {
   userDefaults?
     .removeObject(forKey: CURRENT_BLOCKLIST_KEY)
+
+  updateBlock(triggeredBy: triggeredBy)
 }
 
 @available(iOS 15.0, *)

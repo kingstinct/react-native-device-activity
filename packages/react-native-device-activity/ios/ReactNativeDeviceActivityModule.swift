@@ -691,10 +691,8 @@ public class ReactNativeDeviceActivityModule: Module {
       )
     }
 
-    Function("clearBlocklistAndUpdateBlock") { (triggeredBy: String?) in
-      clearBlocklist()
-
-      updateBlock(triggeredBy: triggeredBy ?? "clearBlocklistAndUpdateBlock called manually")
+    Function("resetBlocks") { (triggeredBy: String?) in
+      resetBlocks(triggeredBy: triggeredBy ?? "resetBlocks called manually")
     }
 
     Function("isBlockingAllModeEnabled") { () -> Bool in

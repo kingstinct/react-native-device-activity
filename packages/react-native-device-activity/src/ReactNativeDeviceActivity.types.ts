@@ -156,7 +156,7 @@ export type ShieldActionType =
   | "disableBlockAllMode"
   | "dismiss"
   | "unblockCurrentApp"
-  | "clearBlocklistAndUpdateBlock"
+  | "resetBlocks"
   | "sendNotification"
   | "openApp";
 
@@ -383,7 +383,7 @@ export type ReactNativeDeviceActivityNativeModule = {
   // clears the blocklist and removes the shield (does not automatically clear the whitelist)
   disableBlockAllMode: (triggeredBy?: string) => void;
 
-  clearBlocklistAndUpdateBlock: (triggeredBy?: string) => void;
+  resetBlocks: (triggeredBy?: string) => void;
 
   removeSelectionFromWhitelistAndUpdateBlock: (
     familyActivitySelection: ActivitySelectionInput,

@@ -83,6 +83,11 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
 
       }
     }
+  } else if type == "clearWhitelistAndUpdateBlock" {
+    clearWhitelist()
+    updateBlock(triggeredBy: eventKey)
+  } else if type == "resetBlocks" {
+    resetBlocks(triggeredBy: eventKey)
   } else if type == "clearWhitelist" {
     clearWhitelist()
   } else if type == "disableBlockAllMode" {

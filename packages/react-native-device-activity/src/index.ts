@@ -436,8 +436,8 @@ export function disableBlockAllMode(triggeredBy?: string): void {
   return ReactNativeDeviceActivityModule?.disableBlockAllMode(triggeredBy);
 }
 
-export function clearBlocklistAndUpdateBlock(triggeredBy?: string): void {
-  return ReactNativeDeviceActivityModule?.clearBlocklistAndUpdateBlock(
+export function resetBlocks(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.resetBlocks(
     triggeredBy,
   );
 }

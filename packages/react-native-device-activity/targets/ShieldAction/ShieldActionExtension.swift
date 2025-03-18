@@ -20,9 +20,8 @@ func handleAction(
       disableBlockAllMode(triggeredBy: "shieldAction")
     }
 
-    if type == "clearBlocklistAndUpdateBlock" {
-      clearBlocklist()
-      updateBlock(triggeredBy: "shieldAction")
+    if type == "resetBlocks" {
+      resetBlocks(triggeredBy: "shieldAction")
     }
 
     let url = configForSelectedAction["url"] as? String

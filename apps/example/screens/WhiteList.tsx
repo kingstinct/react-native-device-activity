@@ -15,7 +15,7 @@ import {
   clearWhitelistAndUpdateBlock,
   addSelectionToWhitelistAndUpdateBlock,
   ActivitySelectionMetadata,
-  clearBlocklistAndUpdateBlock,
+  resetBlocks,
   clearWhitelist,
 } from "react-native-device-activity";
 import { Button, Switch } from "react-native-paper";
@@ -89,7 +89,7 @@ export function WhiteListTab() {
             onValueChange={async () => {
               if (isShieldUp) {
                 disableBlockAllMode();
-                clearBlocklistAndUpdateBlock();
+                resetBlocks();
               } else {
                 enableBlockAllMode();
               }
