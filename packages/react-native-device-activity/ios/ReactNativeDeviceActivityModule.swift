@@ -7,28 +7,6 @@ import ManagedSettings
 import ManagedSettingsUI
 import os
 
-@available(iOS 15.0, *)
-func isShieldActive() -> Bool {
-  let shield = store.shield
-
-  let areAnyApplicationsShielded =
-    shield.applications != nil && shield.applications!.count > 0
-  let areAnyWebDomainsShielded =
-    shield.webDomains != nil && shield.webDomains!.count > 0
-  let areAnyApplicationCategoriesShielded =
-    shield.applicationCategories != nil
-    && shield.applicationCategories
-      != ShieldSettings.ActivityCategoryPolicy<Application>.none
-  let areAnyWebDomainCategoriesShielded =
-    shield.webDomainCategories != nil
-    && shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
-
-  return areAnyApplicationsShielded
-    || areAnyWebDomainsShielded
-    || areAnyApplicationCategoriesShielded
-    || areAnyWebDomainCategoriesShielded
-}
-
 struct DateComponentsFromJS: ExpoModulesCore.Record {
   @Field
   var era: Int?

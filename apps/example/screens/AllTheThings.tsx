@@ -324,7 +324,7 @@ export function AllTheThings() {
               },
               {
                 primary: {
-                  type: "unblockAll",
+                  type: "disableBlockAllMode",
                   behavior: "defer",
                 },
                 secondary: {

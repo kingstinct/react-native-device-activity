@@ -60,7 +60,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
       }
     }
   } else if type == "disableBlockAllMode" {
-    enableBlockAllMode(triggeredBy: eventKey)
+    disableBlockAllMode(triggeredBy: eventKey)
   } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")

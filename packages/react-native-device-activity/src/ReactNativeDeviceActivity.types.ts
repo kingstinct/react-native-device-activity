@@ -153,7 +153,7 @@ export type DeviceActivityEvent = {
 };
 
 export type ShieldActionType =
-  | "unblockAll"
+  | "disableBlockAllMode"
   | "dismiss"
   | "unblockCurrentApp"
   | "sendNotification"

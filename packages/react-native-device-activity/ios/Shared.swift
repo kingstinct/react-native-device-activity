@@ -695,6 +695,33 @@ func getCurrentWhitelist() -> FamilyActivitySelection {
 }
 
 @available(iOS 15.0, *)
+func isShieldActive() -> Bool {
+  let shield = store.shield
+
+  let applications = shield.applications ?? Set()
+  let webDomains = shield.webDomains ?? Set()
+
+  let areAnyApplicationsShielded = applications.count > 0
+  let areAnyWebDomainsShielded = webDomains.count > 0
+  let areAnyApplicationCategoriesShielded =
+    shield.applicationCategories != nil
+    && shield.applicationCategories
+      != ShieldSettings.ActivityCategoryPolicy<Application>.none
+    && shield.applicationCategories
+      != ShieldSettings.ActivityCategoryPolicy<Application>.specific(Set(), except: Set())
+  let areAnyWebDomainCategoriesShielded =
+    shield.webDomainCategories != nil
+    && shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+    && shield.applicationCategories
+      != ShieldSettings.ActivityCategoryPolicy<Application>.specific(Set(), except: Set())
+
+  return areAnyApplicationsShielded
+    || areAnyWebDomainsShielded
+    || areAnyApplicationCategoriesShielded
+    || areAnyWebDomainCategoriesShielded
+}
+
+@available(iOS 15.0, *)
 func clearWhitelist() {
   userDefaults?
     .removeObject(forKey: CURRENT_WHITELIST_KEY)
@@ -834,7 +861,20 @@ func updateBlock(triggeredBy: String) {
       "whitelistCategoryCount": currentWhitelist.categoryTokens.count
     ], forKey: "lastBlockUpdate")
 
-  if blockingAllModeEnabled {
+  updateBlockInternal(
+    isBlockingAllModeEnabled: blockingAllModeEnabled,
+    currentBlocklist: currentBlocklist,
+    currentWhitelist: currentWhitelist
+  )
+}
+
+@available(iOS 15.0, *)
+func updateBlockInternal(
+  isBlockingAllModeEnabled: Bool,
+  currentBlocklist: FamilyActivitySelection,
+  currentWhitelist: FamilyActivitySelection
+) {
+  if isBlockingAllModeEnabled {
     store.shield.applicationCategories = .all(
       except: currentWhitelist.applicationTokens
     )
@@ -864,8 +904,8 @@ func updateBlock(triggeredBy: String) {
       except: currentWhitelist.webDomainTokens
     )
   } else {
-    store.shield.applicationCategories = Optional.none
-    store.shield.webDomainCategories = Optional.none
+    store.shield.applicationCategories = nil
+    store.shield.webDomainCategories = nil
   }
 }
 

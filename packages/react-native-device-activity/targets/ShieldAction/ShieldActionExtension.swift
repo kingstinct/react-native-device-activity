@@ -16,8 +16,13 @@ func handleAction(
 ) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
-    if type == "unblockAll" {
-      enableBlockAllMode(triggeredBy: "shieldAction")
+    if type == "disableBlockAllMode" {
+      disableBlockAllMode(triggeredBy: "shieldAction")
+    }
+
+    if type == "clearBlocklistAndUpdateBlock" {
+      clearBlocklist()
+      updateBlock(triggeredBy: "shieldAction")
     }
 
     let url = configForSelectedAction["url"] as? String
@@ -39,12 +44,7 @@ func handleAction(
     }
 
     if type == "unblockCurrentApp" {
-      let unblockedSelectionStr = userDefaults?.string(forKey: CURRENT_WHITELIST_KEY)
-
-      var selection =
-        unblockedSelectionStr != nil
-        ? deserializeFamilyActivitySelection(familyActivitySelectionStr: unblockedSelectionStr!)
-        : FamilyActivitySelection()
+      var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {
         selection.applicationTokens.insert(applicationToken)
@@ -54,9 +54,7 @@ func handleAction(
         selection.webDomainTokens.insert(webdomainToken)
       }
 
-      let serialized = serializeFamilyActivitySelection(selection: selection)
-
-      userDefaults?.set(serialized, forKey: CURRENT_WHITELIST_KEY)
+      saveCurrentWhitelist(whitelist: selection)
     }
   }
 

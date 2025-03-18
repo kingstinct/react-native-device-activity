@@ -3,8 +3,8 @@ import { PaperProvider, BottomNavigation } from "react-native-paper";
 
 import { AllTheThings } from "./screens/AllTheThings";
 import { EventsTab } from "./screens/Events";
+import { SetOpsTab } from "./screens/SetOps";
 import { Settings } from "./screens/Settings";
-import { SetOpsTab } from "./screens/ShieldTab";
 import { SimpleTab } from "./screens/SimpleTab";
 import { WhiteListTab } from "./screens/WhiteList";
 
