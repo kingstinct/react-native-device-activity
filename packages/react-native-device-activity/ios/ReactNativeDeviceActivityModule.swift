@@ -733,7 +733,7 @@ public class ReactNativeDeviceActivityModule: Module {
         selection: activitySelection, triggeredBy: triggeredBy)
 
       if #available(iOS 15.2, *) {
-        if !whitelistSelection.includeEntireCategory {
+        if !activitySelection.includeEntireCategory {
           throw WhitelistSelectionWithoutEntireCategoryError()
         }
       } else {
