@@ -121,6 +121,14 @@ const handleScreenTimeError = (error: any) => {
   }
 };
 
+export const refreshManagedSettingsStore = () => {
+  return ReactNativeDeviceActivityModule?.refreshManagedSettingsStore();
+};
+
+export const clearAllManagedSettingsStoreSettings = () => {
+  return ReactNativeDeviceActivityModule?.clearAllManagedSettingsStoreSettings();
+};
+
 export function addSelectionToWhitelistAndUpdateBlock(
   selection: ActivitySelectionInput,
   triggeredBy?: string,
@@ -437,9 +445,7 @@ export function disableBlockAllMode(triggeredBy?: string): void {
 }
 
 export function resetBlocks(triggeredBy?: string): void {
-  return ReactNativeDeviceActivityModule?.resetBlocks(
-    triggeredBy,
-  );
+  return ReactNativeDeviceActivityModule?.resetBlocks(triggeredBy);
 }
 
 export function unblockSelection(
