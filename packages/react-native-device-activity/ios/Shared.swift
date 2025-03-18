@@ -16,8 +16,8 @@ let SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
 let SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX = "shieldConfigurationForSelection"
 let SHIELD_ACTIONS_FOR_SELECTION_PREFIX = "shieldActionsForSelection"
 let SHIELD_ACTIONS_KEY = "shieldActions"
-let CURRENT_BLOCKED_SELECTION = "currentBlockedSelection"
-let CURRENT_UNBLOCKED_SELECTION = "currentUnblockedSelection"
+let CURRENT_BLOCKLIST_KEY = "currentBlockedSelection"
+let CURRENT_WHITELIST_KEY = "currentUnblockedSelection"
 let IS_BLOCKING_ALL = "isBlockingAll"
 let FAMILY_ACTIVITY_SELECTION_ID_KEY = "familyActivitySelectionIds"
 
@@ -376,6 +376,18 @@ func setFamilyActivitySelectionById(id: String, activitySelection: FamilyActivit
 }
 
 @available(iOS 15.0, *)
+func renameFamilyActivitySelectionId(previousId: String, newId: String) {
+  if var familyActivitySelectionIds = userDefaults?.dictionary(
+    forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY) {
+    familyActivitySelectionIds[newId] = familyActivitySelectionIds[previousId]
+    familyActivitySelectionIds.removeValue(forKey: previousId)
+
+    userDefaults?
+      .set(familyActivitySelectionIds, forKey: FAMILY_ACTIVITY_SELECTION_ID_KEY)
+  }
+}
+
+@available(iOS 15.0, *)
 func getActivitySelectionPrefixedConfigFromUserDefaults(
   keyPrefix: String,
   defaultKey: String,
@@ -487,45 +499,34 @@ func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> Str
 }
 
 @available(iOS 15.0, *)
-func unblockAllApps(triggeredBy: String) {
-  userDefaults?
-    .removeObject(forKey: CURRENT_BLOCKED_SELECTION)
+func enableBlockAllMode(triggeredBy: String) {
+  userDefaults?.set(true, forKey: IS_BLOCKING_ALL)
 
-  userDefaults?
-    .removeObject(forKey: IS_BLOCKING_ALL)
-
-  userDefaults?.removeObject(forKey: CURRENT_UNBLOCKED_SELECTION)
-
-  store.shield.applicationCategories = nil
-  store.shield.webDomainCategories = nil
-
-  store.shield.applications = .none
-  store.shield.webDomains = .none
-
-  userDefaults?.set(
-    [
-      "triggeredBy": triggeredBy,
-      "unblockedAt": Date.now.ISO8601Format()
-    ], forKey: "lastUnblock")
+  updateBlock(triggeredBy: triggeredBy)
 }
 
 @available(iOS 15.0, *)
-func blockAllApps(triggeredBy: String) {
+func disableBlockAllMode(triggeredBy: String) {
   userDefaults?
-    .removeObject(forKey: CURRENT_UNBLOCKED_SELECTION)
-  userDefaults?
-    .removeObject(forKey: CURRENT_BLOCKED_SELECTION)
+    .removeObject(forKey: IS_BLOCKING_ALL)
 
-  userDefaults?.set(true, forKey: IS_BLOCKING_ALL)
+  updateBlock(triggeredBy: triggeredBy)
+}
 
-  store.shield.applicationCategories = .all(except: Set())
-  store.shield.webDomainCategories = .all(except: Set())
+@available(iOS 15.0, *)
+func setsIncludesEntireCategory(
+  _ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySelection
+)
+  -> Bool {
+  if #available(iOS 15.2, *) {
+    let selection1Safe = selection1.includeEntireCategory || selection1.categoryTokens.count == 0
 
-  userDefaults?.set(
-    [
-      "triggeredBy": triggeredBy,
-      "blockedAt": Date.now.ISO8601Format()
-    ], forKey: "lastBlock")
+    let selection2Safe = selection2.includeEntireCategory || selection2.categoryTokens.count == 0
+
+    return selection1Safe && selection2Safe
+  }
+
+  return false
 }
 
 @available(iOS 15.0, *)
@@ -543,7 +544,14 @@ func intersection(_ selection1: FamilyActivitySelection, _ selection2: FamilyAct
     selection2.categoryTokens
   )
 
-  var selection = FamilyActivitySelection()
+  let includeEntireCategory = setsIncludesEntireCategory(
+    selection1,
+    selection2
+  )
+
+  var selection = FamilyActivitySelection(
+    includeEntireCategory: includeEntireCategory
+  )
 
   selection.applicationTokens = applicationTokens
   selection.webDomainTokens = domainTokens
@@ -568,7 +576,14 @@ func symmetricDifference(
     selection2.categoryTokens
   )
 
-  var selection = FamilyActivitySelection()
+  let includeEntireCategory = setsIncludesEntireCategory(
+    selection1,
+    selection2
+  )
+
+  var selection = FamilyActivitySelection(
+    includeEntireCategory: includeEntireCategory
+  )
 
   selection.applicationTokens = applicationTokens
   selection.webDomainTokens = domainTokens
@@ -592,7 +607,14 @@ func difference(_ selection1: FamilyActivitySelection, _ selection2: FamilyActiv
     selection2.categoryTokens
   )
 
-  var selection = FamilyActivitySelection()
+  let includeEntireCategory = setsIncludesEntireCategory(
+    selection1,
+    selection2
+  )
+
+  var selection = FamilyActivitySelection(
+    includeEntireCategory: includeEntireCategory
+  )
 
   selection.applicationTokens = applicationTokens
   selection.webDomainTokens = domainTokens
@@ -616,7 +638,14 @@ func union(_ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySe
     selection2.categoryTokens
   )
 
-  var selection = FamilyActivitySelection()
+  let includeEntireCategory = setsIncludesEntireCategory(
+    selection1,
+    selection2
+  )
+
+  var selection = FamilyActivitySelection(
+    includeEntireCategory: includeEntireCategory
+  )
 
   selection.applicationTokens = applicationTokens
   selection.webDomainTokens = domainTokens
@@ -626,143 +655,238 @@ func union(_ selection1: FamilyActivitySelection, _ selection2: FamilyActivitySe
 }
 
 @available(iOS 15.0, *)
+func parseActivitySelectionInput(input: [String: Any]) -> FamilyActivitySelection {
+  if let currentBlocklist = input["currentBlocklist"] as? Bool {
+    if currentBlocklist {
+      return getCurrentBlocklist()
+    }
+  }
+  if let currentWhitelist = input["currentWhitelist"] as? Bool {
+    if currentWhitelist {
+      return getCurrentWhitelist()
+    }
+  }
+  if let activitySelectionId = input["activitySelectionId"] as? String {
+    if let selection = getFamilyActivitySelectionById(id: activitySelectionId) {
+      return selection
+    }
+  }
+
+  if let activitySelectionToken = input["activitySelectionToken"] as? String {
+    return deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: activitySelectionToken
+    )
+  }
+
+  return FamilyActivitySelection()
+}
+
+@available(iOS 15.0, *)
+func getCurrentWhitelist() -> FamilyActivitySelection {
+  let currentWhitelistSelectionSerialized = userDefaults?
+    .string(forKey: CURRENT_WHITELIST_KEY)
+
+  if let currentWhitelistSelectionSerialized = currentWhitelistSelectionSerialized {
+    return deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: currentWhitelistSelectionSerialized)
+  }
+
+  return FamilyActivitySelection()
+}
+
+@available(iOS 15.0, *)
+func clearWhitelist() {
+  userDefaults?
+    .removeObject(forKey: CURRENT_WHITELIST_KEY)
+}
+
+@available(iOS 15.0, *)
+func clearBlocklist() {
+  userDefaults?
+    .removeObject(forKey: CURRENT_BLOCKLIST_KEY)
+}
+
+@available(iOS 15.0, *)
+func getCurrentBlocklist() -> FamilyActivitySelection {
+  let currentBlockedSelectionSerialized = userDefaults?
+    .string(forKey: CURRENT_BLOCKLIST_KEY)
+
+  if let currentBlockedSelectionSerialized = currentBlockedSelectionSerialized {
+    return deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: currentBlockedSelectionSerialized)
+  }
+
+  return FamilyActivitySelection()
+}
+
+func isBlockingAllModeEnabled() -> Bool {
+  let isBlockingAll = userDefaults?.bool(forKey: IS_BLOCKING_ALL) ?? false
+
+  return isBlockingAll
+}
+
+@available(iOS 15.0, *)
+func saveCurrentBlocklist(blocklist: FamilyActivitySelection) {
+  userDefaults?
+    .set(
+      serializeFamilyActivitySelection(selection: blocklist),
+      forKey: CURRENT_BLOCKLIST_KEY
+    )
+}
+
+@available(iOS 15.0, *)
+func saveCurrentWhitelist(whitelist: FamilyActivitySelection) {
+  userDefaults?
+    .set(
+      serializeFamilyActivitySelection(selection: whitelist),
+      forKey: CURRENT_WHITELIST_KEY
+    )
+}
+
+@available(iOS 15.0, *)
+func addSelectionToWhitelistAndUpdateBlock(
+  whitelistSelection: FamilyActivitySelection,
+  triggeredBy: String
+) throws {
+  let currentWhitelist = getCurrentWhitelist()
+
+  let updatedWhitelist = union(whitelistSelection, currentWhitelist)
+
+  saveCurrentWhitelist(whitelist: updatedWhitelist)
+
+  updateBlock(triggeredBy: triggeredBy)
+
+  if #available(iOS 15.2, *) {
+    if !whitelistSelection.includeEntireCategory {
+      throw WhitelistSelectionWithoutEntireCategoryError()
+    }
+  } else {
+    throw WhitelistSelectionWithoutEntireCategoryError()
+  }
+}
+
+struct WhitelistSelectionWithoutEntireCategoryError: Error {
+
+}
+
+struct TryingToBlockSelectionWhenBlockModeIsEnabledError: Error {
+
+}
+
+@available(iOS 15.0, *)
+func removeSelectionFromWhitelistAndUpdateBlock(
+  selection: FamilyActivitySelection,
+  triggeredBy: String
+) throws {
+  let currentWhitelist = getCurrentWhitelist()
+
+  let updatedWhitelist = difference(currentWhitelist, selection)
+
+  saveCurrentWhitelist(whitelist: updatedWhitelist)
+
+  updateBlock(triggeredBy: triggeredBy)
+
+  if #available(iOS 15.2, *) {
+    if !selection.includeEntireCategory {
+      throw WhitelistSelectionWithoutEntireCategoryError()
+    }
+  } else {
+    throw WhitelistSelectionWithoutEntireCategoryError()
+  }
+}
+
+@available(iOS 15.0, *)
 func blockSelectedApps(
   blockSelection: FamilyActivitySelection,
-  triggeredBy: String,
-  blockedFamilyActivitySelectionId: String?
-) {
-  // doesn't work together with blockAll, and doesn't really make sense together
-  userDefaults?
-    .removeObject(forKey: IS_BLOCKING_ALL)
+  triggeredBy: String
+) throws {
+  let currentBlocklist = getCurrentBlocklist()
 
-  let currentBlockedSelection = userDefaults?
-    .string(forKey: CURRENT_BLOCKED_SELECTION)
+  let updatedBlocklist = union(blockSelection, currentBlocklist)
 
-  let currentUnblockedSelectionSerialized = userDefaults?
-    .string(forKey: CURRENT_UNBLOCKED_SELECTION)
+  saveCurrentBlocklist(blocklist: updatedBlocklist)
 
-  let previousSelection =
-    currentBlockedSelection != nil
-    ? deserializeFamilyActivitySelection(familyActivitySelectionStr: currentBlockedSelection!)
-    : nil
+  updateBlock(triggeredBy: triggeredBy)
 
-  let currentUnblockedSelection =
-    currentUnblockedSelectionSerialized != nil
-    ? difference(
-      deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: currentUnblockedSelectionSerialized!
-      ), blockSelection) : FamilyActivitySelection()
+  let blockingAllModeEnabled = isBlockingAllModeEnabled()
 
-  let combinedSelection =
-    previousSelection != nil
-    ? union(blockSelection, previousSelection!)
-    : blockSelection
+  if blockingAllModeEnabled {
+    throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
+  }
+}
 
-  store.shield.applications = combinedSelection.applicationTokens
-
-  store.shield.webDomains = combinedSelection.webDomainTokens
-
-  store.shield.applicationCategories = .specific(
-    combinedSelection.categoryTokens,
-    except: currentUnblockedSelection.applicationTokens
-  )
-
-  store.shield.webDomainCategories = .specific(
-    combinedSelection.categoryTokens,
-    except: currentUnblockedSelection.webDomainTokens
-  )
-
-  userDefaults?
-    .set(
-      serializeFamilyActivitySelection(selection: currentUnblockedSelection),
-      forKey: CURRENT_UNBLOCKED_SELECTION
-    )
-
-  userDefaults?
-    .set(
-      serializeFamilyActivitySelection(selection: combinedSelection),
-      forKey: CURRENT_BLOCKED_SELECTION
-    )
+@available(iOS 15.0, *)
+func updateBlock(triggeredBy: String) {
+  let blockingAllModeEnabled = isBlockingAllModeEnabled()
+  let currentBlocklist = getCurrentBlocklist()
+  let currentWhitelist = getCurrentWhitelist()
 
   userDefaults?.set(
     [
       "triggeredBy": triggeredBy,
       "blockedAt": Date.now.ISO8601Format(),
-      "blockedFamilyActivitySelectionId": blockedFamilyActivitySelectionId as Any,
-      "blockedAppCount": combinedSelection.applicationTokens.count,
-      "blockedWebDomainCount": combinedSelection.webDomainTokens.count,
-      "blockedCategoryCount": combinedSelection.categoryTokens.count
-    ], forKey: "lastBlock")
-}
+      "blockingAllModeEnabled": blockingAllModeEnabled,
+      "blocklistAppCount": currentBlocklist.applicationTokens.count,
+      "blocklistWebDomainCount": currentBlocklist.webDomainTokens.count,
+      "blocklistCategoryCount": currentBlocklist.categoryTokens.count,
+      "whitelistAppCount": currentWhitelist.applicationTokens.count,
+      "whitelistWebDomainCount": currentWhitelist.webDomainTokens.count,
+      "whitelistCategoryCount": currentWhitelist.categoryTokens.count
+    ], forKey: "lastBlockUpdate")
 
-@available(iOS 15.0, *)
-func unblockSelectedApps(
-  unblockSelection: FamilyActivitySelection,
-  triggeredBy: String
-) {
-  let isBlockingAll = userDefaults?.bool(forKey: IS_BLOCKING_ALL) ?? false
-
-  let currentUnblockedSelectionSerialized = userDefaults?
-    .string(forKey: CURRENT_UNBLOCKED_SELECTION)
-
-  let currentUnblockedSelection =
-    currentUnblockedSelectionSerialized != nil
-    ? deserializeFamilyActivitySelection(
-      familyActivitySelectionStr: currentUnblockedSelectionSerialized!
-    ) : FamilyActivitySelection()
-
-  if isBlockingAll {
-    // note: for whitelisting to work with categories, it seems the FamilyActivitySelection needs to be initialized with includeEntireCategory: true - which is not currently exposed by this library (it is probably challenging to make it stable since the selection could get so big)
+  if blockingAllModeEnabled {
     store.shield.applicationCategories = .all(
-      except: currentUnblockedSelection.applicationTokens
+      except: currentWhitelist.applicationTokens
     )
     store.shield.webDomainCategories = .all(
-      except: currentUnblockedSelection.webDomainTokens
+      except: currentWhitelist.webDomainTokens
     )
 
     return
   }
 
-  let currentBlockedSelectionStr = userDefaults?
-    .string(forKey: CURRENT_BLOCKED_SELECTION)
-
-  let currentBlockedSelection =
-    currentBlockedSelectionStr != nil
-    ? deserializeFamilyActivitySelection(familyActivitySelectionStr: currentBlockedSelectionStr!)
-    : FamilyActivitySelection()
-
-  let combinedUnblockedSelection = union(currentUnblockedSelection, unblockSelection)
-
-  store.shield.applications = currentBlockedSelection.applicationTokens
-
-  store.shield.webDomains = currentBlockedSelection.webDomainTokens
-
-  store.shield.applicationCategories = .specific(
-    currentBlockedSelection.categoryTokens,
-    except: combinedUnblockedSelection.applicationTokens
-  )
-  store.shield.webDomainCategories = .specific(
-    currentBlockedSelection.categoryTokens,
-    except: combinedUnblockedSelection.webDomainTokens
+  let blocklistWithoutWhiteListOverlap: FamilyActivitySelection = difference(
+    currentBlocklist,
+    currentWhitelist
   )
 
-  userDefaults?
-    .set(
-      serializeFamilyActivitySelection(selection: combinedUnblockedSelection),
-      forKey: CURRENT_UNBLOCKED_SELECTION
+  store.shield.applications = blocklistWithoutWhiteListOverlap.applicationTokens
+
+  store.shield.webDomains = blocklistWithoutWhiteListOverlap.webDomainTokens
+
+  if blocklistWithoutWhiteListOverlap.categoryTokens.count > 0 {
+    store.shield.applicationCategories = .specific(
+      blocklistWithoutWhiteListOverlap.categoryTokens,
+      except: currentWhitelist.applicationTokens
     )
+    store.shield.webDomainCategories = .specific(
+      blocklistWithoutWhiteListOverlap.categoryTokens,
+      except: currentWhitelist.webDomainTokens
+    )
+  } else {
+    store.shield.applicationCategories = Optional.none
+    store.shield.webDomainCategories = Optional.none
+  }
+}
 
-  userDefaults?.set(
-    [
-      "triggeredBy": triggeredBy,
-      "unblockedAt": Date.now.ISO8601Format(),
-      "blockedAppCount": currentBlockedSelection.applicationTokens.count,
-      "blockedWebDomainCount": currentBlockedSelection.webDomainTokens.count,
-      "blockedCategoryCount": currentBlockedSelection.categoryTokens.count,
-      "unblockedAppCount": currentUnblockedSelection.applicationTokens.count,
-      "unblockedWebDomainCount": currentUnblockedSelection.webDomainTokens.count,
-      "unblockedCategoryCount": currentUnblockedSelection.categoryTokens.count
-    ], forKey: "lastUnblock")
+@available(iOS 15.0, *)
+func unblockSelection(
+  removeSelection: FamilyActivitySelection,
+  triggeredBy: String
+) throws {
+  let currentBlocklist = getCurrentBlocklist()
+
+  let updatedBlocklist = difference(currentBlocklist, removeSelection)
+
+  saveCurrentBlocklist(blocklist: updatedBlocklist)
+
+  updateBlock(triggeredBy: triggeredBy)
+
+  let blockingAllModeEnabled = isBlockingAllModeEnabled()
+
+  if blockingAllModeEnabled {
+    throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
+  }
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {

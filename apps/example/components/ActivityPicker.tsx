@@ -1,6 +1,7 @@
 import { Pressable, Text, View, NativeSyntheticEvent } from "react-native";
 import {
   ActivitySelectionMetadata,
+  ActivitySelectionWithMetadata,
   DeviceActivitySelectionView,
   DeviceActivitySelectionViewPersisted,
 } from "react-native-device-activity";
@@ -35,12 +36,7 @@ export const ActivityPicker = ({
   visible: boolean;
   onDismiss: () => void;
   onSelectionChange: (
-    event: NativeSyntheticEvent<{
-      familyActivitySelection: string | null;
-      applicationCount: number;
-      categoryCount: number;
-      webDomainCount: number;
-    }>,
+    event: NativeSyntheticEvent<ActivitySelectionWithMetadata>,
   ) => void;
   familyActivitySelection: string | undefined;
   onReload: () => void;

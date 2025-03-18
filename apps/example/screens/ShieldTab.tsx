@@ -6,31 +6,20 @@ import {
   Text,
   View,
   SafeAreaView,
-  TextInput,
 } from "react-native";
 import {
-  UIBlurEffectStyle,
   ActivitySelectionWithMetadata,
-  isShieldActive,
-  isShieldActiveWithSelection,
-  updateShield,
   intersection,
   union,
   difference,
   symmetricDifference,
   activitySelectionMetadata,
-  unblockAllApps,
-  blockAllApps,
-  blockAppsWithSelectionId,
-  unblockSelectedApps,
 } from "react-native-device-activity";
-import { Button, Switch } from "react-native-paper";
+import { Button } from "react-native-paper";
 
 import { ActivityPicker } from "../components/ActivityPicker";
 
-export function ShieldTab() {
-  const [shieldTitle, setShieldTitle] = React.useState<string>("");
-
+export function SetOpsTab() {
   const [familyActivitySelectionResult, setFamilyActivitySelectionResult] =
     React.useState<ActivitySelectionWithMetadata | null>(null);
 
@@ -39,22 +28,6 @@ export function ShieldTab() {
     setSecondFamilyActivitySelectionResult,
   ] = React.useState<ActivitySelectionWithMetadata | null>(null);
 
-  const [isShieldUp, setIsShieldUp] = useState(false);
-  const [isShieldUpWithSelection, setIsShieldUpWithSelection] = useState(false);
-
-  const refreshIsShieldActive = useCallback(() => {
-    setIsShieldUp(isShieldActive());
-    if (familyActivitySelectionResult?.familyActivitySelection) {
-      setIsShieldUpWithSelection(
-        isShieldActiveWithSelection(
-          familyActivitySelectionResult.familyActivitySelection,
-        ),
-      );
-    } else {
-      setIsShieldUpWithSelection(false);
-    }
-  }, [familyActivitySelectionResult?.familyActivitySelection]);
-
   const onSelectionChange = useCallback(
     (event: NativeSyntheticEvent<ActivitySelectionWithMetadata>) => {
       if (
@@ -62,13 +35,9 @@ export function ShieldTab() {
         familyActivitySelectionResult?.familyActivitySelection
       ) {
         setFamilyActivitySelectionResult(event.nativeEvent);
-        refreshIsShieldActive();
       }
     },
-    [
-      familyActivitySelectionResult?.familyActivitySelection,
-      refreshIsShieldActive,
-    ],
+    [familyActivitySelectionResult?.familyActivitySelection],
   );
 
   const onSecondSelectionChange = useCallback(
@@ -78,67 +47,9 @@ export function ShieldTab() {
         familyActivitySelectionResult?.familyActivitySelection
       ) {
         setSecondFamilyActivitySelectionResult(event.nativeEvent);
-        refreshIsShieldActive();
       }
     },
-    [
-      secondFamilyActivitySelectionResult?.familyActivitySelection,
-      refreshIsShieldActive,
-    ],
-  );
-
-  const onSubmitEditing = useCallback(
-    () =>
-      updateShield(
-        {
-          title: shieldTitle,
-          backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
-          backgroundColor: {
-            red: 255,
-            green: 0,
-            blue: 0,
-          },
-          titleColor: {
-            red: 255,
-            green: 0,
-            blue: 0,
-          },
-          subtitle: "subtitle",
-          primaryButtonLabel: "primaryButtonLabel",
-          secondaryButtonLabel: "secondaryButtonLabel",
-          subtitleColor: {
-            red: Math.random() * 255,
-            green: Math.random() * 255,
-            blue: Math.random() * 255,
-          },
-          primaryButtonBackgroundColor: {
-            red: Math.random() * 255,
-            green: Math.random() * 255,
-            blue: Math.random() * 255,
-          },
-          primaryButtonLabelColor: {
-            red: Math.random() * 255,
-            green: Math.random() * 255,
-            blue: Math.random() * 255,
-          },
-          secondaryButtonLabelColor: {
-            red: Math.random() * 255,
-            green: Math.random() * 255,
-            blue: Math.random() * 255,
-          },
-        },
-        {
-          primary: {
-            type: "openApp",
-            behavior: "close",
-          },
-          secondary: {
-            type: "dismiss",
-            behavior: "defer",
-          },
-        },
-      ),
-    [shieldTitle],
+    [secondFamilyActivitySelectionResult?.familyActivitySelection],
   );
 
   const [showSelectionView, setShowSelectionView] = useState<
@@ -153,8 +64,17 @@ export function ShieldTab() {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
       ? intersection(
-          familyActivitySelectionResult?.familyActivitySelection,
-          secondFamilyActivitySelectionResult?.familyActivitySelection,
+          {
+            activitySelectionToken:
+              familyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            activitySelectionToken:
+              secondFamilyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            stripToken: true,
+          },
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
@@ -163,8 +83,17 @@ export function ShieldTab() {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
       ? union(
-          familyActivitySelectionResult?.familyActivitySelection,
-          secondFamilyActivitySelectionResult?.familyActivitySelection,
+          {
+            activitySelectionToken:
+              familyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            activitySelectionToken:
+              secondFamilyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            stripToken: true,
+          },
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
@@ -173,8 +102,17 @@ export function ShieldTab() {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
       ? difference(
-          familyActivitySelectionResult?.familyActivitySelection,
-          secondFamilyActivitySelectionResult?.familyActivitySelection,
+          {
+            activitySelectionToken:
+              familyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            activitySelectionToken:
+              secondFamilyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            stripToken: true,
+          },
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
@@ -183,21 +121,38 @@ export function ShieldTab() {
     return familyActivitySelectionResult?.familyActivitySelection &&
       secondFamilyActivitySelectionResult?.familyActivitySelection
       ? symmetricDifference(
-          familyActivitySelectionResult?.familyActivitySelection,
-          secondFamilyActivitySelectionResult?.familyActivitySelection,
+          {
+            activitySelectionToken:
+              familyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            activitySelectionToken:
+              secondFamilyActivitySelectionResult?.familyActivitySelection,
+          },
+          {
+            stripToken: true,
+          },
         )
       : undefined;
   }, [familyActivitySelectionResult, secondFamilyActivitySelectionResult]);
 
   const activitySelectionMetadataData = useMemo(() => {
     return familyActivitySelectionResult?.familyActivitySelection
-      ? activitySelectionMetadata(
-          familyActivitySelectionResult.familyActivitySelection,
-        )
+      ? activitySelectionMetadata({
+          activitySelectionToken:
+            familyActivitySelectionResult.familyActivitySelection,
+        })
       : undefined;
   }, [familyActivitySelectionResult]);
 
-  console.log("activitySelectionMetadata", activitySelectionMetadataData);
+  const activitySelectionMetadataData2 = useMemo(() => {
+    return secondFamilyActivitySelectionResult?.familyActivitySelection
+      ? activitySelectionMetadata({
+          activitySelectionToken:
+            secondFamilyActivitySelectionResult.familyActivitySelection,
+        })
+      : undefined;
+  }, [secondFamilyActivitySelectionResult]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -209,53 +164,45 @@ export function ShieldTab() {
             margin: 10,
             alignItems: "center",
           }}
-        >
-          <Switch
-            value={isShieldUp}
-            onValueChange={async () => {
-              if (isShieldUp) {
-                unblockAllApps();
-              } else {
-                blockAllApps();
-              }
-              refreshIsShieldActive();
-            }}
-          />
-          <Text>Shield active</Text>
-        </View>
-
+        />
         <View
           style={{
             flexDirection: "row",
             gap: 10,
             margin: 10,
-            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <Switch
-            value={isShieldUpWithSelection}
-            disabled={!familyActivitySelectionResult}
-            onValueChange={async () => {
-              const familyActivitySelectionId =
-                familyActivitySelectionResult?.familyActivitySelection;
-              if (familyActivitySelectionId) {
-                if (isShieldUpWithSelection) {
-                  unblockSelectedApps(familyActivitySelectionId);
-                } else {
-                  blockAppsWithSelectionId(familyActivitySelectionId);
-                }
-              }
-              refreshIsShieldActive();
-            }}
-          />
-          <Text style={{ flex: 1 }}>Block selected apps</Text>
+          <Button onPress={() => setShowSelectionView("first")}>
+            Select set 1
+          </Button>
+          <Button onPress={() => setShowSelectionView("second")}>
+            Select set 2
+          </Button>
         </View>
-        <Button onPress={() => setShowSelectionView("first")}>
-          Show selection (1)
-        </Button>
-        <Button onPress={() => setShowSelectionView("second")}>
-          Show selection (2)
-        </Button>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+            margin: 10,
+            justifyContent: "space-between",
+          }}
+        >
+          {activitySelectionMetadataData ? (
+            <Text>
+              {JSON.stringify(activitySelectionMetadataData, null, 2)}
+            </Text>
+          ) : (
+            <Text>None selected</Text>
+          )}
+          {activitySelectionMetadataData2 ? (
+            <Text>
+              {JSON.stringify(activitySelectionMetadataData2, null, 2)}
+            </Text>
+          ) : (
+            <Text>None selected</Text>
+          )}
+        </View>
         <ActivityPicker
           onSelectionChange={onSelectionChange}
           familyActivitySelection={
@@ -286,30 +233,14 @@ export function ShieldTab() {
           }}
         />
         <Text>
-          {familyActivitySelectionResult &&
-          familyActivitySelectionResult?.categoryCount < 13
-            ? `${familyActivitySelectionResult?.applicationCount} apps, ${familyActivitySelectionResult?.categoryCount} categories, ${familyActivitySelectionResult?.webDomainCount} domains`
-            : familyActivitySelectionResult?.categoryCount
-              ? "All categories selected"
-              : "Nothing selected"}
+          {"intersection: " + JSON.stringify(intersectionData, null, 2)}
         </Text>
-        <Text>{"intersection: " + JSON.stringify(intersection, null, 2)}</Text>
-        <Text>{"union: " + JSON.stringify(union, null, 2)}</Text>
-        <Text>{"difference: " + JSON.stringify(difference, null, 2)}</Text>
+        <Text>{"union: " + JSON.stringify(unionData, null, 2)}</Text>
+        <Text>{"difference: " + JSON.stringify(differenceData, null, 2)}</Text>
         <Text>
           {"symmetricDifference: " +
-            JSON.stringify(symmetricDifference, null, 2)}
+            JSON.stringify(symmetricDifferenceData, null, 2)}
         </Text>
-        <Text>
-          {"activitySelectionMetadata: " +
-            JSON.stringify(activitySelectionMetadata, null, 2)}
-        </Text>
-        <TextInput
-          placeholder="Enter shield title"
-          onChangeText={(text) => setShieldTitle(text)}
-          value={shieldTitle}
-          onSubmitEditing={onSubmitEditing}
-        />
       </ScrollView>
     </SafeAreaView>
   );

@@ -6,6 +6,7 @@ const warnText = "[react-native-device-activity] Only available on iOS";
 
 const warnFn = () => {
   console.warn(warnText);
+  return Promise.resolve();
 };
 
 const warnFnArray = () => {
@@ -25,11 +26,24 @@ const warnFnBoolean = () => {
 
 const warnFnActivitySelectionWithMetadata = () => {
   console.warn(warnText);
+
   return {
     familyActivitySelection: null,
     applicationCount: 0,
     categoryCount: 0,
     webDomainCount: 0,
+    includeEntireCategory: false,
+  };
+};
+
+const warnFnActivitySelectionMetadata = () => {
+  console.warn(warnText);
+
+  return {
+    applicationCount: 0,
+    categoryCount: 0,
+    webDomainCount: 0,
+    includeEntireCategory: false,
   };
 };
 
@@ -38,27 +52,36 @@ const mockModule:
   | null = {
   isAvailable: () => false,
   requestAuthorization: warnFn,
-  blockAppsWithSelectionId: warnFn,
+  blockSelection: warnFn,
   userDefaultsAll: warnFn,
   userDefaultsGet: warnFn,
   userDefaultsRemove: warnFn,
   userDefaultsSet: warnFn,
   userDefaultsClear: warnFn,
-  activitySelectionMetadata: warnFnActivitySelectionWithMetadata,
+  activitySelectionWithMetadata: warnFnActivitySelectionWithMetadata,
+  activitySelectionMetadata: warnFnActivitySelectionMetadata,
   intersection: warnFnActivitySelectionWithMetadata,
   union: warnFnActivitySelectionWithMetadata,
   difference: warnFnActivitySelectionWithMetadata,
   symmetricDifference: warnFnActivitySelectionWithMetadata,
+  addSelectionToWhitelistAndUpdateBlock: warnFn,
+  clearAllManagedSettingsStoreSettings: warnFn,
+  clearWhitelistAndUpdateBlock: warnFn,
+  convertToIncludeCategories: warnFnActivitySelectionWithMetadata,
+  refreshManagedSettingsStore: warnFn,
+  removeSelectionFromWhitelistAndUpdateBlock: warnFn,
+  renameActivitySelection: warnFn,
+  clearBlocklistAndUpdateBlock: warnFn,
+  clearWhitelist: warnFn,
+  unblockSelection: warnFn,
   revokeAuthorization: warnFn,
   isShieldActive: warnFnBoolean,
   getAppGroupFileDirectory: warnFn,
-  isShieldActiveWithSelection: warnFnBoolean,
   doesSelectionHaveOverlap: warnFnBoolean,
   updateShieldConfiguration: warnFn,
   unblockApps: warnFn,
-  blockAllApps: warnFn,
-  unblockAllApps: warnFn,
-  unblockSelectedApps: warnFn,
+  enableBlockAllMode: warnFn,
+  disableBlockAllMode: warnFn,
   blockApps: warnFn,
   activities: warnFnArray,
   authorizationStatus: warnFnNumber,

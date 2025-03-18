@@ -9,17 +9,19 @@ import os
 
 @available(iOS 15.0, *)
 func isShieldActive() -> Bool {
+  let shield = store.shield
+
   let areAnyApplicationsShielded =
-    store.shield.applications != nil && store.shield.applications!.count > 0
+    shield.applications != nil && shield.applications!.count > 0
   let areAnyWebDomainsShielded =
-    store.shield.webDomains != nil && store.shield.webDomains!.count > 0
+    shield.webDomains != nil && shield.webDomains!.count > 0
   let areAnyApplicationCategoriesShielded =
-    store.shield.applicationCategories != nil
-    && store.shield.applicationCategories
+    shield.applicationCategories != nil
+    && shield.applicationCategories
       != ShieldSettings.ActivityCategoryPolicy<Application>.none
   let areAnyWebDomainCategoriesShielded =
-    store.shield.webDomainCategories != nil
-    && store.shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
+    shield.webDomainCategories != nil
+    && shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
 
   return areAnyApplicationsShielded
     || areAnyWebDomainsShielded
@@ -82,14 +84,24 @@ struct ActivitySelectionWithMetadata: ExpoModulesCore.Record {
   }
 
   init(
-    activitySelection: FamilyActivitySelection
+    activitySelection: FamilyActivitySelection,
+    stripToken: Bool? = false
   ) {
-    self.familyActivitySelection = serializeFamilyActivitySelection(
-      selection: activitySelection
-    )
+    let stripToken = stripToken ?? false
+    if !stripToken {
+      self.familyActivitySelection = serializeFamilyActivitySelection(
+        selection: activitySelection
+      )
+    }
     self.applicationCount = activitySelection.applicationTokens.count
     self.categoryCount = activitySelection.categoryTokens.count
     self.webdomainCount = activitySelection.webDomainTokens.count
+
+    if #available(iOS 15.2, *) {
+      self.includeEntireCategory = activitySelection.includeEntireCategory
+    } else {
+      self.includeEntireCategory = false
+    }
   }
 
   @Field
@@ -100,6 +112,36 @@ struct ActivitySelectionWithMetadata: ExpoModulesCore.Record {
   var categoryCount: Int
   @Field
   var webdomainCount: Int
+  @Field
+  var includeEntireCategory: Bool
+}
+
+@available(iOS 15.0, *)
+struct ActivitySelectionMetadata: ExpoModulesCore.Record {
+  init() {
+
+  }
+
+  init(
+    activitySelection: FamilyActivitySelection
+  ) {
+    self.applicationCount = activitySelection.applicationTokens.count
+    self.categoryCount = activitySelection.categoryTokens.count
+    self.webdomainCount = activitySelection.webDomainTokens.count
+    if #available(iOS 15.2, *) {
+      self.includeEntireCategory = activitySelection.includeEntireCategory
+    } else {
+      self.includeEntireCategory = false
+    }
+  }
+  @Field
+  var applicationCount: Int
+  @Field
+  var categoryCount: Int
+  @Field
+  var webdomainCount: Int
+  @Field
+  var includeEntireCategory: Bool
 }
 
 struct DeviceActivityEventFromJS: ExpoModulesCore.Record {
@@ -263,7 +305,6 @@ public class ReactNativeDeviceActivityModule: Module {
 
     var watchActivitiesHandle: Cancellable?
     var onDeviceActivityDetectedHandle: Cancellable?
-    // var watchStoreHandle: Cancellable? = nil
 
     Function("getAppGroupFileDirectory") {
 
@@ -386,50 +427,6 @@ public class ReactNativeDeviceActivityModule: Module {
       return nil
     }
 
-    Function("doesSelectionHaveOverlap") { (familyActivitySelections: [String]) in
-      let decodedFamilyActivitySelections: [FamilyActivitySelection] = familyActivitySelections.map { familyActivitySelection in
-        let decoder = JSONDecoder()
-        let data = Data(base64Encoded: familyActivitySelection)
-        do {
-          let activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
-          return activitySelection
-        } catch {
-          return FamilyActivitySelection()
-        }
-      }
-
-      let hasOverlap = decodedFamilyActivitySelections.contains { selection in
-        return decodedFamilyActivitySelections.contains { compareWith in
-          // if it's the same instance - skip comparison
-          if compareWith == selection {
-            return false
-          }
-
-          if compareWith.applicationTokens.contains(where: { token in
-            return selection.applicationTokens.contains(token)
-          }) {
-            return true
-          }
-
-          if compareWith.categoryTokens.contains(where: { token in
-            return selection.categoryTokens.contains(token)
-          }) {
-            return true
-          }
-
-          if compareWith.webDomainTokens.contains(where: { token in
-            return selection.webDomainTokens.contains(token)
-          }) {
-            return true
-          }
-
-          return false
-        }
-      }
-
-      return hasOverlap
-    }
-
     Function("authorizationStatus") {
       let currentStatus = AuthorizationCenter.shared.authorizationStatus
 
@@ -446,12 +443,16 @@ public class ReactNativeDeviceActivityModule: Module {
       }
     }
 
-    Function("unblockSelectedApps") {
-      (familyActivitySelectionId: String, triggeredBy: String?) in
+    Function("unblockSelection") {
+      (familyActivitySelection: [String: Any], triggeredBy: String?) in
       let triggeredBy = triggeredBy ?? "called manually"
 
-      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        unblockSelectedApps(unblockSelection: activitySelection, triggeredBy: triggeredBy)
+      let activitySelection = parseActivitySelectionInput(
+        input: familyActivitySelection
+      )
+
+      do {
+        try unblockSelection(removeSelection: activitySelection, triggeredBy: triggeredBy)
       }
     }
 
@@ -570,73 +571,126 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     Function("intersection") {
-      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
+      (
+        familyActivitySelection: [String: Any], familyActivitySelection2: [String: Any],
+        options: [String: Any]
+      )
         -> ActivitySelectionWithMetadata in
-      let selection1 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+      let selection1 = parseActivitySelectionInput(input: familyActivitySelection)
 
-      let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr2)
+      let selection2 = parseActivitySelectionInput(input: familyActivitySelection2)
 
       let selection = intersection(selection1, selection2)
 
+      if let persistAsActivitySelectionId = options["persistAsActivitySelectionId"] as? String {
+        setFamilyActivitySelectionById(
+          id: persistAsActivitySelectionId, activitySelection: selection)
+      }
+
+      let stripToken = options["stripToken"] as? Bool ?? false
+
       return ActivitySelectionWithMetadata(
-        activitySelection: selection
+        activitySelection: selection,
+        stripToken: stripToken
       )
     }
 
     Function("union") {
-      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
+      (
+        familyActivitySelection: [String: Any], familyActivitySelection2: [String: Any],
+        options: [String: Any]
+      )
         -> ActivitySelectionWithMetadata in
-      let selection1 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+      let selection1 = parseActivitySelectionInput(input: familyActivitySelection)
 
-      let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr2)
+      let selection2 = parseActivitySelectionInput(input: familyActivitySelection2)
 
       let selection = union(selection1, selection2)
 
+      if let persistAsActivitySelectionId = options["persistAsActivitySelectionId"] as? String {
+        setFamilyActivitySelectionById(
+          id: persistAsActivitySelectionId, activitySelection: selection)
+      }
+
+      let stripToken = options["stripToken"] as? Bool ?? false
+
       return ActivitySelectionWithMetadata(
-        activitySelection: selection
+        activitySelection: selection,
+        stripToken: stripToken
       )
     }
 
     Function("difference") {
-      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
+      (
+        familyActivitySelection: [String: Any], familyActivitySelection2: [String: Any],
+        options: [String: Any]
+      )
         -> ActivitySelectionWithMetadata in
-      let selection1 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+      let selection1 = parseActivitySelectionInput(input: familyActivitySelection)
 
-      let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr2)
+      let selection2 = parseActivitySelectionInput(input: familyActivitySelection2)
 
       let selection = difference(selection1, selection2)
 
+      if let persistAsActivitySelectionId = options["persistAsActivitySelectionId"] as? String {
+        setFamilyActivitySelectionById(
+          id: persistAsActivitySelectionId, activitySelection: selection)
+      }
+
+      let stripToken = options["stripToken"] as? Bool ?? false
+
       return ActivitySelectionWithMetadata(
-        activitySelection: selection
+        activitySelection: selection,
+        stripToken: stripToken
       )
     }
 
     Function("symmetricDifference") {
-      (familyActivitySelectionStr: String, familyActivitySelectionStr2: String)
+      (
+        familyActivitySelection: [String: Any], familyActivitySelection2: [String: Any],
+        options: [String: Any]
+      )
         -> ActivitySelectionWithMetadata in
-      let selection1 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+      let selection1 = parseActivitySelectionInput(input: familyActivitySelection)
 
-      let selection2 = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr2)
+      let selection2 = parseActivitySelectionInput(input: familyActivitySelection2)
 
       let selection = symmetricDifference(selection1, selection2)
 
+      if let persistAsActivitySelectionId = options["persistAsActivitySelectionId"] as? String {
+        setFamilyActivitySelectionById(
+          id: persistAsActivitySelectionId, activitySelection: selection)
+      }
+
+      let stripToken = options["stripToken"] as? Bool ?? false
+
       return ActivitySelectionWithMetadata(
+        activitySelection: selection,
+        stripToken: stripToken
+      )
+    }
+
+    Function("renameActivitySelection") {
+      (
+        previousFamilyActivitySelectionId: String,
+        newFamilyActivitySelectionId: String
+      ) in
+      renameFamilyActivitySelectionId(
+        previousId: previousFamilyActivitySelectionId, newId: newFamilyActivitySelectionId)
+    }
+
+    Function("activitySelectionMetadata") {
+      (familyActivitySelection: [String: Any]) -> ActivitySelectionMetadata in
+      let selection = parseActivitySelectionInput(input: familyActivitySelection)
+
+      return ActivitySelectionMetadata(
         activitySelection: selection
       )
     }
 
-    Function("activitySelectionMetadata") {
-      (familyActivitySelectionStr: String) -> ActivitySelectionWithMetadata in
-      let selection = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+    Function("activitySelectionWithMetadata") {
+      (familyActivitySelection: [String: Any]) -> ActivitySelectionWithMetadata in
+      let selection = parseActivitySelectionInput(input: familyActivitySelection)
 
       return ActivitySelectionWithMetadata(
         activitySelection: selection
@@ -647,81 +701,79 @@ public class ReactNativeDeviceActivityModule: Module {
       return isShieldActive()
     }
 
-    Function("isShieldActiveWithSelection") { (familyActivitySelectionStr: String) -> Bool in
-      let _isShieldActive = isShieldActive()
-      if !_isShieldActive {
-        return false
-      }
+    Function("blockSelection") {
+      (familyActivitySelection: [String: Any], triggeredBy: String?) in
+      let triggeredBy = triggeredBy ?? "blockSelection called manually"
 
-      let selection = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr)
+      let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
 
-      let shield = store.shield
-
-      let areApplicationsEqual = tokenSetsAreEqual(
-        tokenSetOne: shield.applications,
-        tokenSetTwo: selection.applicationTokens
-      )
-
-      let areWebDomainsEqual = tokenSetsAreEqual(
-        tokenSetOne: shield.webDomains,
-        tokenSetTwo: selection.webDomainTokens
-      )
-
-      let appCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<Application>.specific(
-        selection.categoryTokens, except: Set())
-
-      let areAnyApplicationCategoriesEqual = shield.applicationCategories == appCategoryPolicy
-
-      let webDomainCategoryPolicy = ShieldSettings.ActivityCategoryPolicy<WebDomain>.specific(
-        selection.categoryTokens, except: Set())
-
-      let areAnyWebDomainCategoriesEqual =
-        webDomainCategoryPolicy == shield.webDomainCategories
-
-      return areApplicationsEqual && areWebDomainsEqual && areAnyApplicationCategoriesEqual
-        && areAnyWebDomainCategoriesEqual
-    }
-
-    Function("blockAppsWithSelectionId") {
-      (familyActivitySelectionId: String, triggeredBy: String?) in
-      let triggeredBy = triggeredBy ?? "blockAppsWithSelectionId called manually"
-
-      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        blockSelectedApps(
-          blockSelection: activitySelection,
-          triggeredBy: triggeredBy,
-          blockedFamilyActivitySelectionId: familyActivitySelectionId
-        )
-      }
-    }
-
-    Function("blockApps") { (familyActivitySelectionStr: String, triggeredBy: String?) in
-      let triggeredBy = triggeredBy ?? "blockApps called manually"
-
-      let selection = deserializeFamilyActivitySelection(
-        familyActivitySelectionStr: familyActivitySelectionStr
-      )
-
-      blockSelectedApps(
-        blockSelection: selection,
-        triggeredBy: triggeredBy,
-        blockedFamilyActivitySelectionId: nil
+      try blockSelectedApps(
+        blockSelection: activitySelection,
+        triggeredBy: triggeredBy
       )
     }
 
-    Function("blockAllApps") { (triggeredBy: String?) in
+    Function("clearBlocklistAndUpdateBlock") { (triggeredBy: String?) in
+      clearBlocklist()
+
+      updateBlock(triggeredBy: triggeredBy ?? "clearBlocklistAndUpdateBlock called manually")
+    }
+
+    Function("isBlockingAllModeEnabled") { () -> Bool in
       // block all apps
-      blockAllApps(triggeredBy: triggeredBy ?? "blockAllApps called manually")
+      return isBlockingAllModeEnabled()
     }
 
-    // deprecated - but not removing to avoid breaking changes
-    Function("unblockApps") { (triggeredBy: String?) in
-      unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
+    Function("enableBlockAllMode") { (triggeredBy: String?) in
+      // block all apps
+      enableBlockAllMode(
+        triggeredBy: triggeredBy ?? "enableBlockAllMode called manually"
+      )
     }
 
-    Function("unblockAllApps") { (triggeredBy: String?) in
-      unblockAllApps(triggeredBy: triggeredBy ?? "unblockApps called manually")
+    Function("disableBlockAllMode") { (triggeredBy: String?) in
+      disableBlockAllMode(
+        triggeredBy: triggeredBy ?? "disableBlockAllMode called manually"
+      )
+    }
+
+    Function("removeSelectionFromWhitelistAndUpdateBlock") {
+      (familyActivitySelection: [String: Any], triggeredBy: String?) throws in
+      let triggeredBy = triggeredBy ?? "removeSelectionFromWhitelistAndUpdateBlock called manually"
+
+      let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
+
+      try removeSelectionFromWhitelistAndUpdateBlock(
+        selection: activitySelection, triggeredBy: triggeredBy)
+    }
+
+    Function("addSelectionToWhitelistAndUpdateBlock") {
+      (familyActivitySelection: [String: Any], triggeredBy: String?) throws in
+      let triggeredBy = triggeredBy ?? "addSelectionToWhitelistAndUpdateBlock called manually"
+
+      let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
+
+      try addSelectionToWhitelistAndUpdateBlock(
+        whitelistSelection: activitySelection,
+        triggeredBy: triggeredBy
+      )
+
+      if #available(iOS 15.2, *), activitySelection.includeEntireCategory {
+
+      } else {
+        /*throw Error("Whitelisting a selection without includeEntireCategory can provide inconsistent results");*/
+      }
+    }
+
+    Function("clearWhitelistAndUpdateBlock") {
+      (triggeredBy: String?) in
+      clearWhitelist()
+
+      updateBlock(triggeredBy: triggeredBy ?? "clearWhitelistAndUpdateBlock called manually")
+    }
+
+    Function("clearWhitelist") {
+      clearWhitelist()
     }
 
     AsyncFunction("revokeAuthorization") { () async throws in
@@ -787,15 +839,16 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelectionId") {
         (view: ReactNativeDeviceActivityViewPersisted, prop: String) in
-        let includeEntireCategory = view.model.includeEntireCategory ?? false
-
-        let selection =
-          getFamilyActivitySelectionById(
-            id: prop
-          ) ?? FamilyActivitySelection(includeEntireCategory: includeEntireCategory)
-
-        view.model.activitySelection = selection
         view.model.activitySelectionId = prop
+        if let includeEntireCategory = view.model.includeEntireCategory {
+          let selection =
+            getFamilyActivitySelectionById(
+              id: prop
+            ) ?? FamilyActivitySelection(includeEntireCategory: includeEntireCategory)
+
+          view.model.activitySelection = selection
+
+        }
       }
 
       // note: this property will only have an effect on new selections

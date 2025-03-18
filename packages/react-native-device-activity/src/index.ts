@@ -6,6 +6,9 @@ import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import DeviceActivitySelectionViewPersisted from "./DeviceActivitySelectionViewPersisted";
 import {
   Action,
+  ActivitySelectionInput,
+  ActivitySelectionInputWithBlocks,
+  ActivitySelectionMetadata,
   ActivitySelectionWithMetadata,
   AuthorizationStatus,
   AuthorizationStatusType,
@@ -19,6 +22,7 @@ import {
   DeviceActivitySelectionViewProps,
   EventParsed,
   FamilyActivitySelection,
+  SetOperationOptions,
   ShieldActions,
   ShieldConfiguration,
 } from "./ReactNativeDeviceActivity.types";
@@ -89,6 +93,61 @@ export function userDefaultsClearWithPrefix(prefix: string) {
   return ReactNativeDeviceActivityModule?.userDefaultsClearWithPrefix(prefix);
 }
 
+export function clearWhitelistAndUpdateBlock(triggeredBy?: string) {
+  return ReactNativeDeviceActivityModule?.clearWhitelistAndUpdateBlock(
+    triggeredBy,
+  );
+}
+
+export const clearWhitelist = () => {
+  return ReactNativeDeviceActivityModule?.clearWhitelist();
+};
+
+const handleScreenTimeError = (error: any) => {
+  if (
+    error?.message?.includes("TryingToBlockSelectionWhenBlockModeIsEnabled")
+  ) {
+    console.warn(
+      "Blocking a selection when blockAllMode is enabled will not have any effect",
+    );
+  } else if (
+    error?.message?.includes("WhitelistSelectionWithoutEntireCategoryError")
+  ) {
+    console.warn(
+      "A selection without includeEntireCategory means categories might not be correctly whitelisted, (not supported before iOS 15.2)",
+    );
+  } else {
+    console.warn(error.message);
+  }
+};
+
+export function addSelectionToWhitelistAndUpdateBlock(
+  selection: ActivitySelectionInput,
+  triggeredBy?: string,
+) {
+  try {
+    return ReactNativeDeviceActivityModule?.addSelectionToWhitelistAndUpdateBlock(
+      selection,
+      triggeredBy,
+    );
+  } catch (error) {
+    handleScreenTimeError(error);
+  }
+}
+
+export function removeSelectionFromWhitelistAndUpdateBlock(
+  selection: ActivitySelectionInput,
+  triggeredBy?: string,
+) {
+  try {
+    return ReactNativeDeviceActivityModule?.removeSelectionFromWhitelistAndUpdateBlock(
+      selection,
+      triggeredBy,
+    );
+  } catch (error) {
+    handleScreenTimeError(error);
+  }
+}
 function convertDeviceActivityEvents(
   events: DeviceActivityEvent[],
 ): [DeviceActivityEventRaw[], FamilyActivitySelection[]] {
@@ -141,50 +200,66 @@ export const reloadDeviceActivityCenter = () => {
 };
 
 export const intersection = (
-  familyActivitySelections: FamilyActivitySelection,
-  familyActivitySelections2: FamilyActivitySelection,
+  familyActivitySelections: ActivitySelectionInputWithBlocks,
+  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.intersection(
     familyActivitySelections,
     familyActivitySelections2,
+    options ?? {},
   );
 };
 
 export const union = (
-  familyActivitySelections: FamilyActivitySelection,
-  familyActivitySelections2: FamilyActivitySelection,
+  familyActivitySelections: ActivitySelectionInputWithBlocks,
+  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.union(
     familyActivitySelections,
     familyActivitySelections2,
+    options ?? {},
   );
 };
 
 export const difference = (
-  familyActivitySelections: FamilyActivitySelection,
-  familyActivitySelections2: FamilyActivitySelection,
+  familyActivitySelections: ActivitySelectionInputWithBlocks,
+  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.difference(
     familyActivitySelections,
     familyActivitySelections2,
+    options ?? {},
   );
 };
 
 export const symmetricDifference = (
-  familyActivitySelections: FamilyActivitySelection,
-  familyActivitySelections2: FamilyActivitySelection,
+  familyActivitySelections: ActivitySelectionInputWithBlocks,
+  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.symmetricDifference(
     familyActivitySelections,
     familyActivitySelections2,
+    options ?? {},
   );
 };
 
 export const activitySelectionMetadata = (
-  familyActivitySelectionStr: string,
-): ActivitySelectionWithMetadata | undefined => {
+  activitySelection: ActivitySelectionInputWithBlocks,
+): ActivitySelectionMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.activitySelectionMetadata(
-    familyActivitySelectionStr,
+    activitySelection,
+  );
+};
+
+export const activitySelectionWithMetadata = (
+  activitySelection: ActivitySelectionInputWithBlocks,
+): ActivitySelectionWithMetadata | undefined => {
+  return ReactNativeDeviceActivityModule?.activitySelectionWithMetadata(
+    activitySelection,
   );
 };
 
@@ -338,43 +413,47 @@ export function copyFile(
   );
 }
 
-export function isShieldActiveWithSelection(
-  familyActivitySelectionStr: string,
-): boolean {
-  return (
-    ReactNativeDeviceActivityModule?.isShieldActiveWithSelection(
-      familyActivitySelectionStr,
-    ) ?? false
-  );
-}
-
-export function blockAppsWithSelectionId(
-  familyActivitySelectionId: string,
+export function blockSelection(
+  activitySelection: ActivitySelectionInput,
   triggeredBy?: string,
 ): void {
-  return ReactNativeDeviceActivityModule?.blockAppsWithSelectionId(
-    familyActivitySelectionId,
+  try {
+    return ReactNativeDeviceActivityModule?.blockSelection(
+      activitySelection,
+      triggeredBy,
+    );
+  } catch (error) {
+    handleScreenTimeError(error);
+  }
+}
+
+export function enableBlockAllMode(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.enableBlockAllMode(triggeredBy);
+}
+
+export function disableBlockAllMode(triggeredBy?: string): void {
+  // deprecated, should be renamed to disableBlockAllMode
+  return ReactNativeDeviceActivityModule?.disableBlockAllMode(triggeredBy);
+}
+
+export function clearBlocklistAndUpdateBlock(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.clearBlocklistAndUpdateBlock(
     triggeredBy,
   );
 }
 
-export function blockAllApps(triggeredBy?: string): void {
-  return ReactNativeDeviceActivityModule?.blockAllApps(triggeredBy);
-}
-
-export function unblockAllApps(triggeredBy?: string): void {
-  // deprecated, should be renamed to unblockAllApps
-  return ReactNativeDeviceActivityModule?.unblockApps(triggeredBy);
-}
-
-export function unblockSelectedApps(
-  familyActivitySelectionId: string,
+export function unblockSelection(
+  familyActivitySelection: ActivitySelectionInput,
   triggeredBy?: string,
 ): void {
-  return ReactNativeDeviceActivityModule?.unblockSelectedApps(
-    familyActivitySelectionId,
-    triggeredBy,
-  );
+  try {
+    return ReactNativeDeviceActivityModule?.unblockSelection(
+      familyActivitySelection,
+      triggeredBy,
+    );
+  } catch (error) {
+    handleScreenTimeError(error);
+  }
 }
 
 export function getAuthorizationStatus(): AuthorizationStatusType {
@@ -494,6 +573,42 @@ export function updateShieldWithId(
 ) {
   userDefaultsSet(`shieldConfiguration_${shieldId}`, shieldConfiguration);
   userDefaultsSet(`shieldActions_${shieldId}`, shieldActions);
+}
+
+export function isEqual(
+  a: ActivitySelectionInputWithBlocks,
+  b: ActivitySelectionInputWithBlocks,
+) {
+  const symmetricDifference =
+    ReactNativeDeviceActivityModule?.symmetricDifference(a, b, {
+      stripToken: true,
+    });
+
+  return (
+    symmetricDifference?.applicationCount === 0 &&
+    symmetricDifference?.categoryCount === 0 &&
+    symmetricDifference?.webDomainCount === 0
+  );
+}
+
+export function isSubsetOf(
+  subset: ActivitySelectionInputWithBlocks,
+  superset: ActivitySelectionInputWithBlocks,
+) {
+  const metadata =
+    ReactNativeDeviceActivityModule?.activitySelectionMetadata(superset);
+
+  const intersection = ReactNativeDeviceActivityModule?.intersection(
+    subset,
+    superset,
+    { stripToken: true },
+  );
+
+  return (
+    intersection?.applicationCount === metadata?.applicationCount &&
+    intersection?.categoryCount === metadata?.categoryCount &&
+    intersection?.webDomainCount === metadata?.webDomainCount
+  );
 }
 
 export function isAvailable(): boolean {

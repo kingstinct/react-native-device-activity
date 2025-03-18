@@ -55,6 +55,7 @@ class ReactNativeDeviceActivityViewPersisted: ExpoView {
         selection.applicationTokens.count > 0 || selection.webDomainTokens.count > 0
         || selection.categoryTokens
           .count > 0
+
       if isSelectionNonEmpty {
         setFamilyActivitySelectionById(
           id: activitySelectionId,

@@ -4,8 +4,9 @@ import { PaperProvider, BottomNavigation } from "react-native-paper";
 import { AllTheThings } from "./screens/AllTheThings";
 import { EventsTab } from "./screens/Events";
 import { Settings } from "./screens/Settings";
-import { ShieldTab } from "./screens/ShieldTab";
+import { SetOpsTab } from "./screens/ShieldTab";
 import { SimpleTab } from "./screens/SimpleTab";
+import { WhiteListTab } from "./screens/WhiteList";
 
 export default function App() {
   const [index, setIndex] = React.useState(0);
@@ -18,7 +19,8 @@ export default function App() {
     },
     { key: "events", title: "Events", focusedIcon: "album" },
     { key: "all", title: "All", focusedIcon: "album" },
-    { key: "shield", title: "Shield", focusedIcon: "history" },
+    { key: "shield", title: "Set ops", focusedIcon: "history" },
+    { key: "whitelist", title: "Whitelist", focusedIcon: "history" },
     {
       key: "settings",
       title: "Settings",
@@ -31,7 +33,8 @@ export default function App() {
     activities: SimpleTab,
     events: EventsTab,
     all: AllTheThings,
-    shield: ShieldTab,
+    shield: SetOpsTab,
+    whitelist: WhiteListTab,
     settings: Settings,
   });
 

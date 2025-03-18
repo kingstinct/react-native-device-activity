@@ -26,6 +26,7 @@ export type ActivitySelectionMetadata = {
   applicationCount: number;
   categoryCount: number;
   webDomainCount: number;
+  includeEntireCategory: boolean;
 };
 
 export type ActivitySelectionWithMetadata = {
@@ -35,7 +36,7 @@ export type ActivitySelectionWithMetadata = {
 export type DeviceActivitySelectionEvent = ActivitySelectionWithMetadata;
 
 export type DeviceActivitySelectionViewProps = PropsWithChildren<{
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   onSelectionChange?: (
     selection: NativeSyntheticEvent<DeviceActivitySelectionEvent>,
   ) => void;
@@ -45,7 +46,7 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
 }>;
 
 export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   onSelectionChange?: (
     selection: NativeSyntheticEvent<ActivitySelectionMetadata>,
   ) => void;
@@ -204,19 +205,30 @@ type CommonTypeParams = {
 export type Action =
   | ({
       type: "blockSelection";
-      familyActivitySelectionId: string;
-      shieldId?: string;
+      familyActivitySelection: ActivitySelectionInput;
+      shieldId?: string; // maybe consider moving to its own action
     } & CommonTypeParams)
   | ({
       type: "unblockSelection";
-      familyActivitySelectionId: string;
+      familyActivitySelection: ActivitySelectionInput;
     } & CommonTypeParams)
   | ({
-      type: "unblockAllApps";
+      type: "enableBlockAllMode";
+      shieldId?: string; // maybe consider moving to its own action
     } & CommonTypeParams)
   | ({
-      type: "blockAllApps";
-      shieldId?: string;
+      type: "disableBlockAllMode";
+    } & CommonTypeParams)
+  | ({
+      type: "addSelectionToWhitelist";
+      familyActivitySelection: ActivitySelectionInput;
+    } & CommonTypeParams)
+  | ({
+      type: "removeSelectionFromWhitelist";
+      familyActivitySelection: ActivitySelectionInput;
+    } & CommonTypeParams)
+  | ({
+      type: "clearWhitelist";
     } & CommonTypeParams)
   | ({
       type: "sendNotification";
@@ -271,66 +283,133 @@ export type CallbackName =
   | "eventDidReachThreshold"
   | "eventWillReachThresholdWarning";
 
+export type ActivitySelectionInput =
+  | {
+      activitySelectionId: string;
+      activitySelectionToken?: undefined;
+      currentBlocklist?: undefined;
+      currentWhitelist?: undefined;
+    }
+  | {
+      activitySelectionToken: string;
+      activitySelectionId?: undefined;
+      currentBlocklist?: undefined;
+      currentWhitelist?: undefined;
+    };
+
+export type ActivitySelectionInputWithBlocks =
+  | {
+      currentBlocklist: true;
+      currentWhitelist?: undefined;
+      activitySelectionToken?: undefined;
+      activitySelectionId?: undefined;
+    }
+  | {
+      currentWhitelist: true;
+      currentBlocklist?: undefined;
+      activitySelectionToken?: undefined;
+      activitySelectionId?: undefined;
+    }
+  | ActivitySelectionInput;
+
+export type SetOperationOptions = {
+  stripToken?: boolean;
+  persistAsActivitySelectionId?: string;
+};
+
 export type ReactNativeDeviceActivityNativeModule = {
+  // userDefaults functions
   userDefaultsSet: (dict: any) => void;
   userDefaultsGet: (key: string) => any;
   userDefaultsRemove: (key: string) => void;
-  unblockSelectedApps: (
-    familyActivitySelectionId: string,
-    triggeredBy?: string,
-  ) => void;
   userDefaultsClear: () => void;
-  userDefaultsAll: () => any;
+  userDefaultsAll: () => Record<string, any>;
+  // metadata and set functions
   activitySelectionMetadata: (
-    familyActivitySelectionStr: string,
+    familyActivitySelection: ActivitySelectionInputWithBlocks,
+  ) => ActivitySelectionMetadata;
+  activitySelectionWithMetadata: (
+    familyActivitySelection: ActivitySelectionInputWithBlocks,
+  ) => ActivitySelectionWithMetadata;
+  convertToIncludeCategories: (
+    familyActivitySelection: ActivitySelectionInputWithBlocks,
   ) => ActivitySelectionWithMetadata;
   intersection: (
-    familyActivitySelectionOne: FamilyActivitySelection,
-    familyActivitySelectionTwo: FamilyActivitySelection,
+    familyActivitySelectionOne: ActivitySelectionInputWithBlocks,
+    familyActivitySelectionTwo: ActivitySelectionInputWithBlocks,
+    options: SetOperationOptions,
   ) => ActivitySelectionWithMetadata;
   union: (
-    familyActivitySelectionOne: FamilyActivitySelection,
-    familyActivitySelectionTwo: FamilyActivitySelection,
+    familyActivitySelectionOne: ActivitySelectionInputWithBlocks,
+    familyActivitySelectionTwo: ActivitySelectionInputWithBlocks,
+    options: SetOperationOptions,
   ) => ActivitySelectionWithMetadata;
   difference: (
-    familyActivitySelectionOne: FamilyActivitySelection,
-    familyActivitySelectionTwo: FamilyActivitySelection,
+    familyActivitySelectionOne: ActivitySelectionInputWithBlocks,
+    familyActivitySelectionTwo: ActivitySelectionInputWithBlocks,
+    options: SetOperationOptions,
   ) => ActivitySelectionWithMetadata;
   symmetricDifference: (
-    familyActivitySelectionOne: FamilyActivitySelection,
-    familyActivitySelectionTwo: FamilyActivitySelection,
+    familyActivitySelectionOne: ActivitySelectionInputWithBlocks,
+    familyActivitySelectionTwo: ActivitySelectionInputWithBlocks,
+    options: SetOperationOptions,
   ) => ActivitySelectionWithMetadata;
+
+  renameActivitySelection: (
+    previousFamilyActivitySelectionId: string,
+    newFamilyActivitySelectionId: string,
+  ) => void;
+
+  // auth functions
   requestAuthorization: (
     forIndividualOrChild: "individual" | "child",
-  ) => PromiseLike<void> | void;
-  revokeAuthorization: () => PromiseLike<void> | void;
-  blockApps: (
-    familyActivitySelectionStr?: string,
-    triggeredBy?: string,
-  ) => void;
-  blockAllApps: (triggeredBy?: string) => void;
-  blockAppsWithSelectionId: (
-    familyActivitySelectionId: string,
-    triggeredBy?: string,
-  ) => void;
-  unblockApps: (triggeredBy?: string) => void;
-  unblockAllApps: (triggeredBy?: string) => void;
-  isShieldActive: () => boolean;
-  isShieldActiveWithSelection: (familyActivitySelectionStr: string) => boolean;
-  doesSelectionHaveOverlap: (
-    familyActivitySelections: FamilyActivitySelection[],
-  ) => boolean;
-  getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
-  activities: () => string[];
+  ) => PromiseLike<void>;
+  revokeAuthorization: () => PromiseLike<void>;
   authorizationStatus: () => AuthorizationStatusType;
-  stopMonitoring: (activityNames?: string[]) => void;
+
+  // blocklist functions
+  unblockSelection: (
+    familyActivitySelection: ActivitySelectionInput,
+    triggeredBy?: string,
+  ) => void;
+  blockSelection: (
+    familyActivitySelection: ActivitySelectionInput,
+    triggeredBy?: string,
+  ) => void;
+  enableBlockAllMode: (triggeredBy?: string) => void;
+  // clears the blocklist and removes the shield (does not automatically clear the whitelist)
+  disableBlockAllMode: (triggeredBy?: string) => void;
+
+  clearBlocklistAndUpdateBlock: (triggeredBy?: string) => void;
+
+  removeSelectionFromWhitelistAndUpdateBlock: (
+    familyActivitySelection: ActivitySelectionInput,
+    triggeredBy?: string,
+  ) => void;
+  addSelectionToWhitelistAndUpdateBlock: (
+    familyActivitySelection: ActivitySelectionInput,
+    triggeredBy?: string,
+  ) => void;
+  clearWhitelistAndUpdateBlock: (triggeredBy?: string) => void;
+  clearWhitelist: () => void;
+
+  // reset, reload things
   reloadDeviceActivityCenter: () => void;
+  refreshManagedSettingsStore: () => void;
+  clearAllManagedSettingsStoreSettings: () => void;
+
+  // monitoring
+  stopMonitoring: (activityNames?: string[]) => void;
   startMonitoring: (
     activityName: string,
     deviceActivitySchedule: DeviceActivitySchedule,
     deviceActivityEvents: DeviceActivityEventRaw[],
     uniqueSelections: string[],
   ) => void;
+
+  isShieldActive: () => boolean;
+  getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
+  activities: () => string[];
 };
 
 /**

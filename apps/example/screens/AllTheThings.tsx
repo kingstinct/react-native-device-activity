@@ -3,7 +3,6 @@ import * as Notifications from "expo-notifications";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
-  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,7 +16,6 @@ import {
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
   AuthorizationStatus,
-  DeviceActivityEvent,
   EventParsed,
   UIBlurEffectStyle,
 } from "react-native-device-activity";
@@ -190,8 +188,13 @@ export function AllTheThings() {
 
     if (familyActivitySelection) {
       setIsShieldActiveWithSelection(
-        ReactNativeDeviceActivity.isShieldActiveWithSelection(
-          familyActivitySelection,
+        ReactNativeDeviceActivity.isSubsetOf(
+          {
+            activitySelectionToken: familyActivitySelection,
+          },
+          {
+            currentBlocklist: true,
+          },
         ),
       );
     }
@@ -250,7 +253,7 @@ export function AllTheThings() {
         <Button
           title="Block all apps"
           onPress={async () => {
-            ReactNativeDeviceActivity.blockAllApps();
+            ReactNativeDeviceActivity.enableBlockAllMode();
             refreshIsShieldActive();
           }}
         />
@@ -258,14 +261,16 @@ export function AllTheThings() {
         <Button
           title="Block selected apps"
           onPress={async () => {
-            ReactNativeDeviceActivity.blockAppsWithSelectionId(selectionId);
+            ReactNativeDeviceActivity.blockSelection({
+              activitySelectionId: selectionId,
+            });
             refreshIsShieldActive();
           }}
         />
         <Button
           title="Unblock all apps"
           onPress={async () => {
-            ReactNativeDeviceActivity.unblockAllApps();
+            ReactNativeDeviceActivity.disableBlockAllMode();
             refreshIsShieldActive();
           }}
         />
@@ -273,7 +278,9 @@ export function AllTheThings() {
         <Button
           title="Unblock selected apps"
           onPress={async () => {
-            ReactNativeDeviceActivity.unblockSelectedApps(selectionId);
+            ReactNativeDeviceActivity.unblockSelection({
+              activitySelectionId: selectionId,
+            });
             refreshIsShieldActive();
           }}
         />

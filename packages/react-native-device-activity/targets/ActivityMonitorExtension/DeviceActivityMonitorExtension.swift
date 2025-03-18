@@ -29,36 +29,44 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
 
         sleep(ms: 50)
 
-        blockSelectedApps(
-          blockSelection: activitySelection,
-          triggeredBy: eventKey,
-          blockedFamilyActivitySelectionId: familyActivitySelectionId
-        )
+        do {
+          try blockSelectedApps(
+            blockSelection: activitySelection,
+            triggeredBy: eventKey
+          )
+        } catch {
+
+        }
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
     }
-  } else if type == "unblockSelectedApps" {
+  } else if type == "unblockSelection" {
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
 
-        unblockSelectedApps(
-          unblockSelection: activitySelection,
-          triggeredBy: eventKey
-        )
+        do {
+          try unblockSelection(
+            removeSelection: activitySelection,
+            triggeredBy: eventKey
+          )
+        } catch {
+
+        }
+
         userDefaults?
           .removeObject(
             forKey: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX + "_" + familyActivitySelectionId)
       }
     }
-  } else if type == "unblockAllApps" {
-    unblockAllApps(triggeredBy: eventKey)
+  } else if type == "disableBlockAllMode" {
+    enableBlockAllMode(triggeredBy: eventKey)
   } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
 
     sleep(ms: 1000)
-  } else if type == "blockAllApps" {
+  } else if type == "enableBlockAllMode" {
     updateShield(
       shieldId: action["shieldId"] as? String,
       triggeredBy: eventKey,
@@ -68,7 +76,7 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
     // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
 
-    blockAllApps(triggeredBy: eventKey)
+    enableBlockAllMode(triggeredBy: eventKey)
   } else if type == "sendNotification" {
     if let notification = action["payload"] as? [String: Any] {
       sendNotification(contents: notification, placeholders: placeholders)

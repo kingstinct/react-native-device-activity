@@ -17,7 +17,7 @@ func handleAction(
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
     if type == "unblockAll" {
-      unblockAllApps(triggeredBy: "shieldAction")
+      enableBlockAllMode(triggeredBy: "shieldAction")
     }
 
     let url = configForSelectedAction["url"] as? String
@@ -39,7 +39,7 @@ func handleAction(
     }
 
     if type == "unblockCurrentApp" {
-      let unblockedSelectionStr = userDefaults?.string(forKey: CURRENT_UNBLOCKED_SELECTION)
+      let unblockedSelectionStr = userDefaults?.string(forKey: CURRENT_WHITELIST_KEY)
 
       var selection =
         unblockedSelectionStr != nil
@@ -56,7 +56,7 @@ func handleAction(
 
       let serialized = serializeFamilyActivitySelection(selection: selection)
 
-      userDefaults?.set(serialized, forKey: CURRENT_UNBLOCKED_SELECTION)
+      userDefaults?.set(serialized, forKey: CURRENT_WHITELIST_KEY)
     }
   }
 
