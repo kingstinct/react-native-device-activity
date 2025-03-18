@@ -155,7 +155,7 @@ export type DeviceActivityEvent = {
 export type ShieldActionType =
   | "disableBlockAllMode"
   | "dismiss"
-  | "unblockCurrentApp"
+  | "whitelistCurrentApp"
   | "resetBlocks"
   | "sendNotification"
   | "openApp";

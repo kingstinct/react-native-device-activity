@@ -42,7 +42,7 @@ func handleAction(
       }
     }
 
-    if type == "unblockCurrentApp" {
+    if type == "whitelistCurrentApp" {
       var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {
