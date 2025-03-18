@@ -29,14 +29,10 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
 
         sleep(ms: 50)
 
-        do {
-          try blockSelectedApps(
-            blockSelection: activitySelection,
-            triggeredBy: eventKey
-          )
-        } catch {
-
-        }
+        blockSelectedApps(
+          blockSelection: activitySelection,
+          triggeredBy: eventKey
+        )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
       }
@@ -45,14 +41,10 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
     if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
 
-        do {
-          try unblockSelection(
-            removeSelection: activitySelection,
-            triggeredBy: eventKey
-          )
-        } catch {
-
-        }
+        unblockSelection(
+          removeSelection: activitySelection,
+          triggeredBy: eventKey
+        )
 
         userDefaults?
           .removeObject(
@@ -62,26 +54,18 @@ func executeAction(action: [String: Any], placeholders: [String: String?], event
   } else if type == "addSelectionToWhitelist" {
     if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
       let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
-      do {
-        try addSelectionToWhitelistAndUpdateBlock(
-          whitelistSelection: selection,
-          triggeredBy: eventKey
-        )
-      } catch {
-
-      }
+      addSelectionToWhitelistAndUpdateBlock(
+        whitelistSelection: selection,
+        triggeredBy: eventKey
+      )
     }
   } else if type == "removeSelectionFromWhitelist" {
     if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
       let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
-      do {
-        try removeSelectionFromWhitelistAndUpdateBlock(
-          selection: selection,
-          triggeredBy: eventKey
-        )
-      } catch {
-
-      }
+      removeSelectionFromWhitelistAndUpdateBlock(
+        selection: selection,
+        triggeredBy: eventKey
+      )
     }
   } else if type == "clearWhitelistAndUpdateBlock" {
     clearWhitelist()
