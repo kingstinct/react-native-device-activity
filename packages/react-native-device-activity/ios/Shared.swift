@@ -712,8 +712,9 @@ func isShieldActive() -> Bool {
   let areAnyWebDomainCategoriesShielded =
     shield.webDomainCategories != nil
     && shield.webDomainCategories != ShieldSettings.ActivityCategoryPolicy<WebDomain>.none
-    && shield.applicationCategories
-      != ShieldSettings.ActivityCategoryPolicy<Application>.specific(Set(), except: Set())
+    && shield.webDomainCategories
+      != ShieldSettings.ActivityCategoryPolicy<WebDomain>
+      .specific(Set(), except: Set())
 
   return areAnyApplicationsShielded
     || areAnyWebDomainsShielded
