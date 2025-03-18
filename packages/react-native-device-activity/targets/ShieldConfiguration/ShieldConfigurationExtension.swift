@@ -130,9 +130,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": application.localizedDisplayName,
       "token": "\(application.token!.hashValue)",
       "tokenType": "application",
-      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
         applicationToken: application.token
-      )
+      ).first?.id
     ]
 
     return buildShield(
@@ -154,10 +154,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": application.localizedDisplayName,
       "token": "\(category.token!.hashValue)",
       "tokenType": "application_category",
-      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
-        applicationToken: application.token,
-        categoryToken: category.token
-      )
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
+        applicationToken: application.token
+      ).first?.id
     ]
 
     return buildShield(
@@ -178,9 +177,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": webDomain.domain,
       "token": "\(webDomain.token!.hashValue)",
       "tokenType": "web_domain",
-      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
         webDomainToken: webDomain.token
-      )
+      ).first?.id
     ]
 
     return buildShield(
@@ -202,10 +201,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "applicationOrDomainDisplayName": webDomain.domain,
       "token": "\(category.token!.hashValue)",
       "tokenType": "web_domain_category",
-      "familyActivitySelectionId": getPossibleFamilyActivitySelectionId(
-        webDomainToken: webDomain.token,
-        categoryToken: category.token
-      )
+      "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
+        webDomainToken: webDomain.token
+      ).first?.id
     ]
 
     return buildShield(

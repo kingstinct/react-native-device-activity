@@ -12,12 +12,40 @@ import UIKit
 func handleAction(
   configForSelectedAction: [String: Any],
   applicationToken: ApplicationToken?,
-  webdomainToken: WebDomainToken?
+  webdomainToken: WebDomainToken?,
+  categoryToken: ActivityCategoryToken?
 ) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
+    }
+
+    if type == "unblockPossibleFamilyActivitySelection" {
+      if let possibleFamilyActivitySelectionId = getPossibleFamilyActivitySelectionIds(
+        applicationToken: applicationToken,
+        webDomainToken: webdomainToken,
+        categoryToken: categoryToken
+      ).last?.id {
+        if let selection = getFamilyActivitySelectionById(id: possibleFamilyActivitySelectionId) {
+          unblockSelection(removeSelection: selection, triggeredBy: "shieldAction")
+        }
+      }
+    }
+
+    if type == "unblockAllPossibleFamilyActivitySelections" {
+      let possibleFamilyActivitySelections = getPossibleFamilyActivitySelectionIds(
+        applicationToken: applicationToken,
+        webDomainToken: webdomainToken,
+        categoryToken: categoryToken
+      )
+
+      for selection in possibleFamilyActivitySelections {
+        unblockSelection(
+          removeSelection: selection.selection,
+          triggeredBy: "shieldAction"
+        )
+      }
     }
 
     if type == "resetBlocks" {
@@ -70,7 +98,8 @@ func handleAction(
   action: ShieldAction,
   completionHandler: @escaping (ShieldActionResponse) -> Void,
   applicationToken: ApplicationToken?,
-  webdomainToken: WebDomainToken?
+  webdomainToken: WebDomainToken?,
+  categoryToken: ActivityCategoryToken?
 ) {
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
@@ -85,7 +114,8 @@ func handleAction(
       let response = handleAction(
         configForSelectedAction: configForSelectedAction,
         applicationToken: applicationToken,
-        webdomainToken: webdomainToken
+        webdomainToken: webdomainToken,
+        categoryToken: categoryToken
       )
       if let delay = configForSelectedAction["delay"] as? Double {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
@@ -116,7 +146,8 @@ class ShieldActionExtension: ShieldActionDelegate {
       action: action,
       completionHandler: completionHandler,
       applicationToken: application,
-      webdomainToken: nil
+      webdomainToken: nil,
+      categoryToken: nil
     )
   }
 
@@ -130,7 +161,8 @@ class ShieldActionExtension: ShieldActionDelegate {
       action: action,
       completionHandler: completionHandler,
       applicationToken: nil,
-      webdomainToken: webDomain
+      webdomainToken: webDomain,
+      categoryToken: nil
     )
   }
 
@@ -144,7 +176,8 @@ class ShieldActionExtension: ShieldActionDelegate {
       action: action,
       completionHandler: completionHandler,
       applicationToken: nil,
-      webdomainToken: nil
+      webdomainToken: nil,
+      categoryToken: category
     )
   }
 }

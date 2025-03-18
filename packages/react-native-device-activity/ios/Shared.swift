@@ -437,14 +437,14 @@ func getActivitySelectionPrefixedConfigFromUserDefaults(
 }
 
 @available(iOS 15.0, *)
-func getPossibleFamilyActivitySelectionId(
+func getPossibleFamilyActivitySelectionIds(
   applicationToken: ApplicationToken? = nil,
   webDomainToken: WebDomainToken? = nil,
   categoryToken: ActivityCategoryToken? = nil
-) -> String? {
+) -> [FamilyActivitySelectionWithId] {
   let familyActivitySelectionIds = getFamilyActivitySelectionIds()
 
-  let foundIt = familyActivitySelectionIds.first(where: { (activitySelection) in
+  let ids = familyActivitySelectionIds.filter({ (activitySelection) in
     if let applicationToken = applicationToken {
       if activitySelection.selection.applicationTokens.contains(applicationToken) {
         return true
@@ -466,7 +466,7 @@ func getPossibleFamilyActivitySelectionId(
     return false
   })
 
-  return foundIt?.id
+  return ids
 }
 
 @available(iOS 15.0, *)
@@ -777,7 +777,7 @@ func saveCurrentWhitelist(whitelist: FamilyActivitySelection) {
 func addSelectionToWhitelistAndUpdateBlock(
   whitelistSelection: FamilyActivitySelection,
   triggeredBy: String
-) throws {
+) {
   let currentWhitelist = getCurrentWhitelist()
 
   let updatedWhitelist = union(whitelistSelection, currentWhitelist)
@@ -785,14 +785,6 @@ func addSelectionToWhitelistAndUpdateBlock(
   saveCurrentWhitelist(whitelist: updatedWhitelist)
 
   updateBlock(triggeredBy: triggeredBy)
-
-  if #available(iOS 15.2, *) {
-    if !whitelistSelection.includeEntireCategory {
-      throw WhitelistSelectionWithoutEntireCategoryError()
-    }
-  } else {
-    throw WhitelistSelectionWithoutEntireCategoryError()
-  }
 }
 
 struct WhitelistSelectionWithoutEntireCategoryError: Error {
@@ -807,7 +799,7 @@ struct TryingToBlockSelectionWhenBlockModeIsEnabledError: Error {
 func removeSelectionFromWhitelistAndUpdateBlock(
   selection: FamilyActivitySelection,
   triggeredBy: String
-) throws {
+) {
   let currentWhitelist = getCurrentWhitelist()
 
   let updatedWhitelist = difference(currentWhitelist, selection)
@@ -815,21 +807,13 @@ func removeSelectionFromWhitelistAndUpdateBlock(
   saveCurrentWhitelist(whitelist: updatedWhitelist)
 
   updateBlock(triggeredBy: triggeredBy)
-
-  if #available(iOS 15.2, *) {
-    if !selection.includeEntireCategory {
-      throw WhitelistSelectionWithoutEntireCategoryError()
-    }
-  } else {
-    throw WhitelistSelectionWithoutEntireCategoryError()
-  }
 }
 
 @available(iOS 15.0, *)
 func blockSelectedApps(
   blockSelection: FamilyActivitySelection,
   triggeredBy: String
-) throws {
+) {
   let currentBlocklist = getCurrentBlocklist()
 
   let updatedBlocklist = union(blockSelection, currentBlocklist)
@@ -837,12 +821,6 @@ func blockSelectedApps(
   saveCurrentBlocklist(blocklist: updatedBlocklist)
 
   updateBlock(triggeredBy: triggeredBy)
-
-  let blockingAllModeEnabled = isBlockingAllModeEnabled()
-
-  if blockingAllModeEnabled {
-    throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
-  }
 }
 
 @available(iOS 15.0, *)
@@ -916,7 +894,7 @@ func updateBlockInternal(
 func unblockSelection(
   removeSelection: FamilyActivitySelection,
   triggeredBy: String
-) throws {
+) {
   let currentBlocklist = getCurrentBlocklist()
 
   let updatedBlocklist = difference(currentBlocklist, removeSelection)
@@ -924,12 +902,6 @@ func unblockSelection(
   saveCurrentBlocklist(blocklist: updatedBlocklist)
 
   updateBlock(triggeredBy: triggeredBy)
-
-  let blockingAllModeEnabled = isBlockingAllModeEnabled()
-
-  if blockingAllModeEnabled {
-    throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
-  }
 }
 
 func getColor(color: [String: Double]?) -> UIColor? {

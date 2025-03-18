@@ -429,8 +429,12 @@ public class ReactNativeDeviceActivityModule: Module {
         input: familyActivitySelection
       )
 
-      do {
-        try unblockSelection(removeSelection: activitySelection, triggeredBy: triggeredBy)
+      unblockSelection(removeSelection: activitySelection, triggeredBy: triggeredBy)
+
+      let blockingAllModeEnabled = isBlockingAllModeEnabled()
+
+      if blockingAllModeEnabled {
+        throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
       }
     }
 
@@ -689,6 +693,12 @@ public class ReactNativeDeviceActivityModule: Module {
         blockSelection: activitySelection,
         triggeredBy: triggeredBy
       )
+
+      let blockingAllModeEnabled = isBlockingAllModeEnabled()
+
+      if blockingAllModeEnabled {
+        throw TryingToBlockSelectionWhenBlockModeIsEnabledError()
+      }
     }
 
     Function("resetBlocks") { (triggeredBy: String?) in
@@ -719,8 +729,16 @@ public class ReactNativeDeviceActivityModule: Module {
 
       let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
 
-      try removeSelectionFromWhitelistAndUpdateBlock(
+      removeSelectionFromWhitelistAndUpdateBlock(
         selection: activitySelection, triggeredBy: triggeredBy)
+
+      if #available(iOS 15.2, *) {
+        if !whitelistSelection.includeEntireCategory {
+          throw WhitelistSelectionWithoutEntireCategoryError()
+        }
+      } else {
+        throw WhitelistSelectionWithoutEntireCategoryError()
+      }
     }
 
     Function("addSelectionToWhitelistAndUpdateBlock") {
@@ -729,15 +747,17 @@ public class ReactNativeDeviceActivityModule: Module {
 
       let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
 
-      try addSelectionToWhitelistAndUpdateBlock(
+      addSelectionToWhitelistAndUpdateBlock(
         whitelistSelection: activitySelection,
         triggeredBy: triggeredBy
       )
 
-      if #available(iOS 15.2, *), activitySelection.includeEntireCategory {
-
+      if #available(iOS 15.2, *) {
+        if !activitySelection.includeEntireCategory {
+          throw WhitelistSelectionWithoutEntireCategoryError()
+        }
       } else {
-        /*throw Error("Whitelisting a selection without includeEntireCategory can provide inconsistent results");*/
+        throw WhitelistSelectionWithoutEntireCategoryError()
       }
     }
 
