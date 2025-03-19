@@ -271,8 +271,6 @@ public class ReactNativeDeviceActivityModule: Module {
     // The module will be accessible from `requireNativeModule('ReactNativeDeviceActivity')` in JavaScript.
     Name("ReactNativeDeviceActivity")
 
-    var center = DeviceActivityCenter()
-
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants([
       "PI": Double.pi

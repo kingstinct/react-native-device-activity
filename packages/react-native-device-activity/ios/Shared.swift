@@ -5,6 +5,7 @@
 //  Created by Robert Herber on 2024-11-07.
 //
 
+import DeviceActivity
 import FamilyControls
 import Foundation
 import ManagedSettings
@@ -437,14 +438,30 @@ func getActivitySelectionPrefixedConfigFromUserDefaults(
 }
 
 @available(iOS 15.0, *)
+var center = DeviceActivityCenter()
+
+@available(iOS 15.0, *)
 func getPossibleFamilyActivitySelectionIds(
   applicationToken: ApplicationToken? = nil,
   webDomainToken: WebDomainToken? = nil,
-  categoryToken: ActivityCategoryToken? = nil
+  categoryToken: ActivityCategoryToken? = nil,
+  onlyFamilySelectionIdsContainingMonitoredActivityNames: Bool = true
 ) -> [FamilyActivitySelectionWithId] {
   let familyActivitySelectionIds = getFamilyActivitySelectionIds()
+  let monitoredActivities =
+    onlyFamilySelectionIdsContainingMonitoredActivityNames ? center.activities : []
 
   let ids = familyActivitySelectionIds.filter({ (activitySelection) in
+    if onlyFamilySelectionIdsContainingMonitoredActivityNames {
+      let isActivityMonitored = monitoredActivities.contains(where: {
+        return $0.self.rawValue.contains(activitySelection.id)
+      })
+
+      if !isActivityMonitored {
+        return false
+      }
+    }
+
     if let applicationToken = applicationToken {
       if activitySelection.selection.applicationTokens.contains(applicationToken) {
         return true

@@ -126,6 +126,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   override func configuration(shielding application: Application) -> ShieldConfiguration {
     // Customize the shield as needed for applications.
 
+    let config = getActivitySelectionPrefixedConfigFromUserDefaults(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      defaultKey: SHIELD_CONFIGURATION_KEY,
+      applicationToken: application.token
+    )
+
     let placeholders: [String: String?] = [
       "applicationOrDomainDisplayName": application.localizedDisplayName,
       "token": "\(application.token!.hashValue)",
@@ -137,11 +143,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     return buildShield(
       placeholders: placeholders,
-      config: getActivitySelectionPrefixedConfigFromUserDefaults(
-        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-        defaultKey: SHIELD_CONFIGURATION_KEY,
-        applicationToken: application.token
-      )
+      config: config
     )
   }
 
@@ -149,6 +151,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     -> ShieldConfiguration {
 
     logger.log("shielding application category")
+
+    let config = getActivitySelectionPrefixedConfigFromUserDefaults(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      defaultKey: SHIELD_CONFIGURATION_KEY,
+      applicationToken: application.token
+    )
 
     let placeholders = [
       "applicationOrDomainDisplayName": application.localizedDisplayName,
@@ -161,17 +169,18 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     return buildShield(
       placeholders: placeholders,
-      config: getActivitySelectionPrefixedConfigFromUserDefaults(
-        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-        defaultKey: SHIELD_CONFIGURATION_KEY,
-        applicationToken: application.token,
-        categoryToken: category.token
-      )
+      config: config
     )
   }
 
   override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
     logger.log("shielding web domain")
+
+    let config = getActivitySelectionPrefixedConfigFromUserDefaults(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      defaultKey: SHIELD_CONFIGURATION_KEY,
+      webDomainToken: webDomain.token
+    )
 
     let placeholders = [
       "applicationOrDomainDisplayName": webDomain.domain,
@@ -184,11 +193,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     return buildShield(
       placeholders: placeholders,
-      config: getActivitySelectionPrefixedConfigFromUserDefaults(
-        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-        defaultKey: SHIELD_CONFIGURATION_KEY,
-        webDomainToken: webDomain.token
-      )
+      config: config
     )
   }
 
@@ -196,6 +201,13 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     -> ShieldConfiguration {
 
     logger.log("shielding web domain category")
+
+    let config = getActivitySelectionPrefixedConfigFromUserDefaults(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      defaultKey: SHIELD_CONFIGURATION_KEY,
+      webDomainToken: webDomain.token,
+      categoryToken: category.token
+    )
 
     let placeholders = [
       "applicationOrDomainDisplayName": webDomain.domain,
@@ -208,12 +220,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     return buildShield(
       placeholders: placeholders,
-      config: getActivitySelectionPrefixedConfigFromUserDefaults(
-        keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-        defaultKey: SHIELD_CONFIGURATION_KEY,
-        webDomainToken: webDomain.token,
-        categoryToken: category.token
-      )
+      config: config
     )
   }
 }

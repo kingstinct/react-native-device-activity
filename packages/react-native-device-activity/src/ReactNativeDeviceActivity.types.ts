@@ -170,6 +170,10 @@ export type ShieldAction = {
   type: ShieldActionType;
   delay?: number;
   payload?: NotificationPayload;
+  /**
+   * defaults to true
+   */
+  onlyFamilySelectionIdsContainingMonitoredActivityNames?: boolean;
   behavior: "close" | "defer";
 };
 

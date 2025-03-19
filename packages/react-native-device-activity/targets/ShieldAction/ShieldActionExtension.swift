@@ -16,6 +16,9 @@ func handleAction(
   categoryToken: ActivityCategoryToken?
 ) -> ShieldActionResponse {
   logger.log("handleAction")
+  let onlyFamilySelectionIdsContainingMonitoredActivityNames =
+    configForSelectedAction["onlyFamilySelectionIdsContainingMonitoredActivityNames"] as? Bool
+    ?? true
   if let type = configForSelectedAction["type"] as? String {
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
@@ -25,7 +28,9 @@ func handleAction(
       if let possibleFamilyActivitySelectionId = getPossibleFamilyActivitySelectionIds(
         applicationToken: applicationToken,
         webDomainToken: webdomainToken,
-        categoryToken: categoryToken
+        categoryToken: categoryToken,
+        onlyFamilySelectionIdsContainingMonitoredActivityNames:
+          onlyFamilySelectionIdsContainingMonitoredActivityNames
       ).last?.id {
         if let selection = getFamilyActivitySelectionById(id: possibleFamilyActivitySelectionId) {
           unblockSelection(removeSelection: selection, triggeredBy: "shieldAction")
@@ -37,7 +42,9 @@ func handleAction(
       let possibleFamilyActivitySelections = getPossibleFamilyActivitySelectionIds(
         applicationToken: applicationToken,
         webDomainToken: webdomainToken,
-        categoryToken: categoryToken
+        categoryToken: categoryToken,
+        onlyFamilySelectionIdsContainingMonitoredActivityNames:
+          onlyFamilySelectionIdsContainingMonitoredActivityNames
       )
 
       for selection in possibleFamilyActivitySelections {
