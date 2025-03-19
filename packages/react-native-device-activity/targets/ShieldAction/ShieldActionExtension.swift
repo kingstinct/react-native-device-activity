@@ -16,13 +16,16 @@ func handleAction(
   categoryToken: ActivityCategoryToken?
 ) -> ShieldActionResponse {
   logger.log("handleAction")
-  let onlyFamilySelectionIdsContainingMonitoredActivityNames =
-    configForSelectedAction["onlyFamilySelectionIdsContainingMonitoredActivityNames"] as? Bool
-    ?? true
   if let type = configForSelectedAction["type"] as? String {
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
     }
+
+    let onlyFamilySelectionIdsContainingMonitoredActivityNames =
+      configForSelectedAction["onlyFamilySelectionIdsContainingMonitoredActivityNames"] as? Bool
+      ?? true
+
+    let sortByGranularity = true
 
     if type == "unblockPossibleFamilyActivitySelection" {
       if let possibleFamilyActivitySelectionId = getPossibleFamilyActivitySelectionIds(
@@ -30,8 +33,9 @@ func handleAction(
         webDomainToken: webdomainToken,
         categoryToken: categoryToken,
         onlyFamilySelectionIdsContainingMonitoredActivityNames:
-          onlyFamilySelectionIdsContainingMonitoredActivityNames
-      ).last?.id {
+          onlyFamilySelectionIdsContainingMonitoredActivityNames,
+        sortByGranularity: sortByGranularity
+      ).first?.id {
         if let selection = getFamilyActivitySelectionById(id: possibleFamilyActivitySelectionId) {
           unblockSelection(removeSelection: selection, triggeredBy: "shieldAction")
         }
@@ -44,7 +48,8 @@ func handleAction(
         webDomainToken: webdomainToken,
         categoryToken: categoryToken,
         onlyFamilySelectionIdsContainingMonitoredActivityNames:
-          onlyFamilySelectionIdsContainingMonitoredActivityNames
+          onlyFamilySelectionIdsContainingMonitoredActivityNames,
+        sortByGranularity: sortByGranularity
       )
 
       for selection in possibleFamilyActivitySelections {
@@ -61,8 +66,9 @@ func handleAction(
         webDomainToken: webdomainToken,
         categoryToken: categoryToken,
         onlyFamilySelectionIdsContainingMonitoredActivityNames:
-          onlyFamilySelectionIdsContainingMonitoredActivityNames
-      ).last?.id {
+          onlyFamilySelectionIdsContainingMonitoredActivityNames,
+        sortByGranularity: sortByGranularity
+      ).first?.id {
         if let selection = getFamilyActivitySelectionById(id: possibleFamilyActivitySelectionId) {
           addSelectionToWhitelistAndUpdateBlock(
             whitelistSelection: selection,
@@ -78,7 +84,8 @@ func handleAction(
         webDomainToken: webdomainToken,
         categoryToken: categoryToken,
         onlyFamilySelectionIdsContainingMonitoredActivityNames:
-          onlyFamilySelectionIdsContainingMonitoredActivityNames
+          onlyFamilySelectionIdsContainingMonitoredActivityNames,
+        sortByGranularity: sortByGranularity
       )
 
       for selection in possibleFamilyActivitySelections {

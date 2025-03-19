@@ -237,6 +237,37 @@ struct FamilyActivitySelectionWithId {
   var id: String
 }
 
+@available(iOS 15.0, *)
+struct FamilyActivitySelectionWithIdWithMatching {
+  init(
+    selection: FamilyActivitySelection,
+    id: String,
+    granularMatch: Bool,
+    match: Bool
+  ) {
+    self.selection = selection
+    self.id = id
+    self.granularMatch = granularMatch
+    self.match = match
+  }
+
+  init(
+    selection: FamilyActivitySelectionWithId, granularMatch: Bool,
+    match: Bool
+  ) {
+    self.selection = selection.selection
+    self.id = selection.id
+    self.granularMatch = granularMatch
+    self.match = match
+  }
+
+  var selection: FamilyActivitySelection
+  var id: String
+  // indicates that the match is directly on the webDomain or application
+  var granularMatch: Bool
+  var match: Bool
+}
+
 struct TextToReplaceWithOptionalSpecialTreatment {
   var textToReplace: String
   var specialTreatment: String?
@@ -445,45 +476,76 @@ func getPossibleFamilyActivitySelectionIds(
   applicationToken: ApplicationToken? = nil,
   webDomainToken: WebDomainToken? = nil,
   categoryToken: ActivityCategoryToken? = nil,
-  onlyFamilySelectionIdsContainingMonitoredActivityNames: Bool = true
-) -> [FamilyActivitySelectionWithId] {
+  onlyFamilySelectionIdsContainingMonitoredActivityNames: Bool = true,
+  sortByGranularity: Bool = true
+) -> [FamilyActivitySelectionWithIdWithMatching] {
   let familyActivitySelectionIds = getFamilyActivitySelectionIds()
   let monitoredActivities =
     onlyFamilySelectionIdsContainingMonitoredActivityNames ? center.activities : []
 
-  let ids = familyActivitySelectionIds.filter({ (activitySelection) in
+  let idsWithMatchings = familyActivitySelectionIds.map({ (activitySelection) in
     if onlyFamilySelectionIdsContainingMonitoredActivityNames {
       let isActivityMonitored = monitoredActivities.contains(where: {
         return $0.self.rawValue.contains(activitySelection.id)
       })
 
       if !isActivityMonitored {
-        return false
+        return FamilyActivitySelectionWithIdWithMatching(
+          selection: activitySelection,
+          granularMatch: false,
+          match: false
+        )
       }
     }
 
     if let applicationToken = applicationToken {
       if activitySelection.selection.applicationTokens.contains(applicationToken) {
-        return true
+        return FamilyActivitySelectionWithIdWithMatching(
+          selection: activitySelection,
+          granularMatch: true,
+          match: true
+        )
       }
     }
 
     if let webDomainToken = webDomainToken {
       if activitySelection.selection.webDomainTokens.contains(webDomainToken) {
-        return true
+        return FamilyActivitySelectionWithIdWithMatching(
+          selection: activitySelection,
+          granularMatch: true,
+          match: true
+        )
       }
     }
 
     if let categoryToken = categoryToken {
       if activitySelection.selection.categoryTokens.contains(categoryToken) {
-        return true
+        return FamilyActivitySelectionWithIdWithMatching(
+          selection: activitySelection,
+          granularMatch: false,
+          match: true
+        )
       }
     }
 
-    return false
+    return FamilyActivitySelectionWithIdWithMatching(
+      selection: activitySelection,
+      granularMatch: false,
+      match: false
+    )
   })
 
-  return ids
+  let ids = idsWithMatchings.filter({ (activitySelection) in
+    return activitySelection.match
+  })
+
+  return ids.sorted {
+    (
+      selection1: FamilyActivitySelectionWithIdWithMatching,
+      selection2: FamilyActivitySelectionWithIdWithMatching
+    ) in
+    return selection1.granularMatch && !selection2.granularMatch
+  }
 }
 
 @available(iOS 15.0, *)
