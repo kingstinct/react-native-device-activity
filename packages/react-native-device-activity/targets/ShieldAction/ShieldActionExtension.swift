@@ -55,6 +55,40 @@ func handleAction(
       }
     }
 
+    if type == "whitelistPossibleFamilyActivitySelection" {
+      if let possibleFamilyActivitySelectionId = getPossibleFamilyActivitySelectionIds(
+        applicationToken: applicationToken,
+        webDomainToken: webdomainToken,
+        categoryToken: categoryToken,
+        onlyFamilySelectionIdsContainingMonitoredActivityNames:
+          onlyFamilySelectionIdsContainingMonitoredActivityNames
+      ).last?.id {
+        if let selection = getFamilyActivitySelectionById(id: possibleFamilyActivitySelectionId) {
+          addSelectionToWhitelistAndUpdateBlock(
+            whitelistSelection: selection,
+            triggeredBy: "shieldAction"
+          )
+        }
+      }
+    }
+
+    if type == "whitelistAllPossibleFamilyActivitySelections" {
+      let possibleFamilyActivitySelections = getPossibleFamilyActivitySelectionIds(
+        applicationToken: applicationToken,
+        webDomainToken: webdomainToken,
+        categoryToken: categoryToken,
+        onlyFamilySelectionIdsContainingMonitoredActivityNames:
+          onlyFamilySelectionIdsContainingMonitoredActivityNames
+      )
+
+      for selection in possibleFamilyActivitySelections {
+        addSelectionToWhitelistAndUpdateBlock(
+          whitelistSelection: selection.selection,
+          triggeredBy: "shieldAction"
+        )
+      }
+    }
+
     if type == "resetBlocks" {
       resetBlocks(triggeredBy: "shieldAction")
     }

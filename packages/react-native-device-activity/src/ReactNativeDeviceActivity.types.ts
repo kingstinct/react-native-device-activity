@@ -162,6 +162,8 @@ export type ShieldActionType =
   | "whitelistCurrentApp"
   | "unblockPossibleFamilyActivitySelection"
   | "unblockAllPossibleFamilyActivitySelections"
+  | "whitelistPossibleFamilyActivitySelection"
+  | "whitelistAllPossibleFamilyActivitySelections"
   | "resetBlocks"
   | "sendNotification"
   | "openApp";
