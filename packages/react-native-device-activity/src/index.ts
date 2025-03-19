@@ -602,7 +602,7 @@ export function isSubsetOf(
   superset: ActivitySelectionInputWithBlocks,
 ) {
   const metadata =
-    ReactNativeDeviceActivityModule?.activitySelectionMetadata(superset);
+    ReactNativeDeviceActivityModule?.activitySelectionMetadata(subset);
 
   const intersection = ReactNativeDeviceActivityModule?.intersection(
     subset,
