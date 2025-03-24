@@ -1,6 +1,6 @@
 {
   "name": "react-native-device-activity-mono",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Provides access to Apples DeviceActivity API",
   "scripts": {
@@ -10,7 +10,10 @@
     "prepare": "husky",
     "nail-workspace-dependency-versions": "bun run scripts/nail-workspace-dependency-versions.ts"
   },
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "keywords": [
     "react-native",
     "expo",
