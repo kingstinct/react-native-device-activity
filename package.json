@@ -7,7 +7,8 @@
     "lint": "eslint .",
     "pre-push": "bun run typecheck && bun run lint && apps/example/ios/Pods/SwiftLint/swiftlint lint --strict",
     "typecheck": "cd packages/react-native-device-activity && bun run typecheck && cd ../../apps/example && bun run typecheck",
-    "prepare": "husky"
+    "prepare": "husky",
+    "nail-workspace-dependency-versions": "bun run scripts/nail-workspace-dependency-versions.ts"
   },
   "workspaces": ["packages/*", "apps/*"],
   "keywords": [
