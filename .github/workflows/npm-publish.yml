@@ -66,6 +66,10 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
 
+      - run: git add packages/react-native-device-activity/package.json
+
+      - run: git commit -m "chore: update version"
+
       - run: npm publish
         working-directory: packages/react-native-device-activity
 
