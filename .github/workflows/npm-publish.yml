@@ -55,26 +55,12 @@ jobs:
 
       - run: bun install
 
-      - name: Configure NPM
+      - name: Setup NPM Authentication
         run: |
-          cd packages/react-native-device-activity
-          npm config set registry https://registry.npmjs.org/
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          
-      - name: Debug NPM Token
-        run: |
-          if [ -n "$NODE_AUTH_TOKEN" ]; then
-            echo "NPM token is set"
-          else
-            echo "NPM token is not set"
-          fi
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
 
       - run: npm publish
         working-directory: packages/react-native-device-activity
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - run: git push --follow-tags
         env:
