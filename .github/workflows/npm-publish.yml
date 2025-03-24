@@ -56,8 +56,10 @@ jobs:
 
       - run: bun run nail-workspace-dependency-versions
 
+      - run: npm version ${{ github.event.inputs.release_type }}
+        working-directory: packages/react-native-device-activity
+
       - run: |
-          npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"
           VERSION=$(node -p "require('./package.json').version")
           echo "versionTag=v${VERSION}" >> $GITHUB_ENV
         working-directory: packages/react-native-device-activity
@@ -68,7 +70,8 @@ jobs:
 
       - run: git add packages/react-native-device-activity/package.json
 
-      - run: git commit -m "chore: update version"
+      - run: |
+          git commit -m 'chore: update version'
 
       - run: npm publish
         working-directory: packages/react-native-device-activity
