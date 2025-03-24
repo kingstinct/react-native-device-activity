@@ -56,11 +56,6 @@ jobs:
 
       - run: echo "versionTag=$(npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}")" >> $GITHUB_ENV
 
-      # The error occurs because YAML is interpreting the -am flag as a nested mapping
-      # We can fix this by using the | multi-line syntax for the command
-      - run: |
-          git commit -am "chore: update version"
-
       - run: bun install
 
       - name: Setup NPM Authentication
