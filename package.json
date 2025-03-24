@@ -18,7 +18,7 @@
     "screen-time"
   ],
   "repository": {
-    "url": "https://github.com/kingstinct/react-native-device-activity"
+    "url": "git+https://github.com/kingstinct/react-native-device-activity.git"
   },
   "bugs": {
     "url": "https://github.com/kingstinct/react-native-device-activity/issues"
