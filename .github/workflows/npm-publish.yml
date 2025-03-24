@@ -62,6 +62,8 @@ jobs:
           else
             echo "NPM token is not set"
           fi
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - run: npm publish
         env:
