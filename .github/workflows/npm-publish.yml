@@ -55,6 +55,14 @@ jobs:
 
       - run: bun install
 
+      - name: Debug NPM Token
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM token is set"
+          else
+            echo "NPM token is not set"
+          fi
+
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
