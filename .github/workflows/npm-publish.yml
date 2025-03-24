@@ -71,7 +71,7 @@ jobs:
       - run: git add packages/react-native-device-activity/package.json
 
       - run: |
-          git commit -m 'chore: update version'
+          git commit -m 'chore: update version' --no-verify
 
       - run: npm publish
         working-directory: packages/react-native-device-activity
