@@ -52,9 +52,8 @@ jobs:
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
-      - run: npm version ${{ github.event.inputs.release_type }}
-
       - run: echo "versionTag=$(npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}")" >> $GITHUB_ENV
+        working-directory: packages/react-native-device-activity
 
       - run: bun install
 
