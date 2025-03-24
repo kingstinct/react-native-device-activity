@@ -69,7 +69,9 @@ jobs:
       - run: npm publish
         working-directory: packages/react-native-device-activity
 
-      - run: git push --follow-tags --no-verify
+      - run: |
+          git push origin HEAD --no-verify
+          git push origin --tags --no-verify
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
