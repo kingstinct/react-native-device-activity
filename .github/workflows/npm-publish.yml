@@ -66,6 +66,7 @@ jobs:
           NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - run: npm publish
+        working-directory: packages/react-native-device-activity
         env:
           NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
