@@ -54,7 +54,7 @@ jobs:
 
       - run: bun install
 
-      - run: echo "versionTag=$(npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}")" >> $GITHUB_ENV
+      - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
         working-directory: packages/react-native-device-activity
 
       - name: Setup NPM Authentication
