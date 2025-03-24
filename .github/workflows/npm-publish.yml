@@ -51,7 +51,12 @@ jobs:
 
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
+
+      - run: npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"
+
       - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
+
+      - run: git commit -am "chore: update version"
 
       - run: bun install
 
