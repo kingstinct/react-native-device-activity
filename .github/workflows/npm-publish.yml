@@ -45,6 +45,10 @@ jobs:
       
       - uses: actions/setup-node@v4
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
       - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
