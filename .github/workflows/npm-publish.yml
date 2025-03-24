@@ -56,7 +56,9 @@ jobs:
 
       - run: bun run nail-workspace-dependency-versions
 
-      - run: echo "versionTag=$(npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}")" >> $GITHUB_ENV
+      - run: |
+          VERSION=$(npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}")
+          echo "versionTag=${VERSION}" >> $GITHUB_ENV
         working-directory: packages/react-native-device-activity
 
       - name: Setup NPM Authentication
