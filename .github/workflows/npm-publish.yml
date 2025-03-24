@@ -70,6 +70,9 @@ jobs:
         working-directory: packages/react-native-device-activity
 
       - run: |
+          git status
+          git branch -a
+          git log -1
           git push origin HEAD --no-verify
           git push origin --tags --no-verify
         env:
