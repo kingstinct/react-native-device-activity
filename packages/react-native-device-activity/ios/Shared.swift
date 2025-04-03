@@ -13,7 +13,7 @@ import UIKit
 import WebKit
 import os
 
-let SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
+let FALLBACK_SHIELD_CONFIGURATION_KEY = "shieldConfiguration"
 let SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX = "shieldConfigurationForSelection"
 let SHIELD_ACTIONS_FOR_SELECTION_PREFIX = "shieldActionsForSelection"
 let SHIELD_ACTIONS_KEY = "shieldActions"
@@ -44,7 +44,7 @@ func updateShield(shieldId: String?, triggeredBy: String?, activitySelectionId: 
     shieldConfiguration["updatedAt"] = Date().ISO8601Format()
 
     // update default shield
-    userDefaults?.set(shieldConfiguration, forKey: SHIELD_CONFIGURATION_KEY)
+    userDefaults?.set(shieldConfiguration, forKey: FALLBACK_SHIELD_CONFIGURATION_KEY)
     if let activitySelectionId = activitySelectionId {
       userDefaults?.set(
         shieldConfiguration,
@@ -420,13 +420,12 @@ func renameFamilyActivitySelectionId(previousId: String, newId: String) {
 }
 
 @available(iOS 15.0, *)
-func getActivitySelectionPrefixedConfigFromUserDefaults(
+func tryGetActivitySelectionIdConfigKey(
   keyPrefix: String,
-  defaultKey: String,
   applicationToken: ApplicationToken? = nil,
   webDomainToken: WebDomainToken? = nil,
   categoryToken: ActivityCategoryToken? = nil
-) -> [String: Any]? {
+) -> String? {
   let familyActivitySelectionIds = getFamilyActivitySelectionIds()
 
   let activitySelection = familyActivitySelectionIds.first(
@@ -461,11 +460,29 @@ func getActivitySelectionPrefixedConfigFromUserDefaults(
       return false
     })
 
-  if let activitySelection = activitySelection {
-    return userDefaults?.dictionary(forKey: keyPrefix + "_" + activitySelection.id)
+  return activitySelection != nil ? keyPrefix + "_" + activitySelection!.id : nil
+}
+
+@available(iOS 15.0, *)
+func getActivitySelectionPrefixedConfigFromUserDefaults(
+  keyPrefix: String,
+  fallbackKey: String,
+  applicationToken: ApplicationToken? = nil,
+  webDomainToken: WebDomainToken? = nil,
+  categoryToken: ActivityCategoryToken? = nil
+) -> [String: Any]? {
+  if let configKey = tryGetActivitySelectionIdConfigKey(
+    keyPrefix: keyPrefix,
+    applicationToken: applicationToken,
+    webDomainToken: webDomainToken,
+    categoryToken: categoryToken
+  ) {
+    if let config = userDefaults?.dictionary(forKey: configKey) {
+      return config
+    }
   }
 
-  return userDefaults?.dictionary(forKey: defaultKey)
+  return userDefaults?.dictionary(forKey: fallbackKey)
 }
 
 @available(iOS 15.0, *)

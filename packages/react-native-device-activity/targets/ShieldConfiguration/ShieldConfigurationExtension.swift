@@ -128,7 +128,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     let config = getActivitySelectionPrefixedConfigFromUserDefaults(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      defaultKey: SHIELD_CONFIGURATION_KEY,
+      fallbackKey: FALLBACK_SHIELD_CONFIGURATION_KEY,
       applicationToken: application.token
     )
 
@@ -154,8 +154,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     let config = getActivitySelectionPrefixedConfigFromUserDefaults(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      defaultKey: SHIELD_CONFIGURATION_KEY,
-      applicationToken: application.token
+      fallbackKey: FALLBACK_SHIELD_CONFIGURATION_KEY,
+      applicationToken: application.token,
+      categoryToken: category.token
     )
 
     let placeholders = [
@@ -178,7 +179,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     let config = getActivitySelectionPrefixedConfigFromUserDefaults(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      defaultKey: SHIELD_CONFIGURATION_KEY,
+      fallbackKey: FALLBACK_SHIELD_CONFIGURATION_KEY,
       webDomainToken: webDomain.token
     )
 
@@ -204,7 +205,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
     let config = getActivitySelectionPrefixedConfigFromUserDefaults(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      defaultKey: SHIELD_CONFIGURATION_KEY,
+      fallbackKey: FALLBACK_SHIELD_CONFIGURATION_KEY,
       webDomainToken: webDomain.token,
       categoryToken: category.token
     )

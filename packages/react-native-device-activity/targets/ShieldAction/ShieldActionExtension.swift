@@ -153,9 +153,10 @@ func handleAction(
 
   if let shieldActionConfig = getActivitySelectionPrefixedConfigFromUserDefaults(
     keyPrefix: SHIELD_ACTIONS_FOR_SELECTION_PREFIX,
-    defaultKey: SHIELD_ACTIONS_KEY,
+    fallbackKey: SHIELD_ACTIONS_KEY,
     applicationToken: applicationToken,
-    webDomainToken: webdomainToken
+    webDomainToken: webdomainToken,
+    categoryToken: categoryToken
   ) {
     let actionKey = action == .primaryButtonPressed ? "primary" : "secondary"
     if let configForSelectedAction = shieldActionConfig[actionKey] as? [String: Any] {

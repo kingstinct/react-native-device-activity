@@ -75,4 +75,21 @@ class FamilySelectionIdTests: XCTestCase {
     XCTAssertEqual(familySelection, nil)
     XCTAssertEqual(ids.count, 0)
   }
+
+  func testGetActivitySelectionPrefixedConfigFromUserDefaults(){
+    let id = "my-id-with-shield-config"
+    setFamilyActivitySelectionById(
+      id: id,
+      activitySelection: FamilyActivitySelection()
+    )
+
+    let token = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+
+    let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      categoryToken: token.categoryTokens.first,
+    )
+
+    XCTAssertEqual(activitySelectionPrefixedConfigKey, "shieldConfigurationForSelection_my-id-with-shield-config")
+  }
 }
