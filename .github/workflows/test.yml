@@ -143,6 +143,10 @@ jobs:
 
       - run: bun install
 
+      - name: Start bundler
+        run: bun start &
+        working-directory: apps/example
+
       - uses: actions/cache@v4
         with:
           path: example/ios/Pods
