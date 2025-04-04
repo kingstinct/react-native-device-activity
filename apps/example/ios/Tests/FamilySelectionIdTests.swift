@@ -76,13 +76,49 @@ class FamilySelectionIdTests: XCTestCase {
     XCTAssertEqual(ids.count, 0)
   }
 
-  func testGetActivitySelectionPrefixedConfigFromUserDefaults(){
+  func testGetActivitySelectionPrefixedConfigFromUserDefaults() {
     let id = "my-id-with-shield-config"
+
+    let token = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+
     setFamilyActivitySelectionById(
       id: id,
-      activitySelection: FamilyActivitySelection()
+      activitySelection: token
     )
 
+    userDefaults?.set([:], forKey: "shieldConfigurationForSelection_my-id-with-shield-config")
+
+    let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      categoryToken: token.categoryTokens.first,
+    )
+
+    XCTAssertEqual(
+      activitySelectionPrefixedConfigKey, "shieldConfigurationForSelection_my-id-with-shield-config"
+    )
+  }
+
+  func testGetActivitySelectionPrefixedConfigFromUserDefaultsWhenThereIsNoConfig() {
+    let id = "my-id-with-shield-config-2"
+
+    let token = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+
+    setFamilyActivitySelectionById(
+      id: id,
+      activitySelection: token
+    )
+
+    let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
+      keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
+      categoryToken: token.categoryTokens.first,
+    )
+
+    XCTAssertEqual(
+      activitySelectionPrefixedConfigKey, nil
+    )
+  }
+
+  func testGetActivitySelectionPrefixedConfigFromUserDefaultsWhenThereIsNoActivitySelectionId() {
     let token = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
 
     let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
@@ -90,6 +126,8 @@ class FamilySelectionIdTests: XCTestCase {
       categoryToken: token.categoryTokens.first,
     )
 
-    XCTAssertEqual(activitySelectionPrefixedConfigKey, "shieldConfigurationForSelection_my-id-with-shield-config")
+    XCTAssertEqual(
+      activitySelectionPrefixedConfigKey, nil
+    )
   }
 }
