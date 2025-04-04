@@ -20,15 +20,16 @@ import {
   DeviceActivitySchedule,
   DeviceActivitySelectionViewPersistedProps,
   DeviceActivitySelectionViewProps,
+  EventListenerMap,
   EventParsed,
   FamilyActivitySelection,
+  OnDeviceActivityDetectedListener,
   SetOperationOptions,
   ShieldActions,
   ShieldConfiguration,
-} from "./ReactNativeDeviceActivity.types";
-import ReactNativeDeviceActivityModule, {
   OnAuthorizationStatusChange,
-} from "./ReactNativeDeviceActivityModule";
+} from "./ReactNativeDeviceActivity.types";
+import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
 export async function requestAuthorization(
   forIndividualOrChild: "individual" | "child" = "individual",
@@ -348,7 +349,7 @@ export function getAppGroupFileDirectory(): string {
 }
 
 export function onDeviceActivityDetected(
-  listener: (event: { activityName: string }) => void,
+  listener: OnDeviceActivityDetectedListener,
 ) {
   if (!emitter) {
     return { remove: () => {} };
@@ -469,13 +470,7 @@ export function getAuthorizationStatus(): AuthorizationStatusType {
 }
 
 const emitter = ReactNativeDeviceActivityModule
-  ? new EventEmitter<{
-      onAuthorizationStatusChange: OnAuthorizationStatusChange;
-      onDeviceActivityDetected: (event: { activityName: string }) => void;
-      onDeviceActivityMonitorEvent: (
-        event: DeviceActivityMonitorEventPayload,
-      ) => void;
-    }>(ReactNativeDeviceActivityModule)
+  ? new EventEmitter<EventListenerMap>(ReactNativeDeviceActivityModule)
   : undefined;
 
 export const useActivities = () => {

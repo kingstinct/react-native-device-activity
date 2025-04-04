@@ -1,9 +1,4 @@
-import { NativeModule } from "expo-modules-core/types";
-
-import {
-  AuthorizationStatusType,
-  ReactNativeDeviceActivityNativeModule,
-} from "./ReactNativeDeviceActivity.types";
+import { ReactNativeDeviceActivityNativeModule } from "./ReactNativeDeviceActivity.types";
 
 const warnText = "[react-native-device-activity] Only available on iOS";
 
@@ -32,6 +27,11 @@ const warnFnBoolean = () => {
   return false;
 };
 
+const warnFnString = () => {
+  console.warn(warnText);
+  return "";
+};
+
 const warnFnActivitySelectionWithMetadata = () => {
   console.warn(warnText);
 
@@ -55,23 +55,14 @@ const warnFnActivitySelectionMetadata = () => {
   };
 };
 
-export type OnAuthorizationStatusChange = ({
-  authorizationStatus,
-}: {
-  authorizationStatus: AuthorizationStatusType;
-}) => void;
-
-const mockModule:
-  | (ReactNativeDeviceActivityNativeModule &
-      NativeModule<{
-        onAuthorizationStatusChange: OnAuthorizationStatusChange;
-      }>)
-  | null = {
-  isAvailable: () => false,
+const mockModule: ReactNativeDeviceActivityNativeModule | null = {
   requestAuthorization: warnFn,
+  userDefaultsClearWithPrefix: warnFn,
   blockSelection: warnFn,
   userDefaultsAll: warnFn,
   userDefaultsGet: warnFn,
+  copyFile: warnFn,
+  moveFile: warnFn,
   userDefaultsRemove: warnFn,
   userDefaultsSet: warnFn,
   userDefaultsClear: warnFn,
@@ -93,13 +84,9 @@ const mockModule:
   unblockSelection: warnFn,
   revokeAuthorization: warnFn,
   isShieldActive: warnFnBoolean,
-  getAppGroupFileDirectory: warnFn,
-  doesSelectionHaveOverlap: warnFnBoolean,
-  updateShieldConfiguration: warnFn,
-  unblockApps: warnFn,
+  getAppGroupFileDirectory: warnFnString,
   enableBlockAllMode: warnFn,
   disableBlockAllMode: warnFn,
-  blockApps: warnFn,
   activities: warnFnArray,
   authorizationStatus: warnFnNumber,
   reloadDeviceActivityCenter: warnFn,
@@ -109,13 +96,11 @@ const mockModule:
   },
   startMonitoring: warnFn,
   stopMonitoring: warnFn,
-  removeListeners: warnFn,
-  removeAllListeners: warnFn,
-  emit: warnFn,
-  removeListener: warnFn,
-  stopObserving: warnFn,
-  listenerCount: warnFnNumber,
   addListener: warnFnAddListener,
+  removeListener: warnFnAddListener,
+  removeAllListeners: warnFnAddListener,
+  emit: warnFnAddListener,
+  listenerCount: warnFnNumber,
 };
 
 export default mockModule;

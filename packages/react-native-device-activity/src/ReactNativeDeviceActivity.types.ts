@@ -1,3 +1,4 @@
+import { EventEmitter } from "expo-modules-core/types";
 import { PropsWithChildren } from "react";
 import { NativeSyntheticEvent, StyleProp, ViewStyle } from "react-native";
 
@@ -345,7 +346,19 @@ export type ReactNativeDeviceActivityNativeModule = {
   userDefaultsGet: (key: string) => any;
   userDefaultsRemove: (key: string) => void;
   userDefaultsClear: () => void;
+  moveFile: (
+    sourceUri: string,
+    destinationUri: string,
+    overwrite: boolean,
+  ) => void;
+  copyFile: (
+    sourceUri: string,
+    destinationUri: string,
+    overwrite: boolean,
+  ) => void;
   userDefaultsAll: () => Record<string, any>;
+  getAppGroupFileDirectory: () => string;
+  userDefaultsClearWithPrefix: (prefix: string) => void;
   // metadata and set functions
   activitySelectionMetadata: (
     familyActivitySelection: ActivitySelectionInputWithBlocks,
@@ -432,7 +445,13 @@ export type ReactNativeDeviceActivityNativeModule = {
   isShieldActive: () => boolean;
   getEvents: (onlyEventsForActivityWithName?: string) => EventsLookup;
   activities: () => string[];
-};
+} & EventEmitter<EventListenerMap>;
+
+export type OnAuthorizationStatusChange = ({
+  authorizationStatus,
+}: {
+  authorizationStatus: AuthorizationStatusType;
+}) => void;
 
 /**
  * @link https://developer.apple.com/documentation/managedsettingsui/shieldconfiguration
@@ -579,3 +598,15 @@ export const UIBlurEffectStyle = {
   // @available(iOS 13.0, *)
   systemChromeMaterialDark: 20,
 } as const;
+
+export type OnDeviceActivityDetectedListener = (event: {
+  activityName: string;
+}) => void;
+
+export type EventListenerMap = {
+  onAuthorizationStatusChange: OnAuthorizationStatusChange;
+  onDeviceActivityDetected: OnDeviceActivityDetectedListener;
+  onDeviceActivityMonitorEvent: (
+    event: DeviceActivityMonitorEventPayload,
+  ) => void;
+};

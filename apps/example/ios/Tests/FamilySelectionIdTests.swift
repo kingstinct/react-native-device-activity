@@ -132,20 +132,24 @@ class FamilySelectionIdTests: XCTestCase {
   }
 
   func testGetPossibleFamilyActivitySelectionIdsSorted() {
-    let tokenWithSocial = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+    let tokenWithSocial = deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingSocial)
 
     setFamilyActivitySelectionById(id: "social", activitySelection: tokenWithSocial)
-    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
-      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
-    ))
+    setFamilyActivitySelectionById(
+      id: "everything",
+      activitySelection: deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+      ))
 
     let matches = getPossibleFamilyActivitySelectionIds(
       categoryToken: tokenWithSocial.categoryTokens.first
     )
 
-    XCTAssertEqual(matches.map({ token in
-      token.id
-    }), ["social", "everything"])
+    XCTAssertEqual(
+      matches.map({ token in
+        token.id
+      }), ["social", "everything"])
   }
 
   func testGetPossibleFamilyActivitySelectionIdsOnlyMatches() {
@@ -153,19 +157,25 @@ class FamilySelectionIdTests: XCTestCase {
       familyActivitySelectionStr: tokenIncludingGames
     )
 
-    setFamilyActivitySelectionById(id: "social", activitySelection: deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial))
-    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
-      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
-    ))
+    setFamilyActivitySelectionById(
+      id: "social",
+      activitySelection: deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: tokenIncludingSocial))
+    setFamilyActivitySelectionById(
+      id: "everything",
+      activitySelection: deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+      ))
     setFamilyActivitySelectionById(id: "games", activitySelection: tokenWithGames)
 
     let matches = getPossibleFamilyActivitySelectionIds(
       categoryToken: tokenWithGames.categoryTokens.first
     )
 
-    XCTAssertEqual(matches.map({ token in
-      token.id
-    }), ["games", "everything"])
+    XCTAssertEqual(
+      matches.map({ token in
+        token.id
+      }), ["games", "everything"])
   }
 
   func testGetPossibleFamilyActivitySelectionIdsOnlySortedAllOfIt() {
@@ -173,8 +183,8 @@ class FamilySelectionIdTests: XCTestCase {
       familyActivitySelectionStr: tokenIncludingGames
     )
 
-    let tokenWithSocial = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
-
+    let tokenWithSocial = deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingSocial)
 
     let socialAndGames = union(tokenWithGames, tokenWithSocial)
 
@@ -182,9 +192,11 @@ class FamilySelectionIdTests: XCTestCase {
       id: "social",
       activitySelection: tokenWithSocial
     )
-    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
-      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
-    ))
+    setFamilyActivitySelectionById(
+      id: "everything",
+      activitySelection: deserializeFamilyActivitySelection(
+        familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+      ))
     setFamilyActivitySelectionById(id: "games", activitySelection: tokenWithGames)
     setFamilyActivitySelectionById(
       id: "social-and-games",
@@ -195,8 +207,9 @@ class FamilySelectionIdTests: XCTestCase {
       categoryToken: tokenWithGames.categoryTokens.first
     )
 
-    XCTAssertEqual(matches.map({ token in
-      token.id
-    }), ["games", "social-and-games", "everything"])
+    XCTAssertEqual(
+      matches.map({ token in
+        token.id
+      }), ["games", "social-and-games", "everything"])
   }
 }
