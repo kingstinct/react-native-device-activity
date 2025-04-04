@@ -164,7 +164,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "token": "\(category.token!.hashValue)",
       "tokenType": "application_category",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
-        applicationToken: application.token
+        applicationToken: application.token,
+        categoryToken: category.token
       ).first?.id
     ]
 
@@ -215,7 +216,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       "token": "\(category.token!.hashValue)",
       "tokenType": "web_domain_category",
       "familyActivitySelectionId": getPossibleFamilyActivitySelectionIds(
-        webDomainToken: webDomain.token
+        webDomainToken: webDomain.token,
+        categoryToken: category.token
       ).first?.id
     ]
 

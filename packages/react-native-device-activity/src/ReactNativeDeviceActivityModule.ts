@@ -1,6 +1,9 @@
-import { ProxyNativeModule } from "expo-modules-core";
+import { NativeModule } from "expo-modules-core/types";
 
-import type { ReactNativeDeviceActivityNativeModule } from "./ReactNativeDeviceActivity.types";
+import {
+  AuthorizationStatusType,
+  ReactNativeDeviceActivityNativeModule,
+} from "./ReactNativeDeviceActivity.types";
 
 const warnText = "[react-native-device-activity] Only available on iOS";
 
@@ -17,6 +20,11 @@ const warnFnArray = () => {
 const warnFnNumber = <T extends number>() => {
   console.warn(warnText);
   return 0 as T;
+};
+
+const warnFnAddListener = () => {
+  console.warn(warnText);
+  return { remove: () => {} };
 };
 
 const warnFnBoolean = () => {
@@ -47,8 +55,17 @@ const warnFnActivitySelectionMetadata = () => {
   };
 };
 
+export type OnAuthorizationStatusChange = ({
+  authorizationStatus,
+}: {
+  authorizationStatus: AuthorizationStatusType;
+}) => void;
+
 const mockModule:
-  | (ReactNativeDeviceActivityNativeModule & ProxyNativeModule)
+  | (ReactNativeDeviceActivityNativeModule &
+      NativeModule<{
+        onAuthorizationStatusChange: OnAuthorizationStatusChange;
+      }>)
   | null = {
   isAvailable: () => false,
   requestAuthorization: warnFn,
@@ -92,8 +109,13 @@ const mockModule:
   },
   startMonitoring: warnFn,
   stopMonitoring: warnFn,
-  addListener: warnFn,
   removeListeners: warnFn,
+  removeAllListeners: warnFn,
+  emit: warnFn,
+  removeListener: warnFn,
+  stopObserving: warnFn,
+  listenerCount: warnFnNumber,
+  addListener: warnFnAddListener,
 };
 
 export default mockModule;

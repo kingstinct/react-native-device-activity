@@ -243,22 +243,27 @@ struct FamilyActivitySelectionWithIdWithMatching {
     selection: FamilyActivitySelection,
     id: String,
     granularMatch: Bool,
-    match: Bool
+    match: Bool,
+    granularityCount: Int
   ) {
     self.selection = selection
     self.id = id
     self.granularMatch = granularMatch
     self.match = match
+    self.granularityCount = granularityCount
   }
 
   init(
-    selection: FamilyActivitySelectionWithId, granularMatch: Bool,
-    match: Bool
+    selection: FamilyActivitySelectionWithId,
+    granularMatch: Bool,
+    match: Bool,
+    granularityCount: Int
   ) {
     self.selection = selection.selection
     self.id = selection.id
     self.granularMatch = granularMatch
     self.match = match
+    self.granularityCount = granularityCount
   }
 
   var selection: FamilyActivitySelection
@@ -266,6 +271,7 @@ struct FamilyActivitySelectionWithIdWithMatching {
   // indicates that the match is directly on the webDomain or application
   var granularMatch: Bool
   var match: Bool
+  var granularityCount: Int
 }
 
 struct TextToReplaceWithOptionalSpecialTreatment {
@@ -426,39 +432,20 @@ func tryGetActivitySelectionIdConfigKey(
   webDomainToken: WebDomainToken? = nil,
   categoryToken: ActivityCategoryToken? = nil
 ) -> String? {
-  let familyActivitySelectionIds = getFamilyActivitySelectionIds()
+  let familyActivitySelectionIds = getPossibleFamilyActivitySelectionIds(
+    applicationToken: applicationToken,
+    webDomainToken: webDomainToken,
+    categoryToken: categoryToken,
+    onlyFamilySelectionIdsContainingMonitoredActivityNames: true,
+    sortByGranularity: true
+  )
 
-  let activitySelection = familyActivitySelectionIds.first(
-    where: { (activitySelectionPair) in
-      guard
-        (userDefaults?.dictionary(
-          forKey: keyPrefix + "_" + activitySelectionPair.id
-        )) != nil
-      else {
-        return false
-      }
-
-      if let applicationToken = applicationToken {
-        if activitySelectionPair.selection.applicationTokens
-          .contains(applicationToken) {
-          return true
-        }
-      }
-
-      if let webDomainToken = webDomainToken {
-        if activitySelectionPair.selection.webDomainTokens.contains(webDomainToken) {
-          return true
-        }
-      }
-
-      if let categoryToken = categoryToken {
-        if activitySelectionPair.selection.categoryTokens.contains(categoryToken) {
-          return true
-        }
-      }
-
-      return false
-    })
+  let activitySelection = familyActivitySelectionIds.first {
+    (activitySelectionPair) in
+    return userDefaults?.dictionary(
+      forKey: keyPrefix + "_" + activitySelectionPair.id
+    ) != nil
+  }
 
   return activitySelection != nil ? keyPrefix + "_" + activitySelection!.id : nil
 }
@@ -510,7 +497,8 @@ func getPossibleFamilyActivitySelectionIds(
         return FamilyActivitySelectionWithIdWithMatching(
           selection: activitySelection,
           granularMatch: false,
-          match: false
+          match: false,
+          granularityCount: 0
         )
       }
     }
@@ -520,7 +508,8 @@ func getPossibleFamilyActivitySelectionIds(
         return FamilyActivitySelectionWithIdWithMatching(
           selection: activitySelection,
           granularMatch: true,
-          match: true
+          match: true,
+          granularityCount: activitySelection.selection.applicationTokens.count
         )
       }
     }
@@ -530,7 +519,8 @@ func getPossibleFamilyActivitySelectionIds(
         return FamilyActivitySelectionWithIdWithMatching(
           selection: activitySelection,
           granularMatch: true,
-          match: true
+          match: true,
+          granularityCount: activitySelection.selection.webDomainTokens.count
         )
       }
     }
@@ -540,7 +530,8 @@ func getPossibleFamilyActivitySelectionIds(
         return FamilyActivitySelectionWithIdWithMatching(
           selection: activitySelection,
           granularMatch: false,
-          match: true
+          match: true,
+          granularityCount: activitySelection.selection.categoryTokens.count
         )
       }
     }
@@ -548,7 +539,8 @@ func getPossibleFamilyActivitySelectionIds(
     return FamilyActivitySelectionWithIdWithMatching(
       selection: activitySelection,
       granularMatch: false,
-      match: false
+      match: false,
+      granularityCount: 0
     )
   })
 
@@ -556,12 +548,11 @@ func getPossibleFamilyActivitySelectionIds(
     return activitySelection.match
   })
 
-  return ids.sorted {
-    (
-      selection1: FamilyActivitySelectionWithIdWithMatching,
-      selection2: FamilyActivitySelectionWithIdWithMatching
-    ) in
-    return selection1.granularMatch && !selection2.granularMatch
+  return ids.sorted { selection1, selection2 in
+    if selection1.granularMatch != selection2.granularMatch {
+      return selection1.granularMatch && !selection2.granularMatch
+    }
+    return selection1.granularityCount < selection2.granularityCount
   }
 }
 

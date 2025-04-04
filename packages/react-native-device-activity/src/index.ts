@@ -1,4 +1,4 @@
-import { EventEmitter, Subscription } from "expo-modules-core";
+import { EventEmitter, EventSubscription } from "expo-modules-core";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
@@ -26,7 +26,9 @@ import {
   ShieldActions,
   ShieldConfiguration,
 } from "./ReactNativeDeviceActivity.types";
-import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
+import ReactNativeDeviceActivityModule, {
+  OnAuthorizationStatusChange,
+} from "./ReactNativeDeviceActivityModule";
 
 export async function requestAuthorization(
   forIndividualOrChild: "individual" | "child" = "individual",
@@ -352,10 +354,7 @@ export function onDeviceActivityDetected(
     return { remove: () => {} };
   }
 
-  const handler = emitter?.addListener<{ activityName: string }>(
-    "onDeviceActivityDetected",
-    listener,
-  );
+  const handler = emitter?.addListener("onDeviceActivityDetected", listener);
 
   return handler;
 }
@@ -470,7 +469,13 @@ export function getAuthorizationStatus(): AuthorizationStatusType {
 }
 
 const emitter = ReactNativeDeviceActivityModule
-  ? new EventEmitter(ReactNativeDeviceActivityModule)
+  ? new EventEmitter<{
+      onAuthorizationStatusChange: OnAuthorizationStatusChange;
+      onDeviceActivityDetected: (event: { activityName: string }) => void;
+      onDeviceActivityMonitorEvent: (
+        event: DeviceActivityMonitorEventPayload,
+      ) => void;
+    }>(ReactNativeDeviceActivityModule)
   : undefined;
 
 export const useActivities = () => {
@@ -515,28 +520,22 @@ export const useAuthorizationStatus = () => {
 };
 
 export function onAuthorizationStatusChange(
-  listener: (event: { authorizationStatus: AuthorizationStatusType }) => void,
-): Subscription {
+  listener: OnAuthorizationStatusChange,
+): EventSubscription {
   if (!emitter) {
     return { remove: () => {} };
   }
 
-  return emitter.addListener<{ authorizationStatus: AuthorizationStatusType }>(
-    "onAuthorizationStatusChange",
-    listener,
-  );
+  return emitter.addListener("onAuthorizationStatusChange", listener);
 }
 
 export function onDeviceActivityMonitorEvent(
   listener: (event: DeviceActivityMonitorEventPayload) => void,
-): Subscription {
+): EventSubscription {
   if (!emitter) {
     return { remove: () => {} };
   }
-  return emitter.addListener<DeviceActivityMonitorEventPayload>(
-    "onDeviceActivityMonitorEvent",
-    listener,
-  );
+  return emitter.addListener("onDeviceActivityMonitorEvent", listener);
 }
 
 export const SHIELD_ACTIONS_KEY = "shieldActions";

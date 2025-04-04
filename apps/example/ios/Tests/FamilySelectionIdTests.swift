@@ -130,4 +130,73 @@ class FamilySelectionIdTests: XCTestCase {
       activitySelectionPrefixedConfigKey, nil
     )
   }
+
+  func testGetPossibleFamilyActivitySelectionIdsSorted() {
+    let tokenWithSocial = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+
+    setFamilyActivitySelectionById(id: "social", activitySelection: tokenWithSocial)
+    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+    ))
+
+    let matches = getPossibleFamilyActivitySelectionIds(
+      categoryToken: tokenWithSocial.categoryTokens.first
+    )
+
+    XCTAssertEqual(matches.map({ token in
+      token.id
+    }), ["social", "everything"])
+  }
+
+  func testGetPossibleFamilyActivitySelectionIdsOnlyMatches() {
+    let tokenWithGames = deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingGames
+    )
+
+    setFamilyActivitySelectionById(id: "social", activitySelection: deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial))
+    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+    ))
+    setFamilyActivitySelectionById(id: "games", activitySelection: tokenWithGames)
+
+    let matches = getPossibleFamilyActivitySelectionIds(
+      categoryToken: tokenWithGames.categoryTokens.first
+    )
+
+    XCTAssertEqual(matches.map({ token in
+      token.id
+    }), ["games", "everything"])
+  }
+
+  func testGetPossibleFamilyActivitySelectionIdsOnlySortedAllOfIt() {
+    let tokenWithGames = deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingGames
+    )
+
+    let tokenWithSocial = deserializeFamilyActivitySelection(familyActivitySelectionStr: tokenIncludingSocial)
+
+
+    let socialAndGames = union(tokenWithGames, tokenWithSocial)
+
+    setFamilyActivitySelectionById(
+      id: "social",
+      activitySelection: tokenWithSocial
+    )
+    setFamilyActivitySelectionById(id: "everything", activitySelection: deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: tokenIncludingEverythingWithCategories
+    ))
+    setFamilyActivitySelectionById(id: "games", activitySelection: tokenWithGames)
+    setFamilyActivitySelectionById(
+      id: "social-and-games",
+      activitySelection: socialAndGames
+    )
+
+    let matches = getPossibleFamilyActivitySelectionIds(
+      categoryToken: tokenWithGames.categoryTokens.first
+    )
+
+    XCTAssertEqual(matches.map({ token in
+      token.id
+    }), ["games", "social-and-games", "everything"])
+  }
 }
