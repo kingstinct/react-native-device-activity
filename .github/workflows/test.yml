@@ -10,6 +10,7 @@ jobs:
   lint:
     name: eslint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -24,6 +25,7 @@ jobs:
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +40,7 @@ jobs:
   typecheck-example:
     name: Typecheck (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -53,6 +56,7 @@ jobs:
   bundle-example:
     name: Expo Bundle (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -67,6 +71,7 @@ jobs:
 
   config-example:
     name: Expo Config (example project)
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,6 +88,7 @@ jobs:
   prebuild-example:
     name: Expo Prebuild (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -98,6 +104,7 @@ jobs:
   swift-lint:
     name: SwiftLint (example project)
     runs-on: macos-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -122,6 +129,7 @@ jobs:
   swift-test:
     name: Swift Test (example project)
     runs-on: macos-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
