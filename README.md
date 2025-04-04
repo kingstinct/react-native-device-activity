@@ -88,7 +88,7 @@ The package requires native code, which includes a custom app target. Currently 
       "expo-build-properties",
       {
         "ios": {
-          "deploymentTarget": "15.0"
+          "deploymentTarget": "15.1"
         },
       },
     ],

@@ -38,13 +38,13 @@
     "@react-native/normalize-color": "^2.1.0"
   },
   "devDependencies": {
-    "@types/react": "~18.2.79",
-    "expo": "~51.0.39",
+    "@types/react": "~18.3.12",
+    "expo": "52",
     "expo-module-scripts": "^3.5.2",
-    "expo-modules-core": "^1.12.24",
+    "expo-modules-core": "~2.2.3",
     "pkg-pr-new": "0",
-    "react": "18.2.0",
-    "react-native": "0.74.5"
+    "react": "*",
+    "react-native": "*"
   },
   "peerDependencies": {
     "expo": "*",
