@@ -91,6 +91,7 @@ class FamilySelectionIdTests: XCTestCase {
     let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
       categoryToken: token.categoryTokens.first,
+      onlyFamilySelectionIdsContainingMonitoredActivityNames: false
     )
 
     XCTAssertEqual(
@@ -143,7 +144,8 @@ class FamilySelectionIdTests: XCTestCase {
       ))
 
     let matches = getPossibleFamilyActivitySelectionIds(
-      categoryToken: tokenWithSocial.categoryTokens.first
+      categoryToken: tokenWithSocial.categoryTokens.first,
+      onlyFamilySelectionIdsContainingMonitoredActivityNames: false
     )
 
     XCTAssertEqual(
@@ -169,7 +171,8 @@ class FamilySelectionIdTests: XCTestCase {
     setFamilyActivitySelectionById(id: "games", activitySelection: tokenWithGames)
 
     let matches = getPossibleFamilyActivitySelectionIds(
-      categoryToken: tokenWithGames.categoryTokens.first
+      categoryToken: tokenWithGames.categoryTokens.first,
+      onlyFamilySelectionIdsContainingMonitoredActivityNames: false
     )
 
     XCTAssertEqual(
@@ -204,7 +207,8 @@ class FamilySelectionIdTests: XCTestCase {
     )
 
     let matches = getPossibleFamilyActivitySelectionIds(
-      categoryToken: tokenWithGames.categoryTokens.first
+      categoryToken: tokenWithGames.categoryTokens.first,
+      onlyFamilySelectionIdsContainingMonitoredActivityNames: false
     )
 
     XCTAssertEqual(
