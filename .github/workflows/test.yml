@@ -170,6 +170,8 @@ jobs:
     
       - run: pod install
         working-directory: apps/example/ios
+
+      - run: cp .swiftlint.yml apps/example/ios
       
       - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 16"
         working-directory: apps/example/ios
