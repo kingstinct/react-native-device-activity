@@ -1,0 +1,54 @@
+{
+  "name": "react-native-device-activity",
+  "version": "0.4.20",
+  "description": "Provides access to Apples DeviceActivity API",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "typecheck": "tsc --noEmit",
+    "test": "expo-module test",
+    "prepublishOnly": "expo-module prepublishOnly && tsc",
+    "expo-module": "expo-module",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "react-native-device-activity",
+    "device-activity",
+    "screen-time"
+  ],
+  "repository": {
+    "url": "https://github.com/kingstinct/react-native-device-activity"
+  },
+  "bugs": {
+    "url": "https://github.com/kingstinct/react-native-device-activity/issues"
+  },
+  "author": "Robert Herber <robert@kingstinct.com> (https://github.com/robertherber)",
+  "license": "MIT",
+  "homepage": "https://github.com/kingstinct/react-native-device-activity#readme",
+  "dependencies": {
+    "@bacons/xcode": "^1.0.0-alpha.24",
+    "@expo/plist": "^0.1.3",
+    "@kingstinct/expo-apple-targets": "0.1.19",
+    "@react-native/normalize-color": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "expo": "52",
+    "expo-module-scripts": "^3.5.2",
+    "expo-modules-core": "~2.2.3",
+    "pkg-pr-new": "0",
+    "react": "*",
+    "react-native": "*"
+  },
+  "peerDependencies": {
+    "expo": ">=52",
+    "react": ">=18.3",
+    "react-native": ">=0.76"
+  }
+}

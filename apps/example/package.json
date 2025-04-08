@@ -1,0 +1,38 @@
+{
+  "name": "react-native-device-activity-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo start",
+    "android": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:android",
+    "ios": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:ios",
+    "web": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo start --web",
+    "bundle": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo export",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "rm -rf targets && COPY_TO_TARGET_FOLDER=true INTERNALLY_TEST_EXAMPLE_PROJECT=true npx expo prebuild --platform=ios --clean"
+  },
+  "dependencies": {
+    "expo": "52",
+    "expo-asset": "~11.0.5",
+    "expo-file-system": "~18.0.12",
+    "expo-notifications": "~0.29.14",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "react-native-device-activity": "workspace:*",
+    "react-native-paper": "^5.12.5",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-vector-icons": "^10.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "~18.3.12",
+    "expo-build-properties": "~0.13.2",
+    "typescript": "~5.3.3"
+  },
+  "private": true,
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": "../.."
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "expo": {
+    "name": "react-native-device-activity-example",
+    "slug": "react-native-device-activity-example",
+    "version": "1.0.0",
+    "scheme": "device-activity",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "platforms": ["ios"],
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "appleTeamId": "34SE8X7Q58",
+      "supportsTablet": true,
+      "bundleIdentifier": "expo.modules.deviceactivity.example"
+    },
+    "assetBundlePatterns": [
+      "assets/*"
+    ],
+    "android": {
+      "package": "expo.modules.deviceactivity.example",
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }, 
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
+      
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/kingstinct.png"]
+        }
+      ],
+      [
+        "../../packages/react-native-device-activity/app.plugin.js",
+        {
+          "appGroup": "group.ActivityMonitor",
+          "copyToTargetFolder": false
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "ActivityMonitorExtension",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ActivityMonitorExtension",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                  }
+                },
+                {
+                  "targetName": "ShieldConfiguration",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldConfiguration",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                  }
+                },
+                {
+                  "targetName": "ShieldAction",
+                  "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldAction",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

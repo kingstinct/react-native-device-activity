@@ -10,6 +10,7 @@ jobs:
   lint:
     name: eslint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -24,6 +25,7 @@ jobs:
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +40,7 @@ jobs:
   typecheck-example:
     name: Typecheck (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -47,15 +50,13 @@ jobs:
 
       - run: bun install
 
-      - run: bun install
-        working-directory: example
-
       - run: bun typecheck
-        working-directory: example
+        working-directory: apps/example
 
   bundle-example:
     name: Expo Bundle (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -65,14 +66,12 @@ jobs:
 
       - run: bun install
 
-      - run: bun install
-        working-directory: example
-
       - run: bunx expo export
-        working-directory: example
+        working-directory: apps/example
 
   config-example:
     name: Expo Config (example project)
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,15 +82,13 @@ jobs:
 
       - run: bun install
 
-      - run: bun install
-        working-directory: example
-
       - run: bunx expo config
-        working-directory: example
+        working-directory: apps/example
 
   prebuild-example:
     name: Expo Prebuild (example project)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -101,15 +98,13 @@ jobs:
 
       - run: bun install
 
-      - run: bun install
-        working-directory: example
-
       - run: bunx expo prebuild
-        working-directory: example
+        working-directory: apps/example
 
   swift-lint:
     name: SwiftLint (example project)
     runs-on: macos-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -125,18 +120,16 @@ jobs:
             ${{ runner.os }}-pods-
 
       - run: bun install
-      
-      - run: bun install
-        working-directory: example
-      
+
       - run: pod install
-        working-directory: example/ios
+        working-directory: apps/example/ios
       
-      - run: example/ios/Pods/SwiftLint/swiftlint lint
+      - run: apps/example/ios/Pods/SwiftLint/swiftlint lint
 
   swift-test:
     name: Swift Test (example project)
     runs-on: macos-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
@@ -149,6 +142,10 @@ jobs:
           bun-version: latest
 
       - run: bun install
+
+      - name: Start bundler
+        run: bun start &
+        working-directory: apps/example
 
       - uses: actions/cache@v4
         with:
@@ -169,16 +166,18 @@ jobs:
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
 
       - name: Set up Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
-      
-      - run: bun install
-        working-directory: example
-      
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Check Swift version
+        run: swift --version
+    
       - run: pod install
-        working-directory: example/ios
+        working-directory: apps/example/ios
+
+      - run: cp .swiftlint.yml apps/example/ios
       
       - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 16"
-        working-directory: example/ios
+        working-directory: apps/example/ios
 
 
 

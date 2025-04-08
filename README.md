@@ -88,7 +88,7 @@ The package requires native code, which includes a custom app target. Currently 
       "expo-build-properties",
       {
         "ios": {
-          "deploymentTarget": "15.0"
+          "deploymentTarget": "15.1"
         },
       },
     ],
@@ -110,6 +110,18 @@ For Expo to be able to automatically handle provisioning you need to specify ext
 
 You can potentially modify the targets manually, although you risk the library and your app code diverging. If you want to disable the automatic copying of the targets, you can set `copyToTargetFolder` to `false` in the plugin configuration [as seen here](https://github.com/Intentional-Digital/react-native-device-activity/blob/main/example/app.json#L53).
 
+## Some notes
+- It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make a best guess here - prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
+- When determining which familyActivitySelectionId that should be used it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
+
+## Data model
+Almost all the functionality is built around persisting configuration as well as event history to UserDefaults.
+
+- familyActivitySelectionId mapping. This makes it possible for us to tie a familyActivitySelection token to an id that we can reuse and refer to at a later stage.
+- Triggers. This includes configuring shield UI/actions as well as sending web requests or notifications from the Swift background side, in the context of the device activity monitor process. Prefixed like actions_for_${goalId} in userDefaults. This is how we do blocking of apps, updates to shield UI/actions etc.
+- Event history. Contains information of which events have been triggered and when. Prefixed like events_${goalId} in userDefaults. This can be useful for tracking time spent.
+- ShieldIds. To reduce the storage strain on userDefaults shields are referenced with shieldIds.
+
 # Installation in bare React Native projects
 
 For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
@@ -130,7 +142,7 @@ As early as possible you want to [request approval from Apple](https://developer
 
 Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. I.e. you can't even build an Expo Dev Client.
 
-For every base bundleIdentifier you need approval for 4 bundleIdentifiers:
+For every base bundleIdentifier you need approval for 4 bundleIdentifiers (if you want to use all the native extensions that is, you can potentially just use the Shield-related ones if you have no need to listen to the events, or similarly just use the ActivityMonitor if you do not need control over the Shield UI):
 
 - com.your-bundleIdentifier
 - com.your-bundleIdentifier.ActivityMonitor
@@ -141,12 +153,33 @@ Once you've gotten approval you need to manually add the "Family Controls (Distr
 
 ⚠️ If you don't do all the above you will run in to a lot of strange provisioning errors.
 
-## Limitations and weird/notable things
-
-- The DeviceActivitySelectionView is prone to crashes, which is outside of our control. The best we can do is provide fallback views that allows the user to know what's happening and reload the view.
-- If you've asked about the authorization status once and the user after that revokes it outside the app, the native APIs won't reflect this until the app is restarted.
-- requestAuthorization() can be called multiple times, even when the user has already denied permission.
-
 # Contributing
 
 Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
+
+# Weird behaviors ⚠️
+
+- Authorization changes outside app not captured
+When we've asked whether the user has authorized us to use screen time, and the state is changed outside the app, the native API doesn't update until the app restarts, i.e. this flow:
+  1. Ask for current permission
+  2. Change permission outside the app
+  3. Ask for current permission again will return same as (1)
+  4. **Workaround: restart the app**
+
+- We can both request and revoke permissions as we like, and how many times we like, even when the user has denied permissions. This is very unlike most authorization flows on iOS.
+
+- When calling `getAuthorizationStatus` it can sometimes return `notDetermined` even though the user has already made a choice, this comes with a delay. Workaround: keep polling the status for a while (`pollAuthorizationStatus` is a convenience function for this).
+
+- The DeviceActivitySelectionView is prone to crashes, which is outside of our control. The best we can do is provide fallback views that allows the user to know what's happening and reload the view.
+
+# Troubleshooting 📱
+The Screen Time APIs are known to be very finnicky. Here are some things you can try to troubleshoot events not being reported:
+
+- Disable Low Power Mode (mentioned by Apple Community Specialist [here](https://discussions.apple.com/thread/254808070)) 🪫
+- Turn off/turn on app & website activity
+- Disable/reenable sync between devices for screen time
+- Restart device
+- Make sure device is not low on storage (mentioned by Apple Community Specialist [here](https://discussions.apple.com/thread/254808070)) 💾
+- Upgrade iOS version
+- Content & Privacy Restrictions: If any restrictions are enabled under Screen Time’s Content & Privacy Restrictions, ensure none are blocking your app.
+- Reset all device settings

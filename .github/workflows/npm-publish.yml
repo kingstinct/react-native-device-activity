@@ -45,17 +45,43 @@ jobs:
       
       - uses: actions/setup-node@v4
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - run: git config user.name "$(git log -n 1 --pretty=format:%an)"
       - run: git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      - run: echo "versionTag=`npm version ${{ github.event.inputs.release_type }} -m "%s ${{ github.event.inputs.description }}"`" >> $GITHUB_ENV
 
       - run: bun install
 
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - run: bun run nail-workspace-dependency-versions
 
-      - run: git push --follow-tags
+      - run: npm version ${{ github.event.inputs.release_type }}
+        working-directory: packages/react-native-device-activity
+
+      - run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "versionTag=v${VERSION}" >> $GITHUB_ENV
+        working-directory: packages/react-native-device-activity
+
+      - name: Setup NPM Authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+
+      - run: git add packages/react-native-device-activity/package.json
+
+      - run: |
+          git commit -m 'chore: update version' --no-verify
+
+      - run: npm publish
+        working-directory: packages/react-native-device-activity
+
+      - run: |
+          git status
+          git branch -a
+          git log -1
+          git push origin HEAD --no-verify
+          git push origin --tags --no-verify
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 

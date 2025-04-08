@@ -9,8 +9,9 @@ disabled_rules:
   - cyclomatic_complexity
   - file_length
   - function_parameter_count
+  - inclusive_language
 
 included:
-- ios
-- example/ios
-- targets
+- packages/react-native-device-activity/ios
+- apps/example/ios
+- packages/react-native-device-activity/targets
