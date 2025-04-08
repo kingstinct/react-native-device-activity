@@ -211,49 +211,49 @@ export const reloadDeviceActivityCenter = () => {
 };
 
 export const intersection = (
-  familyActivitySelections: ActivitySelectionInputWithBlocks,
-  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  familyActivitySelection: ActivitySelectionInputWithBlocks,
+  familyActivitySelection2: ActivitySelectionInputWithBlocks,
   options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.intersection(
-    familyActivitySelections,
-    familyActivitySelections2,
+    familyActivitySelection,
+    familyActivitySelection2,
     options ?? {},
   );
 };
 
 export const union = (
-  familyActivitySelections: ActivitySelectionInputWithBlocks,
-  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  familyActivitySelection: ActivitySelectionInputWithBlocks,
+  familyActivitySelection2: ActivitySelectionInputWithBlocks,
   options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.union(
-    familyActivitySelections,
-    familyActivitySelections2,
+    familyActivitySelection,
+    familyActivitySelection2,
     options ?? {},
   );
 };
 
 export const difference = (
-  familyActivitySelections: ActivitySelectionInputWithBlocks,
-  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  familyActivitySelection: ActivitySelectionInputWithBlocks,
+  familyActivitySelection2: ActivitySelectionInputWithBlocks,
   options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.difference(
-    familyActivitySelections,
-    familyActivitySelections2,
+    familyActivitySelection,
+    familyActivitySelection2,
     options ?? {},
   );
 };
 
 export const symmetricDifference = (
-  familyActivitySelections: ActivitySelectionInputWithBlocks,
-  familyActivitySelections2: ActivitySelectionInputWithBlocks,
+  familyActivitySelection: ActivitySelectionInputWithBlocks,
+  familyActivitySelection2: ActivitySelectionInputWithBlocks,
   options?: SetOperationOptions,
 ): ActivitySelectionWithMetadata | undefined => {
   return ReactNativeDeviceActivityModule?.symmetricDifference(
-    familyActivitySelections,
-    familyActivitySelections2,
+    familyActivitySelection,
+    familyActivitySelection2,
     options ?? {},
   );
 };
@@ -440,7 +440,6 @@ export function enableBlockAllMode(triggeredBy?: string): void {
 }
 
 export function disableBlockAllMode(triggeredBy?: string): void {
-  // deprecated, should be renamed to disableBlockAllMode
   return ReactNativeDeviceActivityModule?.disableBlockAllMode(triggeredBy);
 }
 
