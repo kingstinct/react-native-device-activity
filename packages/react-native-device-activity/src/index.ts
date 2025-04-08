@@ -495,6 +495,37 @@ export const useActivities = () => {
   return [activities, refresh] as const;
 };
 
+const DEFAULT_MAX_ATTEMPTS = 10;
+const DEFAULT_POLL_INTERVAL_MS = 250;
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const pollAuthorizationStatus = async ({
+  abortController,
+  pollIntervalMs = DEFAULT_POLL_INTERVAL_MS,
+  maxAttempts = DEFAULT_MAX_ATTEMPTS,
+}: {
+  abortController?: AbortController;
+  pollIntervalMs?: number;
+  maxAttempts?: number;
+} = {}): Promise<AuthorizationStatusType> => {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const status = getAuthorizationStatus();
+
+    if (
+      status !== AuthorizationStatus.notDetermined ||
+      abortController?.signal.aborted
+    ) {
+      return status;
+    }
+
+    await wait(pollIntervalMs);
+  }
+
+  // return final status even if maxAttempts reached
+  return getAuthorizationStatus();
+};
+
 export const useAuthorizationStatus = () => {
   const [authorizationStatus, setAuthorizationStatus] =
     useState<AuthorizationStatusType>(AuthorizationStatus.notDetermined);
