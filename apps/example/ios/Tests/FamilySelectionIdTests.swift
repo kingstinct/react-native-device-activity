@@ -111,7 +111,7 @@ class FamilySelectionIdTests: XCTestCase {
 
     let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      categoryToken: token.categoryTokens.first,
+      categoryToken: token.categoryTokens.first
     )
 
     XCTAssertEqual(
@@ -124,7 +124,7 @@ class FamilySelectionIdTests: XCTestCase {
 
     let activitySelectionPrefixedConfigKey = tryGetActivitySelectionIdConfigKey(
       keyPrefix: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX,
-      categoryToken: token.categoryTokens.first,
+      categoryToken: token.categoryTokens.first
     )
 
     XCTAssertEqual(
