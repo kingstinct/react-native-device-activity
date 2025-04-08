@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 
@@ -7,6 +8,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  if (NSClassFromString(@"XCTestCase")) {
+    // Skip React Native setup for unit tests
+    return YES;
+  }
+
   self.moduleName = @"main";
 
   // You can add your custom initial props in the dictionary below.
