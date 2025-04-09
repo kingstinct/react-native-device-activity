@@ -250,6 +250,9 @@ export type Action =
       type: "clearWhitelist";
     } & CommonTypeParams)
   | ({
+      type: "clearWhitelistAndUpdateBlock";
+    } & CommonTypeParams)
+  | ({
       type: "sendNotification";
       payload: NotificationPayload;
     } & CommonTypeParams)
