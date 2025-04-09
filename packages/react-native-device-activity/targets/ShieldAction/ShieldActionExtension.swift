@@ -134,6 +134,7 @@ func handleAction(
       }
 
       saveCurrentWhitelist(whitelist: selection)
+      updateBlock(triggeredBy: "shieldAction")
     }
   }
 
