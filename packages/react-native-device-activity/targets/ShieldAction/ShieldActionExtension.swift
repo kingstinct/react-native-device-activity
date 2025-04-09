@@ -17,6 +17,7 @@ func handleAction(
 ) -> ShieldActionResponse {
   logger.log("handleAction")
   if let type = configForSelectedAction["type"] as? String {
+    logger.log("type: \(type)")
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
     }
@@ -119,6 +120,7 @@ func handleAction(
     }
 
     if type == "whitelistCurrent" {
+      logger.log("whitelistCurrent!!!")
       var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {
@@ -137,6 +139,8 @@ func handleAction(
       updateBlock(triggeredBy: "shieldAction")
     }
   }
+
+  CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
   if let behavior = configForSelectedAction["behavior"] as? String {
     if behavior == "defer" {
