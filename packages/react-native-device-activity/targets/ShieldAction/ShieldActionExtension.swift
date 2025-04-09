@@ -118,7 +118,7 @@ func handleAction(
       }
     }
 
-    if type == "whitelistCurrentApp" {
+    if type == "whitelistCurrent" {
       var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {
@@ -127,6 +127,10 @@ func handleAction(
 
       if let webdomainToken = webdomainToken {
         selection.webDomainTokens.insert(webdomainToken)
+      }
+
+      if let categoryToken = categoryToken {
+        selection.categoryTokens.insert(categoryToken)
       }
 
       saveCurrentWhitelist(whitelist: selection)
