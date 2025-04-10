@@ -208,6 +208,8 @@ func executeGenericAction(
     enableBlockAllMode(triggeredBy: triggeredBy)
   } else if type == "removeAllPendingNotificationRequests" {
     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+  } else if type == "removeAllDeliveredNotifications" {
+    UNUserNotificationCenter.current().removeAllDeliveredNotifications()
   } else if type == "removePendingNotificationRequests" {
     if let identifiers = action["identifiers"] as? [String] {
       UNUserNotificationCenter

@@ -280,6 +280,12 @@ export type Action =
   | ({
       type: "removePendingNotificationRequests";
       identifiers: string[];
+    } & CommonTypeParams)
+  | ({
+      type: "addCurrentToWhitelist";
+    } & CommonTypeParams)
+  | ({
+      type: "removeAllDeliveredNotifications";
     } & CommonTypeParams);
 
 export type DeviceActivityEventRaw = Omit<
