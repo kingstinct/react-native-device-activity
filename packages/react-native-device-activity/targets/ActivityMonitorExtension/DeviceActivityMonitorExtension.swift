@@ -54,7 +54,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     callbackName: String,
     eventName: String?
   ) {
-    let key =
+    let triggeredBy =
       eventName != nil
       ? "actions_for_\(activityName)_\(callbackName)_\(eventName!)"
       : "actions_for_\(activityName)_\(callbackName)"
@@ -67,7 +67,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
-    if let actions = userDefaults?.array(forKey: key) {
+    if let actions = userDefaults?.array(forKey: triggeredBy) {
       actions.forEach { actionRaw in
         if let action = actionRaw as? [String: Any] {
           let skipIfAlreadyTriggeredAfter = action["skipIfAlreadyTriggeredAfter"] as? Double
@@ -103,7 +103,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             executeGenericAction(
               action: action,
               placeholders: placeholders,
-              eventKey: key
+              triggeredBy: triggeredBy
             )
           }
         }

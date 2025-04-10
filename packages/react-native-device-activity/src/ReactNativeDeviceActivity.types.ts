@@ -160,7 +160,7 @@ export type DeviceActivityEvent = {
 export type ShieldActionType =
   | "disableBlockAllMode"
   | "dismiss"
-  | "whitelistCurrent"
+  | "addCurrentToWhitelist"
   | "unblockPossibleFamilyActivitySelection"
   | "unblockAllPossibleFamilyActivitySelections"
   | "whitelistPossibleFamilyActivitySelection"

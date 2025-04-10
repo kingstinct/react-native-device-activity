@@ -19,9 +19,18 @@ func handleShieldAction(
   logger.log("handleAction")
   if let actions = configForSelectedAction["actions"] as? [[String: Any]] {
     for action in actions {
-      executeGenericAction(action: action, placeholders: placeholders, eventKey: "shieldAction")
+      executeGenericAction(
+        action: action,
+        placeholders: placeholders,
+        triggeredBy: "shieldAction",
+        applicationToken: applicationToken,
+        webdomainToken: webdomainToken,
+        categoryToken: categoryToken
+      )
     }
-  } else if let type = configForSelectedAction["type"] as? String {
+  }
+
+  if let type = configForSelectedAction["type"] as? String {
     logger.log("type: \(type)")
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
@@ -124,7 +133,7 @@ func handleShieldAction(
       }
     }
 
-    if type == "whitelistCurrent" {
+    if type == "addCurrentToWhitelist" {
       var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {

@@ -97,11 +97,37 @@ func notifyAppWithName(name: String) {
   CFNotificationCenterPostNotification(notificationCenter, notificationName, nil, nil, false)
 }
 
-func executeGenericAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
+func executeGenericAction(
+  action: [String: Any],
+  placeholders: [String: String?],
+  triggeredBy: String,
+  applicationToken: ApplicationToken? = nil,
+  webdomainToken: WebDomainToken? = nil,
+  categoryToken: ActivityCategoryToken? = nil
+) {
   let type = action["type"] as? String
 
   if let sleepBefore = action["sleepBefore"] as? Int {
     sleep(ms: sleepBefore)
+  }
+
+  if type == "addCurrentToWhitelist" {
+    var selection = getCurrentWhitelist()
+
+    if let applicationToken = applicationToken {
+      selection.applicationTokens.insert(applicationToken)
+    }
+
+    if let webdomainToken = webdomainToken {
+      selection.webDomainTokens.insert(webdomainToken)
+    }
+
+    if let categoryToken = categoryToken {
+      selection.categoryTokens.insert(categoryToken)
+    }
+
+    saveCurrentWhitelist(whitelist: selection)
+    updateBlock(triggeredBy: "shieldAction")
   }
 
   if type == "blockSelection" {
@@ -109,7 +135,7 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
       if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
         updateShield(
           shieldId: action["shieldId"] as? String,
-          triggeredBy: eventKey,
+          triggeredBy: triggeredBy,
           activitySelectionId: familyActivitySelectionId
         )
 
@@ -117,7 +143,7 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
 
         blockSelectedApps(
           blockSelection: activitySelection,
-          triggeredBy: eventKey
+          triggeredBy: triggeredBy
         )
       } else {
         logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
@@ -129,7 +155,7 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
 
         unblockSelection(
           removeSelection: activitySelection,
-          triggeredBy: eventKey
+          triggeredBy: triggeredBy
         )
 
         userDefaults?
@@ -142,7 +168,7 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
       let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
       addSelectionToWhitelistAndUpdateBlock(
         whitelistSelection: selection,
-        triggeredBy: eventKey
+        triggeredBy: triggeredBy
       )
     }
   } else if type == "removeSelectionFromWhitelist" {
@@ -150,20 +176,20 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
       let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
       removeSelectionFromWhitelistAndUpdateBlock(
         selection: selection,
-        triggeredBy: eventKey
+        triggeredBy: triggeredBy
       )
     }
   } else if type == "clearWhitelistAndUpdateBlock" {
     logger.info("should clearWhitelistAndUpdateBlock")
     clearWhitelist()
-    updateBlock(triggeredBy: eventKey)
+    updateBlock(triggeredBy: triggeredBy)
     logger.info("done")
   } else if type == "resetBlocks" {
-    resetBlocks(triggeredBy: eventKey)
+    resetBlocks(triggeredBy: triggeredBy)
   } else if type == "clearWhitelist" {
     clearWhitelist()
   } else if type == "disableBlockAllMode" {
-    disableBlockAllMode(triggeredBy: eventKey)
+    disableBlockAllMode(triggeredBy: triggeredBy)
   } else if type == "openApp" {
     // todo: replace with general string
     openUrl(urlString: "device-activity://")
@@ -172,14 +198,14 @@ func executeGenericAction(action: [String: Any], placeholders: [String: String?]
   } else if type == "enableBlockAllMode" {
     updateShield(
       shieldId: action["shieldId"] as? String,
-      triggeredBy: eventKey,
+      triggeredBy: triggeredBy,
       activitySelectionId: nil
     )
 
     // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
     sleep(ms: 50)
 
-    enableBlockAllMode(triggeredBy: eventKey)
+    enableBlockAllMode(triggeredBy: triggeredBy)
   } else if type == "removeAllPendingNotificationRequests" {
     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
   } else if type == "removePendingNotificationRequests" {
