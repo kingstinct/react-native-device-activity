@@ -170,7 +170,8 @@ export type ShieldActionType =
   | "openApp";
 
 export type ShieldAction = {
-  type: ShieldActionType;
+  /** @deprecated use actions instead */
+  type?: ShieldActionType;
   delay?: number;
   payload?: NotificationPayload;
   /**
@@ -178,6 +179,7 @@ export type ShieldAction = {
    */
   onlyFamilySelectionIdsContainingMonitoredActivityNames?: boolean;
   behavior: "close" | "defer";
+  actions?: Action[];
 };
 
 export type ShieldActions = {
@@ -267,6 +269,17 @@ export type Action =
         body?: Record<string, any>;
         headers?: Record<string, string>;
       };
+    } & CommonTypeParams)
+  | ({
+      type: "setBadgeCount";
+      count: number | string; // string for placeholder
+    } & CommonTypeParams)
+  | ({
+      type: "removeAllPendingNotificationRequests";
+    } & CommonTypeParams)
+  | ({
+      type: "removePendingNotificationRequests";
+      identifiers: string[];
     } & CommonTypeParams);
 
 export type DeviceActivityEventRaw = Omit<

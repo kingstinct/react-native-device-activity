@@ -9,108 +9,8 @@ import DeviceActivity
 import FamilyControls
 import Foundation
 import ManagedSettings
+import NotificationCenter
 import os
-
-func executeAction(action: [String: Any], placeholders: [String: String?], eventKey: String) {
-  let type = action["type"] as? String
-
-  if let sleepBefore = action["sleepBefore"] as? Int {
-    sleep(ms: sleepBefore)
-  }
-
-  if type == "blockSelection" {
-    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
-      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-        updateShield(
-          shieldId: action["shieldId"] as? String,
-          triggeredBy: eventKey,
-          activitySelectionId: familyActivitySelectionId
-        )
-
-        sleep(ms: 50)
-
-        blockSelectedApps(
-          blockSelection: activitySelection,
-          triggeredBy: eventKey
-        )
-      } else {
-        logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
-      }
-    }
-  } else if type == "unblockSelection" {
-    if let familyActivitySelectionId = action["familyActivitySelectionId"] as? String {
-      if let activitySelection = getFamilyActivitySelectionById(id: familyActivitySelectionId) {
-
-        unblockSelection(
-          removeSelection: activitySelection,
-          triggeredBy: eventKey
-        )
-
-        userDefaults?
-          .removeObject(
-            forKey: SHIELD_CONFIGURATION_FOR_SELECTION_PREFIX + "_" + familyActivitySelectionId)
-      }
-    }
-  } else if type == "addSelectionToWhitelist" {
-    if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
-      let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
-      addSelectionToWhitelistAndUpdateBlock(
-        whitelistSelection: selection,
-        triggeredBy: eventKey
-      )
-    }
-  } else if type == "removeSelectionFromWhitelist" {
-    if let familyActivitySelectionInput = action["familyActivitySelection"] as? [String: Any] {
-      let selection = parseActivitySelectionInput(input: familyActivitySelectionInput)
-      removeSelectionFromWhitelistAndUpdateBlock(
-        selection: selection,
-        triggeredBy: eventKey
-      )
-    }
-  } else if type == "clearWhitelistAndUpdateBlock" {
-    clearWhitelist()
-    updateBlock(triggeredBy: eventKey)
-  } else if type == "resetBlocks" {
-    resetBlocks(triggeredBy: eventKey)
-  } else if type == "clearWhitelist" {
-    clearWhitelist()
-  } else if type == "disableBlockAllMode" {
-    disableBlockAllMode(triggeredBy: eventKey)
-  } else if type == "openApp" {
-    // todo: replace with general string
-    openUrl(urlString: "device-activity://")
-
-    sleep(ms: 1000)
-  } else if type == "enableBlockAllMode" {
-    updateShield(
-      shieldId: action["shieldId"] as? String,
-      triggeredBy: eventKey,
-      activitySelectionId: nil
-    )
-
-    // sometimes the shield doesn't pick up the shield config change above, trying a sleep to get around it
-    sleep(ms: 50)
-
-    enableBlockAllMode(triggeredBy: eventKey)
-  } else if type == "sendNotification" {
-    if let notification = action["payload"] as? [String: Any] {
-      sendNotification(contents: notification, placeholders: placeholders)
-    }
-  } else if type == "sendHttpRequest" {
-    if let url = action["url"] as? String {
-      let config = action["options"] as? [String: Any] ?? [:]
-
-      task = sendHttpRequest(with: url, config: config, placeholders: placeholders)
-
-      // required for it to have time to trigger before process/callback ends
-      sleep(ms: 1000)
-    }
-  }
-
-  if let sleepAfter = action["sleepAfter"] as? Int {
-    sleep(ms: sleepAfter)
-  }
-}
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
@@ -200,7 +100,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             callbackName: callbackName,
             eventName: eventName
           ) {
-            executeAction(
+            executeGenericAction(
               action: action,
               placeholders: placeholders,
               eventKey: key

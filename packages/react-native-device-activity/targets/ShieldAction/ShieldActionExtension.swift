@@ -9,14 +9,19 @@ import FamilyControls
 import ManagedSettings
 import UIKit
 
-func handleAction(
+func handleShieldAction(
   configForSelectedAction: [String: Any],
+  placeholders: [String: String?],
   applicationToken: ApplicationToken?,
   webdomainToken: WebDomainToken?,
   categoryToken: ActivityCategoryToken?
 ) -> ShieldActionResponse {
   logger.log("handleAction")
-  if let type = configForSelectedAction["type"] as? String {
+  if let actions = configForSelectedAction["actions"] as? [[String: Any]] {
+    for action in actions {
+      executeGenericAction(action: action, placeholders: placeholders, eventKey: "shieldAction")
+    }
+  } else if let type = configForSelectedAction["type"] as? String {
     logger.log("type: \(type)")
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
@@ -120,7 +125,6 @@ func handleAction(
     }
 
     if type == "whitelistCurrent" {
-      logger.log("whitelistCurrent!!!")
       var selection = getCurrentWhitelist()
 
       if let applicationToken = applicationToken {
@@ -167,10 +171,29 @@ func handleAction(
     webDomainToken: webdomainToken,
     categoryToken: categoryToken
   ) {
-    let actionKey = action == .primaryButtonPressed ? "primary" : "secondary"
-    if let configForSelectedAction = shieldActionConfig[actionKey] as? [String: Any] {
-      let response = handleAction(
+    let actionButton = action == .primaryButtonPressed ? "primary" : "secondary"
+    let familyActivitySelectionId = getPossibleFamilyActivitySelectionIds(
+      applicationToken: applicationToken,
+      webDomainToken: webdomainToken,
+      categoryToken: categoryToken,
+      onlyFamilySelectionIdsContainingMonitoredActivityNames: true,
+      sortByGranularity: true
+    ).first
+    if let configForSelectedAction = shieldActionConfig[actionButton] as? [String: Any] {
+      let placeholders: [String: String?] = [
+        "action": actionButton,
+        "applicationName": applicationToken != nil
+          ? Application(token: applicationToken!).localizedDisplayName : nil,
+        "webDomain": webdomainToken != nil
+          ? WebDomain(
+            token: webdomainToken!
+          ).domain : nil,
+        "familyActivitySelectionId": familyActivitySelectionId?.id
+      ]
+
+      let response = handleShieldAction(
         configForSelectedAction: configForSelectedAction,
+        placeholders: placeholders,
         applicationToken: applicationToken,
         webdomainToken: webdomainToken,
         categoryToken: categoryToken
