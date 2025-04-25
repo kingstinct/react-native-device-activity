@@ -214,6 +214,7 @@ type CommonTypeParams = {
   skipIfAlreadyTriggeredWithinMS?: number;
   skipIfLargerEventRecordedWithinMS?: number;
   skipIfAlreadyTriggeredBefore?: Date;
+  skipIfWhitelistOrBlacklistIsUnchanged?: boolean;
   skipIfLargerEventRecordedSinceIntervalStarted?: boolean;
   neverTriggerBefore?: Date;
 };

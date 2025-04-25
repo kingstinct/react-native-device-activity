@@ -65,6 +65,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       "eventName": eventName
     ]
 
+    let originalWhitelist = getCurrentWhitelist()
+    let originalBlocklist = getCurrentBlocklist()
+
     CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
 
     if let actions = userDefaults?.array(forKey: triggeredBy) {
@@ -85,6 +88,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           let skipIfAlreadyTriggeredBetweenToDate =
             action["skipIfAlreadyTriggeredBetweenToDate"] as? Double
 
+          let skipIfWhitelistOrBlacklistIsUnchanged = action["skipIfWhitelistOrBlacklistIsUnchanged"] as? Bool
+
           if shouldExecuteAction(
             skipIfAlreadyTriggeredAfter: skipIfAlreadyTriggeredAfter,
             skipIfLargerEventRecordedAfter: skipIfLargerEventRecordedAfter,
@@ -96,6 +101,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             skipIfAlreadyTriggeredBefore: skipIfAlreadyTriggeredBefore,
             skipIfAlreadyTriggeredBetweenFromDate: skipIfAlreadyTriggeredBetweenFromDate,
             skipIfAlreadyTriggeredBetweenToDate: skipIfAlreadyTriggeredBetweenToDate,
+            skipIfWhitelistOrBlacklistIsUnchanged: skipIfWhitelistOrBlacklistIsUnchanged,
+            originalWhitelist: originalWhitelist,
+            originalBlocklist: originalBlocklist,
             activityName: activityName,
             callbackName: callbackName,
             eventName: eventName
