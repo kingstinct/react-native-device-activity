@@ -11,10 +11,34 @@ Provides direct access to Apples Screen Time, Device Activity and Shielding APIs
 
 Please note that it only supports iOS (and requires iOS 15 or higher) and requires a Custom Dev Client to work with Expo. For Android I'd probably look into [UsageStats](https://developer.android.com/reference/android/app/usage/UsageStats), which seems provide more granularity.
 
-# Examples
+# Examples & Use Cases
+
+## Handle permissions
+
+To block apps you need to request screen time permissions. Some features (events still seem to trigger in most cases) seem to work without having permissions, but I would'nt rely on it. It's worth noting that you can always re-request permissions, unlike most other iOS permissions.
 
 ```TypeScript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
+
+useEffect(() => {
+  ReactNativeDeviceActivity.requestAuthorization();
+}, [])
+```
+
+You can also revoke permissions:
+
+```TypeScript
+ReactNativeDeviceActivity.revokeAuthorization();
+```
+
+## Select Apps to track
+
+For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native view:
+
+```TypeScript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
 
 const DeviceActivityPicker = () => {
   // First things first, you need to request authorization
@@ -36,11 +60,24 @@ const DeviceActivityPicker = () => {
     )
   }
 }
+```
+
+Some things worth noting here:
+
+- This is a SwiftUI view, which is prone to crashing, especially when browsing larger categories of apps or searching for apps. It's recommended to provide a fallback view (positioned behind the SwiftUI view) that allows the user to know what's happening and reload the view and tailor that to your app's design and UX.
+- The activitySelection tokens can be quite large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accepts a familyActivitySelectionId as well as the familyActivitySelection token directly.
+
+## Time tracking
+
+It's worth noting that the Screen Time API is not designed for time tracking out-of-the-box. So you have to set up events with names you can parse as time after they've triggered.
+
+```TypeScript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 // once you have authorization and got hold of the familyActivitySelection (which is a base64 string) you can start tracking with it:
 const trackDeviceActivity = (activitySelection: string) => {
   ReactNativeDeviceActivity.startMonitoring(
-    "DeviceActivity.AppLoggedTimeDaily",
+    "TimeTrackingActivity",
     {
       // repeat logging every 24 hours
       intervalStart: { hour: 0, minute: 0, second: 0 },
@@ -49,7 +86,7 @@ const trackDeviceActivity = (activitySelection: string) => {
     },
     events: [
       {
-        eventName: 'user_activity_reached_10_minutes',
+        eventName: 'minutes_reached_10', // remember, give a event names that makes it possible for you to extract time at a later stage, if you want to access this information
         familyActivitySelection: activitySelection,
         threshold: { minute: 10 },
       }
@@ -57,7 +94,7 @@ const trackDeviceActivity = (activitySelection: string) => {
   );
 }
 
-// you can listen to events (which I guess only works when the app is alive):
+// you can listen to events (which only works when the app is alive):
 const listener = ReactNativeDeviceActivity.onDeviceActivityMonitorEvent(
       (event) => {
         const name = event.nativeEvent.callbackName; // the name of the event
@@ -74,6 +111,102 @@ const listener = ReactNativeDeviceActivity.onDeviceActivityMonitorEvent(
 
 // you can also get a history of events called with the time where called:
 const events = ReactNativeDeviceActivityModule.getEvents();
+```
+
+Some things worth noting here:
+
+- Depending on your use case (if you need different schedules for different days for example) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case.
+
+## Block the shield
+
+To block apps you can do it directly from your code.
+
+```TypeScript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
+// block all apps
+ReactNativeDeviceActivity.blockSelection({
+  activitySelectionId: selectionId,
+});
+```
+
+But for many use cases you want to do this in the Swift process, which is why you can specify actions when setting up events:
+
+```TypeScript
+const trackDeviceActivity = (activitySelection: string) => {
+  ReactNativeDeviceActivity.startMonitoring(
+    "BlockAfter10Minutes",
+    {
+      // repeat logging every 24 hours
+      intervalStart: { hour: 0, minute: 0, second: 0 },
+      intervalEnd: { hour: 23, minute: 59, second: 59 },
+      repeats: true,
+    },
+    events: [
+      {
+        eventName: 'minutes_reached_10', // remember, give a event names that makes it possible for you to extract time at a later stage, if you want to access this information
+        familyActivitySelection: activitySelection,
+        threshold: { minute: 10 },
+        actions: [
+          {
+            type: "blockSelection",
+            familyActivitySelectionId,
+          }
+        ]
+      }
+    ]
+  );
+}
+```
+
+There are many other actions you can perform, like sending web requests or notifications. Easiest way to explore this is exploring this with TypeScript, which is easier to keep up-to-date than this documentation.
+
+You can also configure the shield UI and actions of the shield (this can also be done in the Swift process with actions):
+
+```TypeScript
+ReactNativeDeviceActivity.updateShield(
+  {
+    title: shieldTitle,
+    backgroundBlurStyle: UIBlurEffectStyle.systemMaterialDark,
+    // backgroundColor: null,
+    titleColor: {
+      red: 255,
+      green: 0,
+      blue: 0,
+    },
+    subtitle: "subtitle",
+    subtitleColor: {
+      red: Math.random() * 255,
+      green: Math.random() * 255,
+      blue: Math.random() * 255,
+    },
+    primaryButtonBackgroundColor: {
+      red: Math.random() * 255,
+      green: Math.random() * 255,
+      blue: Math.random() * 255,
+    },
+    primaryButtonLabelColor: {
+      red: Math.random() * 255,
+      green: Math.random() * 255,
+      blue: Math.random() * 255,
+    },
+    secondaryButtonLabelColor: {
+      red: Math.random() * 255,
+      green: Math.random() * 255,
+      blue: Math.random() * 255,
+    },
+  },
+  {
+    primary: {
+      type: "disableBlockAllMode",
+      behavior: "defer",
+    },
+    secondary: {
+      type: "dismiss",
+      behavior: "close",
+    },
+  },
+)
 ```
 
 # Installation in managed Expo projects
@@ -111,15 +244,17 @@ For Expo to be able to automatically handle provisioning you need to specify ext
 You can potentially modify the targets manually, although you risk the library and your app code diverging. If you want to disable the automatic copying of the targets, you can set `copyToTargetFolder` to `false` in the plugin configuration [as seen here](https://github.com/Intentional-Digital/react-native-device-activity/blob/main/example/app.json#L53).
 
 ## Some notes
+
 - It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make a best guess here - prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
 - When determining which familyActivitySelectionId that should be used it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
 
 ## Data model
+
 Almost all the functionality is built around persisting configuration as well as event history to UserDefaults.
 
 - familyActivitySelectionId mapping. This makes it possible for us to tie a familyActivitySelection token to an id that we can reuse and refer to at a later stage.
-- Triggers. This includes configuring shield UI/actions as well as sending web requests or notifications from the Swift background side, in the context of the device activity monitor process. Prefixed like actions_for_${goalId} in userDefaults. This is how we do blocking of apps, updates to shield UI/actions etc.
-- Event history. Contains information of which events have been triggered and when. Prefixed like events_${goalId} in userDefaults. This can be useful for tracking time spent.
+- Triggers. This includes configuring shield UI/actions as well as sending web requests or notifications from the Swift background side, in the context of the device activity monitor process. Prefixed like actions*for*${goalId} in userDefaults. This is how we do blocking of apps, updates to shield UI/actions etc.
+- Event history. Contains information of which events have been triggered and when. Prefixed like events\_${goalId} in userDefaults. This can be useful for tracking time spent.
 - ShieldIds. To reduce the storage strain on userDefaults shields are referenced with shieldIds.
 
 # Installation in bare React Native projects
@@ -160,7 +295,8 @@ Contributions are very welcome! Please refer to guidelines described in the [con
 # Weird behaviors ⚠️
 
 - Authorization changes outside app not captured
-When we've asked whether the user has authorized us to use screen time, and the state is changed outside the app, the native API doesn't update until the app restarts, i.e. this flow:
+  When we've asked whether the user has authorized us to use screen time, and the state is changed outside the app, the native API doesn't update until the app restarts, i.e. this flow:
+
   1. Ask for current permission
   2. Change permission outside the app
   3. Ask for current permission again will return same as (1)
@@ -173,6 +309,7 @@ When we've asked whether the user has authorized us to use screen time, and the 
 - The DeviceActivitySelectionView is prone to crashes, which is outside of our control. The best we can do is provide fallback views that allows the user to know what's happening and reload the view.
 
 # Troubleshooting 📱
+
 The Screen Time APIs are known to be very finnicky. Here are some things you can try to troubleshoot events not being reported:
 
 - Disable Low Power Mode (mentioned by Apple Community Specialist [here](https://discussions.apple.com/thread/254808070)) 🪫
