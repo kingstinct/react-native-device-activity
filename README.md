@@ -15,22 +15,24 @@ Please note that it only supports iOS (and requires iOS 15 or higher) and requir
 
 ## Handle permissions
 
-To block apps, you need to request Screen Time permissions. Some features (events still seem to trigger in most cases) seem to work without having permissions, but I wouldn't rely on it.
+To block apps, you need to request Screen Time permissions. Note that some features (for example, events) may still trigger without permissions; however, this behavior is not guaranteed.
 
 ```TypeScript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+import React, { useEffect } from 'react';
 
 useEffect(() => {
   ReactNativeDeviceActivity.requestAuthorization();
 }, [])
-```
 
 You can also revoke permissions:
 
 ```TypeScript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
 ReactNativeDeviceActivity.revokeAuthorization();
-```
 
 ## Select Apps to track
 
@@ -65,7 +67,7 @@ const DeviceActivityPicker = () => {
 Some things worth noting here:
 
 - This is a SwiftUI view, which is prone to crashing, especially when browsing larger categories of apps or searching for apps. It's recommended to provide a fallback view (positioned behind the SwiftUI view) that allows the user to know what's happening and reload the view and tailor that to your app's design and UX.
-The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accepts a familyActivitySelectionId as well as the familyActivitySelection token directly.
+The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accept a familyActivitySelectionId as well as the familyActivitySelection token directly.
 
 ## Time tracking
 
@@ -115,7 +117,7 @@ const events = ReactNativeDeviceActivityModule.getEvents();
 
 Some things worth noting here:
 
-Depending on your use case (if you need different schedules for different days, for example,) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case. 
+Depending on your use case (if you need different schedules for different days, for example) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case. 
 
 ## Block the shield
 
