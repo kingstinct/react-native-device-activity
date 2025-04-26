@@ -1235,7 +1235,7 @@ func hasHigherTriggeredEvent(
 
 func isEqual(
   _ selection1: FamilyActivitySelection,
-  _ selection2: FamilyActivitySelection,
+  _ selection2: FamilyActivitySelection
 ) -> Bool {
   let diff = symmetricDifference(selection1, selection2)
   return diff.categoryTokens.isEmpty && diff.applicationTokens.isEmpty
