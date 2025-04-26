@@ -15,7 +15,7 @@ Please note that it only supports iOS (and requires iOS 15 or higher) and requir
 
 ## Handle permissions
 
-To block apps you need to request screen time permissions. Some features (events still seem to trigger in most cases) seem to work without having permissions, but I would'nt rely on it. It's worth noting that you can always re-request permissions, unlike most other iOS permissions.
+To block apps, you need to request Screen Time permissions. Some features (events still seem to trigger in most cases) seem to work without having permissions, but I wouldn't rely on it.
 
 ```TypeScript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
@@ -65,7 +65,7 @@ const DeviceActivityPicker = () => {
 Some things worth noting here:
 
 - This is a SwiftUI view, which is prone to crashing, especially when browsing larger categories of apps or searching for apps. It's recommended to provide a fallback view (positioned behind the SwiftUI view) that allows the user to know what's happening and reload the view and tailor that to your app's design and UX.
-- The activitySelection tokens can be quite large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accepts a familyActivitySelectionId as well as the familyActivitySelection token directly.
+The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accepts a familyActivitySelectionId as well as the familyActivitySelection token directly.
 
 ## Time tracking
 
@@ -86,7 +86,7 @@ const trackDeviceActivity = (activitySelection: string) => {
     },
     events: [
       {
-        eventName: 'minutes_reached_10', // remember, give a event names that makes it possible for you to extract time at a later stage, if you want to access this information
+        eventName: 'minutes_reached_10', // remember to give event names that make it possible for you to extract time at a later stage, if you want to access this information
         familyActivitySelection: activitySelection,
         threshold: { minute: 10 },
       }
@@ -115,11 +115,11 @@ const events = ReactNativeDeviceActivityModule.getEvents();
 
 Some things worth noting here:
 
-- Depending on your use case (if you need different schedules for different days for example) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case.
+Depending on your use case (if you need different schedules for different days, for example,) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case. 
 
 ## Block the shield
 
-To block apps you can do it directly from your code.
+To block apps, you can do it directly from your code.
 
 ```TypeScript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
@@ -144,7 +144,7 @@ const trackDeviceActivity = (activitySelection: string) => {
     },
     events: [
       {
-        eventName: 'minutes_reached_10', // remember, give a event names that makes it possible for you to extract time at a later stage, if you want to access this information
+        eventName: 'minutes_reached_10', // remember to give event names that make it possible for you to extract time at a later stage, if you want to access this information
         familyActivitySelection: activitySelection,
         threshold: { minute: 10 },
         actions: [
@@ -159,7 +159,7 @@ const trackDeviceActivity = (activitySelection: string) => {
 }
 ```
 
-There are many other actions you can perform, like sending web requests or notifications. Easiest way to explore this is exploring this with TypeScript, which is easier to keep up-to-date than this documentation.
+There are many other actions you can perform, like sending web requests or notifications. The easiest way to explore this is by using TypeScript, which is easier to keep up-to-date than this documentation.
 
 You can also configure the shield UI and actions of the shield (this can also be done in the Swift process with actions):
 
@@ -245,7 +245,7 @@ You can potentially modify the targets manually, although you risk the library a
 
 ## Some notes
 
-- It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make a best guess here - prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
+- It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make the best guess here, prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
 - When determining which familyActivitySelectionId that should be used it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
 
 ## Data model
