@@ -88,7 +88,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           let skipIfAlreadyTriggeredBetweenToDate =
             action["skipIfAlreadyTriggeredBetweenToDate"] as? Double
 
-          let skipIfWhitelistOrBlacklistIsUnchanged = action["skipIfWhitelistOrBlacklistIsUnchanged"] as? Bool
+          let skipIfWhitelistOrBlacklistIsUnchanged =
+            action["skipIfWhitelistOrBlacklistIsUnchanged"] as? Bool
 
           if shouldExecuteAction(
             skipIfAlreadyTriggeredAfter: skipIfAlreadyTriggeredAfter,

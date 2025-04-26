@@ -1238,7 +1238,8 @@ func isEqual(
   _ selection2: FamilyActivitySelection,
 ) -> Bool {
   let diff = symmetricDifference(selection1, selection2)
-  return diff.categoryTokens.isEmpty && diff.applicationTokens.isEmpty && diff.webDomainTokens.isEmpty
+  return diff.categoryTokens.isEmpty && diff.applicationTokens.isEmpty
+    && diff.webDomainTokens.isEmpty
 }
 
 func shouldExecuteAction(
@@ -1266,10 +1267,10 @@ func shouldExecuteAction(
   }
 
   if let skipIfWhitelistOrBlacklistIsUnchanged = skipIfWhitelistOrBlacklistIsUnchanged {
-    if(skipIfWhitelistOrBlacklistIsUnchanged){
+    if skipIfWhitelistOrBlacklistIsUnchanged {
       let whitelistIsEqual = isEqual(originalWhitelist, getCurrentWhitelist())
       let blocklistIsEqual = isEqual(originalBlocklist, getCurrentBlocklist())
-      if(whitelistIsEqual && blocklistIsEqual){
+      if whitelistIsEqual && blocklistIsEqual {
         return false
       }
     }

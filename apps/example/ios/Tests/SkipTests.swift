@@ -1,3 +1,4 @@
+import FamilyControls
 import XCTest
 
 class NeverTriggerBeforeTests: XCTestCase {
@@ -19,6 +20,9 @@ class NeverTriggerBeforeTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -34,6 +38,9 @@ class NeverTriggerBeforeTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -69,6 +76,9 @@ class SkipIfTriggeredBeforeTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: 1001,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -84,6 +94,9 @@ class SkipIfTriggeredBeforeTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: 1000,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -118,6 +131,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: 500,
       skipIfAlreadyTriggeredBetweenToDate: 1500,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -133,6 +149,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: 1001,
       skipIfAlreadyTriggeredBetweenToDate: 1500,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -148,6 +167,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: 500,
       skipIfAlreadyTriggeredBetweenToDate: 999,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -180,6 +202,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -195,6 +220,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -228,6 +256,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -243,6 +274,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -277,6 +311,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -292,6 +329,9 @@ class SkipIfAlreadyTriggeredBetweenTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -332,6 +372,9 @@ class SkipIfLargerTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -347,6 +390,9 @@ class SkipIfLargerTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: eventName
@@ -390,6 +436,9 @@ class SkipIfLargerTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: "15"
@@ -405,6 +454,9 @@ class SkipIfLargerTests: XCTestCase {
       skipIfAlreadyTriggeredBefore: nil,
       skipIfAlreadyTriggeredBetweenFromDate: nil,
       skipIfAlreadyTriggeredBetweenToDate: nil,
+      skipIfWhitelistOrBlacklistIsUnchanged: false,
+      originalWhitelist: FamilyActivitySelection(),
+      originalBlocklist: FamilyActivitySelection(),
       activityName: activityName,
       callbackName: callbackName,
       eventName: "5"
