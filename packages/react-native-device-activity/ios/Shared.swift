@@ -1233,6 +1233,15 @@ func hasHigherTriggeredEvent(
   return false
 }
 
+func isEqual(
+  _ selection1: FamilyActivitySelection,
+  _ selection2: FamilyActivitySelection
+) -> Bool {
+  let diff = symmetricDifference(selection1, selection2)
+  return diff.categoryTokens.isEmpty && diff.applicationTokens.isEmpty
+    && diff.webDomainTokens.isEmpty
+}
+
 func shouldExecuteAction(
   skipIfAlreadyTriggeredAfter: Double?,
   skipIfLargerEventRecordedAfter: Double?,
@@ -1243,6 +1252,9 @@ func shouldExecuteAction(
   skipIfAlreadyTriggeredBefore: Double?,
   skipIfAlreadyTriggeredBetweenFromDate: Double?,
   skipIfAlreadyTriggeredBetweenToDate: Double?,
+  skipIfWhitelistOrBlacklistIsUnchanged: Bool?,
+  originalWhitelist: FamilyActivitySelection,
+  originalBlocklist: FamilyActivitySelection,
   activityName: String,
   callbackName: String,
   eventName: String?
@@ -1251,6 +1263,16 @@ func shouldExecuteAction(
     let now = Date().timeIntervalSince1970 * 1000
     if now < neverTriggerBefore {
       return false
+    }
+  }
+
+  if let skipIfWhitelistOrBlacklistIsUnchanged = skipIfWhitelistOrBlacklistIsUnchanged {
+    if skipIfWhitelistOrBlacklistIsUnchanged {
+      let whitelistIsEqual = isEqual(originalWhitelist, getCurrentWhitelist())
+      let blocklistIsEqual = isEqual(originalBlocklist, getCurrentBlocklist())
+      if whitelistIsEqual && blocklistIsEqual {
+        return false
+      }
     }
   }
 
