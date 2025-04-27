@@ -18,8 +18,7 @@ Please note that it only supports iOS (and requires iOS 15 or higher) and requir
 To block apps, you need to request Screen Time permissions. Note that some features (for example, events) may still trigger without permissions; however, this behavior is not guaranteed.
 
 ```TypeScript
-import * as ReactNativeDeviceActivity from "react-native-device-activity";
-
+import React, { useEffect } from 'react';
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import React, { useEffect } from 'react';
 
