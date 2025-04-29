@@ -542,8 +542,7 @@ const AppBlocker = () => {
 
 For a complete implementation, see the [example app](https://github.com/Kingstinct/react-native-device-activity/tree/main/example).
 
-## API Reference (the list is not exhaustive yet please refer to the Typescript types for the full list)
-
+## API Reference (the list is not exhaustive yet please refer to the TypeScript types for the full list)
 ### Components
 
 | Component                     | Props                                                                                                   | Description                                        |
