@@ -143,7 +143,7 @@ ReactNativeDeviceActivity.startMonitoring(
 - `ShieldAction`
 - `ShieldConfiguration`
 
-### Some notes
+### Some Notes
 
 - It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make a best guess here - prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
 - When determining which familyActivitySelectionId that should be used it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
