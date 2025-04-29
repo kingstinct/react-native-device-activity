@@ -5,7 +5,7 @@
 [![Downloads on NPM](https://img.shields.io/npm/dt/react-native-device-activity)](https://www.npmjs.com/package/react-native-device-activity)
 [![Discord](https://dcbadge.vercel.app/api/server/5wQGsRfS?style=flat)](https://discord.gg/5wQGsRfS)
 
-React Native wrapper for Apple's Screen Time, Device Activity and Family Controls APIs.
+React Native wrapper for Apple's Screen Time, Device Activity, and Family Controls APIs.
 
 ⚠️ **Important**: These APIs require [special approval and entitlements from Apple](https://github.com/Kingstinct/react-native-device-activity#family-controls-distribution-entitlement-requires-approval-from-apple). Request this approval as early as possible in your development process.
 
