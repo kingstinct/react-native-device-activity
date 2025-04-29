@@ -9,9 +9,37 @@ React Native wrapper for Apple's Screen Time, Device Activity and Family Control
 
 ⚠️ **Important**: These APIs require [special approval and entitlements from Apple](https://github.com/Kingstinct/react-native-device-activity#family-controls-distribution-entitlement-requires-approval-from-apple). Request this approval as early as possible in your development process.
 
-## Apple's Screen Time APIs Explained (for official details: [WWDC21](https://www.youtube.com/watch?v=DKH0cw9LhtM))
+## Table of Contents
 
-Note: Depending on your use case you might not need all the APIs hence not all the new bundle identifier and capabilities are required. Below is a quick overview of the APIs available.
+- [Apple's Screen Time APIs Explained](#apples-screen-time-apis-explained-for-official-details-wwdc21)
+  - [FamilyControl API](#familycontrol-api)
+  - [ShieldConfiguration API](#shieldconfiguration-api)
+  - [ShieldAction API](#shieldaction-api)
+  - [ActivityMonitor API](#activitymonitor-api)
+- [Installation in managed Expo projects](#installation-in-managed-expo-projects)
+  - [Some notes](#some-notes)
+  - [Data model](#data-model)
+- [Installation in bare React Native projects](#installation-in-bare-react-native-projects)
+- [Family Controls (distribution) entitlement requires approval from Apple](#family-controls-distribution-entitlement-requires-approval-from-apple)
+- [Basic Example: Event Tracking Approach](#basic-example-event-tracking-approach)
+- [Select Apps to track](#select-apps-to-track)
+- [Time tracking](#time-tracking)
+- [Block the shield](#block-the-shield)
+- [Alternative Example: Blocking Apps for a Time Slot](#alternative-example-blocking-apps-for-a-time-slot)
+  - [Key Concepts Explained](#key-concepts-explained)
+- [API Reference](#api-reference-the-list-is-not-exhaustive-yet-please-refer-to-the-typescript-types-for-the-full-list)
+  - [Components](#components)
+  - [Hooks](#hooks)
+  - [Functions](#functions)
+- [Contributing](#contributing)
+- [Weird behaviors ⚠️](#weird-behaviors-)
+- [Troubleshooting 📱](#troubleshooting-)
+
+## Apple's Screen Time APIs Explained
+
+_(See [WWDC21](https://www.youtube.com/watch?v=DKH0cw9LhtM) for official details.)_
+
+Note: Depending on your use case, you might not need all the APIs hence not all the new bundle identifier and capabilities are required. Below is a quick overview of the APIs available.
 
 ### FamilyControl API
 
@@ -97,7 +125,7 @@ ReactNativeDeviceActivity.startMonitoring(
          "react-native-device-activity",
          {
            "appleTeamId": "<YOUR_TEAM_ID>",
-           "appGroup": "group.<YOUR_APP_GROUP_NAME>",
+           "appGroup": "group.<YOUR_APP_GROUP_NAME>"
          }
        ]
      ],
@@ -149,7 +177,7 @@ As early as possible you want to [request approval from Apple](https://developer
 
 Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. I.e. you can't even build an Expo Dev Client.
 
-For every base bundleIdentifier you need approval for 4 bundleIdentifiers (if you want to use all the native extensions that is, you can potentially just use the Shield-related ones if you have no need to listen to the events, or similarly just use the ActivityMonitor if you do not need control over the Shield UI):
+For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when leveraging all native extensions that is, you can potentially just use the Shield-related ones if you have no need to listen to the events, or similarly just use the ActivityMonitor if you do not need control over the Shield UI):
 
 - com.your-bundleIdentifier
 - com.your-bundleIdentifier.ActivityMonitor
@@ -202,7 +230,7 @@ const DeviceActivityPicker = () => {
 Some things worth noting here:
 
 - This is a SwiftUI view, which is prone to crashing, especially when browsing larger categories of apps or searching for apps. It's recommended to provide a fallback view (positioned behind the SwiftUI view) that allows the user to know what's happening and reload the view and tailor that to your app's design and UX.
-  The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accept a familyActivitySelectionId as well as the familyActivitySelection token directly.
+- The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accept a familyActivitySelectionId as well as the familyActivitySelection token directly.
 
 ## Time tracking
 
@@ -348,7 +376,7 @@ ReactNativeDeviceActivity.updateShield(
 
 ## Alternative Example: Blocking Apps for a Time Slot
 
-This example shows how to implement a complete app blocking system on a given interval. The main principle is that you're configuring these apps to be blocled with FamilyControl API and then schedule when the shield should be shown with ActivityMonitor API. You're customizing the shield UI and actions with ShieldConfiguration and ShieldAction APIs.
+This example shows how to implement a complete app blocking system on a given interval. The main principle is that you're configuring these apps to be blocked with FamilyControl API and then schedule when the shield should be shown with ActivityMonitor API. You're customizing the shield UI and actions with ShieldConfiguration and ShieldAction APIs.
 
 ```typescript
 import { useEffect, useState } from 'react';
@@ -572,5 +600,5 @@ The Screen Time APIs are known to be very finnicky. Here are some things you can
 - Restart device
 - Make sure device is not low on storage (mentioned by Apple Community Specialist [here](https://discussions.apple.com/thread/254808070)) 💾
 - Upgrade iOS version
-- Content & Privacy Restrictions: If any restrictions are enabled under Screen Time’s Content & Privacy Restrictions, ensure none are blocking your app.
+- Content & Privacy Restrictions: If any restrictions are enabled under Screen Time's Content & Privacy Restrictions, ensure none are blocking your app.
 - Reset all device settings
