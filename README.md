@@ -175,7 +175,7 @@ Run `npx pod-install` after installing the npm package.
 
 As early as possible you want to [request approval from Apple](https://developer.apple.com/contact/request/family-controls-distribution), since it can take time to get approved.
 
-Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. I.e. you can't even build an Expo Dev Client.
+Note that until you have approval for all bundleIdentifiers you want to use, you are stuck with local development builds in XCode. i.e., you can't even build an Expo Dev Client.
 
 For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when leveraging all native extensions that is, you can potentially just use the Shield-related ones if you have no need to listen to the events, or similarly just use the ActivityMonitor if you do not need control over the Shield UI):
 
