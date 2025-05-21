@@ -17,7 +17,7 @@ React Native wrapper for Apple's Screen Time, Device Activity, and Family Contro
   - [ShieldAction API](#shieldaction-api)
   - [ActivityMonitor API](#activitymonitor-api)
 - [Installation in managed Expo projects](#installation-in-managed-expo-projects)
-  - [Some notes](#some-notes)
+  - [Some Notes](#some-notes)
   - [Data model](#data-model)
 - [Installation in bare React Native projects](#installation-in-bare-react-native-projects)
 - [Family Controls (distribution) entitlement requires approval from Apple](#family-controls-distribution-entitlement-requires-approval-from-apple)
@@ -146,7 +146,7 @@ ReactNativeDeviceActivity.startMonitoring(
 ### Some Notes
 
 - It's not possible to 100% know which familyActivitySelection an event being handled is triggered for in the context of the Shield UI/actions. We try to make a best guess here - prioritizing apps/websites in an activitySelection over categories, and smaller activitySelections over larger ones (i.e. "Instagram" over "Instagram + Facebook" over "Social Media Apps"). This means that if you display a shield specific for the Instagram selection that will take precedence over the less specific shields.
-- When determining which familyActivitySelectionId that should be used it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
+- When determining which familyActivitySelectionId that should be used, it will only look for familyActivitySelectionIds that are contained in any of the currently monitored activity names (i.e. if familyActivitySelectionId is "social-media-apps" it will only trigger if there is an activity name that contains "social-media-apps"). This might be a limitation for some implementations, it would probably be nice to make this configurable.
 
 ### Data model
 
@@ -163,7 +163,7 @@ For bare React Native projects, you must ensure that you have [installed and con
 
 ### Add the package to your npm dependencies
 
-```
+```bash
 npm install react-native-device-activity
 ```
 
@@ -186,7 +186,7 @@ For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when 
 
 Once you've gotten approval you need to manually add the "Family Controls (Distribution)" under Additional Capabilities for each of the bundleIdentifiers on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) mentioned above. If you use Expo/EAS this has to be done only once, and after that provisioning will be handled automatically.
 
-⚠️ If you don't do all the above you will run in to a lot of strange provisioning errors.
+⚠️ If you don't do all the above you will run into a lot of strange provisioning errors.
 
 ## Basic Example: Event Tracking Approach
 
@@ -380,7 +380,7 @@ This example shows how to implement a complete app blocking system on a given in
 
 ```typescript
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, View, Button } from 'react-native';
 import * as ReactNativeDeviceActivity from 'react-native-device-activity';
 
 // Constants for identifying your selections, shields and scheduled activities
