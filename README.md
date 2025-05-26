@@ -11,7 +11,7 @@ React Native wrapper for Apple's Screen Time, Device Activity, and Family Contro
 
 ## Table of Contents
 
-- [Apple's Screen Time APIs Explained](#apples-screen-time-apis-explained-for-official-details-wwdc21)
+- [Apple's Screen Time APIs Explained](https://developer.apple.com/videos/play/wwdc2021/10123/)
   - [FamilyControl API](#familycontrol-api)
   - [ShieldConfiguration API](#shieldconfiguration-api)
   - [ShieldAction API](#shieldaction-api)
@@ -543,6 +543,7 @@ const AppBlocker = () => {
 For a complete implementation, see the [example app](https://github.com/Kingstinct/react-native-device-activity/tree/main/example).
 
 ## API Reference (the list is not exhaustive yet please refer to the TypeScript types for the full list)
+
 ### Components
 
 | Component                     | Props                                                                                                   | Description                                        |
