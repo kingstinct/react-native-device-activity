@@ -197,6 +197,8 @@ import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 ReactNativeDeviceActivity.revokeAuthorization();
 
+```
+
 ## Select Apps to track
 
 For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native view:
@@ -225,7 +227,7 @@ const DeviceActivityPicker = () => {
     )
   }
 }
-````
+```
 
 Some things worth noting here:
 
@@ -602,3 +604,8 @@ The Screen Time APIs are known to be very finnicky. Here are some things you can
 - Upgrade iOS version
 - Content & Privacy Restrictions: If any restrictions are enabled under Screen Time's Content & Privacy Restrictions, ensure none are blocking your app.
 - Reset all device settings
+
+```
+
+```
+````
