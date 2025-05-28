@@ -180,9 +180,9 @@ Note that until you have approval for all bundleIdentifiers you want to use, you
 For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when leveraging all native extensions that is, you can potentially just use the Shield-related ones if you have no need to listen to the events, or similarly just use the ActivityMonitor if you do not need control over the Shield UI):
 
 - `com.your-bundleIdentifier`
-- com.your-bundleIdentifier.ActivityMonitor
-- com.your-bundleIdentifier.ShieldAction
-- com.your-bundleIdentifier.ShieldConfiguration
+- `com.your-bundleIdentifier.ActivityMonitor`
+- `com.your-bundleIdentifier.ShieldAction`
+- `com.your-bundleIdentifier.ShieldConfiguration`
 
 Once you've gotten approval you need to manually add the "Family Controls (Distribution)" under Additional Capabilities for each of the bundleIdentifiers on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) mentioned above. If you use Expo/EAS this has to be done only once, and after that provisioning will be handled automatically.
 
