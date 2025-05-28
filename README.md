@@ -186,7 +186,7 @@ For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when 
 
 Once you've gotten approval you need to manually add the "Family Controls (Distribution)" under Additional Capabilities for each of the bundleIdentifiers on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) mentioned above. If you use Expo/EAS this has to be done only once, and after that provisioning will be handled automatically.
 
-⚠️ If you don't do all the above you will run into a lot of strange provisioning errors.
+⚠️ If you don't do all the above, you will run into a lot of strange provisioning errors.
 
 ## Basic Example: Event Tracking Approach
 
