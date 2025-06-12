@@ -192,14 +192,14 @@ Once you've gotten approval you need to manually add the "Family Controls (Distr
 
 Here's another example that focuses on tracking app usage with time thresholds:
 
-````typescript
+```typescript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 ReactNativeDeviceActivity.revokeAuthorization();
 
 ```
 
-## Select Apps to track
+### Select Apps to track
 
 For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native view:
 
@@ -234,7 +234,7 @@ Some things worth noting here:
 - This is a SwiftUI view, which is prone to crashing, especially when browsing larger categories of apps or searching for apps. It's recommended to provide a fallback view (positioned behind the SwiftUI view) that allows the user to know what's happening and reload the view and tailor that to your app's design and UX.
 - The activitySelection tokens can be particularly large (especially if you use includeEntireCategory flag), so you probably want to reference them through a familyActivitySelectionId instead of always passing the string token around. Most functions in this library accept a familyActivitySelectionId as well as the familyActivitySelection token directly.
 
-## Time tracking
+### Time tracking
 
 It's worth noting that the Screen Time API is not designed for time tracking out-of-the-box. So you have to set up events with names you can parse as time after they've triggered.
 
@@ -284,7 +284,7 @@ Some things worth noting here:
 
 Depending on your use case (if you need different schedules for different days, for example) you might need multiple monitors. There's a hard limit on 20 monitors at the same time. Study the [DateComponents](https://developer.apple.com/documentation/foundation/datecomponents) object to model this to your use case.
 
-## Block the shield
+### Block the shield
 
 To block apps, you can do it directly from your code.
 
@@ -604,8 +604,3 @@ The Screen Time APIs are known to be very finnicky. Here are some things you can
 - Upgrade iOS version
 - Content & Privacy Restrictions: If any restrictions are enabled under Screen Time's Content & Privacy Restrictions, ensure none are blocking your app.
 - Reset all device settings
-
-```
-
-```
-````
