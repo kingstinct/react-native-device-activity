@@ -500,7 +500,8 @@ public class ReactNativeDeviceActivityModule: Module {
         during: schedule,
         events: dictionary
       )
-      logger.log("✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue)")
+      logger.log(
+        "✅ Succeeded with Starting Monitor Activity: \(activityName.rawValue, privacy: .public)")
 
     }
 
@@ -779,7 +780,8 @@ public class ReactNativeDeviceActivityModule: Module {
           case .success:
             continuation.resume()
           case .failure(let error):
-            logger.log("❌ Failed to revoke authorization: \(error.localizedDescription)")
+            logger.log(
+              "❌ Failed to revoke authorization: \(error.localizedDescription, privacy: .public)")
             continuation.resume(throwing: error)
           }
         }

@@ -146,7 +146,9 @@ func executeGenericAction(
           triggeredBy: triggeredBy
         )
       } else {
-        logger.log("No familyActivitySelection found with ID: \(familyActivitySelectionId)")
+        logger.log(
+          "No familyActivitySelection found with ID: \(familyActivitySelectionId, privacy: .public)"
+        )
       }
     }
   } else if type == "unblockSelection" {
@@ -735,7 +737,7 @@ func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
   do {
     activitySelection = try decoder.decode(FamilyActivitySelection.self, from: data!)
   } catch {
-    logger.log("decode error \(error.localizedDescription)")
+    logger.log("decode error \(error.localizedDescription, privacy: .public)")
   }
 
   return activitySelection
@@ -1303,7 +1305,7 @@ func shouldExecuteAction(
     ) {
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
         logger.log(
-          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+          "skipping executing actions for \(callbackName, privacy: .public)\(eventName ?? "", privacy: .public) because the last triggered time is after \(skipIfAlreadyTriggeredAfter, privacy: .public)"
         )
         return false
       }
@@ -1324,7 +1326,7 @@ func shouldExecuteAction(
       if lastTriggeredAt >= skipIfAlreadyTriggeredBetweenFromDate
         && lastTriggeredAt <= skipIfAlreadyTriggeredBetweenToDate {
         logger.log(
-          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is between \(skipIfAlreadyTriggeredBetweenFromDate) and \(skipIfAlreadyTriggeredBetweenToDate)"
+          "skipping executing actions for \(callbackName, privacy: .public)\(eventName ?? "", privacy: .public) because the last triggered time is between \(skipIfAlreadyTriggeredBetweenFromDate, privacy: .public) and \(skipIfAlreadyTriggeredBetweenToDate, privacy: .public)"
         )
         return false
       }
@@ -1339,7 +1341,7 @@ func shouldExecuteAction(
     ) {
       if lastTriggeredAt < skipIfAlreadyTriggeredBefore {
         logger.log(
-          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredBefore)"
+          "skipping executing actions for \(callbackName, privacy: .public)\(eventName ?? "", privacy: .public) because the last triggered time is after \(skipIfAlreadyTriggeredBefore, privacy: .public)"
         )
         return false
       }
@@ -1354,7 +1356,7 @@ func shouldExecuteAction(
       afterDate: skipIfLargerEventRecordedAfter
     ) {
       logger.log(
-        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+        "skipping executing actions for \(eventName, privacy: .public) because a larger event triggered after \(skipIfLargerEventRecordedAfter, privacy: .public)"
       )
       return false
     }
@@ -1370,7 +1372,7 @@ func shouldExecuteAction(
         Date().timeIntervalSince1970 * 1000 - skipIfAlreadyTriggeredWithinMS
       if lastTriggeredAt > skipIfAlreadyTriggeredAfter {
         logger.log(
-          "skipping executing actions for \(callbackName)\(eventName ?? "") because the last triggered time is after \(skipIfAlreadyTriggeredAfter)"
+          "skipping executing actions for \(callbackName, privacy: .public)\(eventName ?? "", privacy: .public) because the last triggered time is after \(skipIfAlreadyTriggeredAfter, privacy: .public)"
         )
         return false
       }
@@ -1388,7 +1390,7 @@ func shouldExecuteAction(
       afterDate: skipIfLargerEventRecordedAfter
     ) {
       logger.log(
-        "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+        "skipping executing actions for \(eventName, privacy: .public) because a larger event triggered after \(skipIfLargerEventRecordedAfter, privacy: .public)"
       )
       return false
     }
@@ -1408,7 +1410,7 @@ func shouldExecuteAction(
           afterDate: skipIfLargerEventRecordedAfter
         ) {
           logger.log(
-            "skipping executing actions for \(eventName) because a larger event triggered after \(skipIfLargerEventRecordedAfter)"
+            "skipping executing actions for \(eventName, privacy: .public) because a larger event triggered after \(skipIfLargerEventRecordedAfter, privacy: .public)"
           )
           return false
         }
@@ -1527,7 +1529,8 @@ func startMonitoringAction(
   do {
     try center.startMonitoring(activityName, during: schedule, events: eventDict)
     logger.log(
-      "✅ Successfully started monitoring activity: \(activityName.rawValue) from \(triggeredBy)")
+      "✅ Successfully started monitoring activity: \(activityName.rawValue, privacy: .public) from \(triggeredBy, privacy: .public)"
+    )
   } catch {
     logger.log(
       "❌ Failed to start monitoring activity: \(activityName.rawValue, privacy: .public) - \(error.localizedDescription, privacy: .public)"
@@ -1545,11 +1548,11 @@ func stopMonitoringAction(
     let deviceActivityNames = activityNames.map { DeviceActivityName($0) }
     center.stopMonitoring(deviceActivityNames)
     logger.log(
-      "✅ Successfully stopped monitoring activities: \(activityNames.joined(separator: ", ")) from \(triggeredBy)"
+      "✅ Successfully stopped monitoring activities: \(activityNames.joined(separator: ", "), privacy: .public) from \(triggeredBy, privacy: .public)"
     )
   } else {
     // Stop all monitoring
     center.stopMonitoring()
-    logger.log("✅ Successfully stopped all monitoring from \(triggeredBy)")
+    logger.log("✅ Successfully stopped all monitoring from \(triggeredBy, privacy: .public)")
   }
 }
