@@ -238,6 +238,25 @@ func executeGenericAction(
       // required for it to have time to trigger before process/callback ends
       sleep(ms: 1000)
     }
+  } else if type == "startMonitoring" {
+    if let activityName = action["activityName"] as? String,
+      let deviceActivityEvents = action["deviceActivityEvents"] as? [[String: Any]] {
+
+      startMonitoringAction(
+        activityName: activityName,
+        deviceActivityEvents: deviceActivityEvents,
+        intervalStartDelayMs: action["intervalStartDelayMs"] as? Int,
+        intervalEndDelayMs: action["intervalEndDelayMs"] as? Int,
+        triggeredBy: triggeredBy
+      )
+    }
+  } else if type == "stopMonitoring" {
+    let activityNames = action["activityNames"] as? [String]
+
+    stopMonitoringAction(
+      activityNames: activityNames,
+      triggeredBy: triggeredBy
+    )
   }
 
   if let sleepAfter = action["sleepAfter"] as? Int {
@@ -1422,4 +1441,115 @@ func getAppGroupDirectory() -> URL? {
     return container
   }
   return nil
+}
+
+@available(iOS 15.0, *)
+func startMonitoringAction(
+  activityName: String,
+  deviceActivityEvents: [[String: Any]],
+  intervalStartDelayMs: Int?,
+  intervalEndDelayMs: Int?,
+  triggeredBy: String
+) {
+  // Create date components for schedule
+  let now = Date()
+  let calendar = Calendar.current
+
+  var intervalStart = DateComponents()
+  var intervalEnd = DateComponents()
+
+  if let startDelayMs = intervalStartDelayMs {
+    let startDate = now.addingTimeInterval(TimeInterval(startDelayMs) / 1000.0)
+    intervalStart = calendar.dateComponents([.hour, .minute, .second], from: startDate)
+  }
+
+  if let endDelayMs = intervalEndDelayMs {
+    let endDate = now.addingTimeInterval(TimeInterval(endDelayMs) / 1000.0)
+    intervalEnd = calendar.dateComponents([.hour, .minute, .second], from: endDate)
+  } else {
+    // Default to 24 hours from start if not specified
+    let defaultEndMs = (intervalStartDelayMs ?? 0) + (24 * 60 * 60 * 1000)
+    let endDate = now.addingTimeInterval(TimeInterval(defaultEndMs) / 1000.0)
+    intervalEnd = calendar.dateComponents([.hour, .minute, .second], from: endDate)
+  }
+
+  let schedule = DeviceActivitySchedule(
+    intervalStart: intervalStart,
+    intervalEnd: intervalEnd,
+    repeats: false
+  )
+
+  // Create DeviceActivityEvent dictionary
+  var eventDict: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+
+  for eventData in deviceActivityEvents {
+    guard let eventName = eventData["eventName"] as? String,
+      let threshold = eventData["threshold"] as? [String: Any],
+      let familyActivitySelection = eventData["familyActivitySelection"] as? String
+    else {
+      continue
+    }
+
+    let selection = deserializeFamilyActivitySelection(
+      familyActivitySelectionStr: familyActivitySelection)
+
+    // Convert threshold to DateComponents
+    var thresholdComponents = DateComponents()
+    if let hour = threshold["hour"] as? Int { thresholdComponents.hour = hour }
+    if let minute = threshold["minute"] as? Int { thresholdComponents.minute = minute }
+    if let second = threshold["second"] as? Int { thresholdComponents.second = second }
+
+    let includesPastActivity = eventData["includesPastActivity"] as? Bool ?? false
+
+    var event: DeviceActivityEvent
+    if #available(iOS 17.4, *) {
+      event = DeviceActivityEvent(
+        applications: selection.applicationTokens,
+        categories: selection.categoryTokens,
+        webDomains: selection.webDomainTokens,
+        threshold: thresholdComponents,
+        includesPastActivity: includesPastActivity
+      )
+    } else {
+      event = DeviceActivityEvent(
+        applications: selection.applicationTokens,
+        categories: selection.categoryTokens,
+        webDomains: selection.webDomainTokens,
+        threshold: thresholdComponents
+      )
+    }
+
+    eventDict[DeviceActivityEvent.Name(eventName)] = event
+  }
+
+  let activityName = DeviceActivityName(activityName)
+
+  do {
+    try center.startMonitoring(activityName, during: schedule, events: eventDict)
+    logger.log(
+      "✅ Successfully started monitoring activity: \(activityName.rawValue) from \(triggeredBy)")
+  } catch {
+    logger.log(
+      "❌ Failed to start monitoring activity: \(activityName.rawValue, privacy: .public) - \(error.localizedDescription, privacy: .public)"
+    )
+  }
+}
+
+@available(iOS 15.0, *)
+func stopMonitoringAction(
+  activityNames: [String]?,
+  triggeredBy: String
+) {
+  if let activityNames = activityNames {
+    // Stop specific activities
+    let deviceActivityNames = activityNames.map { DeviceActivityName($0) }
+    center.stopMonitoring(deviceActivityNames)
+    logger.log(
+      "✅ Successfully stopped monitoring activities: \(activityNames.joined(separator: ", ")) from \(triggeredBy)"
+    )
+  } else {
+    // Stop all monitoring
+    center.stopMonitoring()
+    logger.log("✅ Successfully stopped all monitoring from \(triggeredBy)")
+  }
 }

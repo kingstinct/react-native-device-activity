@@ -287,6 +287,24 @@ export type Action =
     } & CommonTypeParams)
   | ({
       type: "removeAllDeliveredNotifications";
+    } & CommonTypeParams)
+  | ({
+      type: "startMonitoring";
+      activityName: string;
+      deviceActivityEvents: DeviceActivityEvent[];
+      /**
+       * Optional delay in milliseconds from now for intervalStart.
+       * If provided, will override deviceActivitySchedule.intervalStart.
+       */
+      intervalStartDelayMs?: number;
+      intervalEndDelayMs?: number;
+    } & CommonTypeParams)
+  | ({
+      type: "stopMonitoring";
+      /**
+       * Optional array of activity names to stop. If not provided, stops all monitoring.
+       */
+      activityNames?: string[];
     } & CommonTypeParams);
 
 export type DeviceActivityEventRaw = Omit<

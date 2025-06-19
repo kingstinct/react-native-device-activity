@@ -285,6 +285,83 @@ export function AllTheThings() {
           }}
         />
 
+        <Button
+          title="Test sneakpeak"
+          onPress={() => {
+            /*ReactNativeDeviceActivity.configureActions({
+              activityName: "sneek-peak",
+              callbackName: "intervalDidEnd",
+              actions: [
+                {
+                  type: "sendNotification",
+                  payload: {
+                    title: "sneek-peak ended!!!",
+                    body: "You have reached the end of the sneek-peak!",
+                  },
+                },
+                {
+                  type: "enableBlockAllMode",
+                },
+                {
+                  type: "clearWhitelistAndUpdateBlock",
+                },
+              ],
+            });*/
+
+            ReactNativeDeviceActivity.configureActions({
+              activityName: "sneekpeak",
+              callbackName: "intervalDidStart",
+              actions: [
+                {
+                  type: "sendNotification",
+                  payload: {
+                    title: "sneek-peak ended!!!",
+                    body: "You have reached the end of the sneek-peak!",
+                  },
+                },
+                {
+                  type: "enableBlockAllMode",
+                },
+                {
+                  type: "clearWhitelistAndUpdateBlock",
+                },
+                {
+                  type: "stopMonitoring",
+                  activityNames: ["sneekpeak"],
+                }
+              ],
+            });
+            ReactNativeDeviceActivity.updateShield(
+              {
+                title: "take a sneekpeak!",
+                primaryButtonLabel: "do it now!",
+              },
+              {
+                primary: {
+                  behavior: "defer",
+                  actions: [
+                    {
+                      type: "disableBlockAllMode",
+                    },
+                    {
+                      type: "clearWhitelistAndUpdateBlock",
+                    },
+                    {
+                      type: "startMonitoring",
+                      activityName: "sneekpeak",
+                      intervalStartDelayMs: 10000,
+                      intervalEndDelayMs: 60 * 15 * 1000 + 10000,
+                      deviceActivityEvents: [],
+                    },
+                  ],
+                },
+              },
+            );
+            console.log("done!");
+            console.log(ReactNativeDeviceActivity.getEvents())
+          }}
+        />
+
         <TextInput
           placeholder="Enter shield title"
           onChangeText={(text) => setShieldTitle(text)}
