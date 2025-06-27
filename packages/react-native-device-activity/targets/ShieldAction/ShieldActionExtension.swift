@@ -31,7 +31,7 @@ func handleShieldAction(
   }
 
   if let type = configForSelectedAction["type"] as? String {
-    logger.log("type: \(type)")
+    logger.log("type: \(type, privacy: .public)")
     if type == "disableBlockAllMode" {
       disableBlockAllMode(triggeredBy: "shieldAction")
     }
