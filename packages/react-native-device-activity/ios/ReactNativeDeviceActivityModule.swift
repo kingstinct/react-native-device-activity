@@ -547,7 +547,13 @@ public class ReactNativeDeviceActivityModule: Module {
         try await ac.requestAuthorization(
           for: forIndividualOrChild == "child" ? .child : .individual)
       } else {
-        logger.log("⚠️ iOS 16.0 or later is required to request authorization.")
+        let errorMessage = "iOS 16.0 or later is required to request authorization."
+        logger.log("⚠️ \(errorMessage)")
+        throw NSError(
+          domain: "FamilyControls",
+          code: 9999,
+          userInfo: [NSLocalizedDescriptionKey: errorMessage]
+        )
       }
     }
 

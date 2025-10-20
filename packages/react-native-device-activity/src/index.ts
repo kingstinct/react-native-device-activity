@@ -39,8 +39,8 @@ export async function requestAuthorization(
       forIndividualOrChild,
     );
   } catch (error) {
-    // seems like we get a promise rejection if the user denies the authorization, but we can still request again
-    console.error(error);
+    // Re-throw the error so it can be properly handled by the caller
+    throw error;
   }
 }
 
