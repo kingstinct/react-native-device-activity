@@ -694,7 +694,7 @@ public class ReactNativeDeviceActivityModule: Module {
 
       let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
 
-      try blockSelectedApps(
+      blockSelectedApps(
         blockSelection: activitySelection,
         triggeredBy: triggeredBy
       )
@@ -816,15 +816,18 @@ public class ReactNativeDeviceActivityModule: Module {
       }
 
       Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
-
         view.model.footerText = prop
-
       }
 
       Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
-
         view.model.headerText = prop
+      }
+    }
 
+    View(WebDomainLabelView.self) {
+      // Defines a setter for the `name` prop.
+      Prop("token") { (view: WebDomainLabelView, token: String) in
+        view.token = deserializeToken(tokenStr: token)
       }
     }
   }

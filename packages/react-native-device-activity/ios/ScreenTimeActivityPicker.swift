@@ -39,6 +39,16 @@ struct ActivityPicker: View {
       )
       .allowsHitTesting(false)
       .background(Color.clear)
+      if let firstCategory = model.activitySelection.categoryTokens.first {
+        Label(firstCategory)
+      }
+      if let applicationToken = model.activitySelection.applicationTokens.first {
+        Label(applicationToken)
+      }
+      if let webdomain = model.activitySelection.webDomainTokens.first {
+        Label(webdomain)
+      }
+
     } else {
       FamilyActivityPicker(
         selection: $model.activitySelection

@@ -744,10 +744,38 @@ func deserializeFamilyActivitySelection(familyActivitySelectionStr: String)
 }
 
 @available(iOS 15.0, *)
+func deserializeToken(tokenStr: String)
+  -> Token<Any>? {
+  let decoder = JSONDecoder()
+  let data = Data(base64Encoded: tokenStr)
+  do {
+    var token = try decoder.decode(Token<Any>.self, from: data!)
+    return token
+  } catch {
+    logger.log("decode error \(error.localizedDescription, privacy: .public)")
+  }
+
+  return nil
+}
+
+@available(iOS 15.0, *)
 func serializeFamilyActivitySelection(selection: FamilyActivitySelection) -> String {
   let encoder = JSONEncoder()
   do {
     let json = try encoder.encode(selection)
+    let jsonString = json.base64EncodedString()
+
+    return jsonString
+  } catch {
+    return ""
+  }
+}
+
+@available(iOS 15.0, *)
+func serializeToken(token: Token<Any>) -> String {
+  let encoder = JSONEncoder()
+  do {
+    let json = try encoder.encode(token)
     let jsonString = json.base64EncodedString()
 
     return jsonString
