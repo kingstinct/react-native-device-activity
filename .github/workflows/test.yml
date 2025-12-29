@@ -19,9 +19,9 @@ jobs:
           bun-version: latest
 
       - run: bun install
-      
+
       - run: bun lint
-  
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
           bun-version: latest
 
       - run: bun install
-      
+
       - run: bun typecheck
 
   typecheck-example:
@@ -43,7 +43,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -59,7 +59,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -91,7 +91,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -107,7 +107,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -123,7 +123,7 @@ jobs:
 
       - run: pod install
         working-directory: apps/example/ios
-      
+
       - run: apps/example/ios/Pods/SwiftLint/swiftlint lint
 
   swift-test:
@@ -170,15 +170,11 @@ jobs:
 
       - name: Check Swift version
         run: swift --version
-    
+
       - run: pod install
         working-directory: apps/example/ios
 
       - run: cp .swiftlint.yml apps/example/ios
-      
-      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 16"
+
+      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 17"
         working-directory: apps/example/ios
-
-
-
-      
