@@ -232,6 +232,10 @@ class NativeEventObserver {
     registerListener(name: "intervalWillEndWarning")
     registerListener(name: "eventWillReachThresholdWarning")
   }
+
+  func unregister() {
+    CFNotificationCenterRemoveEveryObserver(notificationCenter, observer)
+  }
 }
 
 @available(iOS 15.0, *)
@@ -277,8 +281,6 @@ public class ReactNativeDeviceActivityModule: Module {
     ])
     let fileManager = FileManager.default
 
-    let observer = NativeEventObserver(module: self)
-
     var watchActivitiesHandle: Cancellable?
     var onDeviceActivityDetectedHandle: Cancellable?
 
@@ -321,7 +323,10 @@ public class ReactNativeDeviceActivityModule: Module {
       return to.absoluteString
     }
 
+    var observer: NativeEventObserver?
+
     OnStartObserving {
+      observer = NativeEventObserver(module: self)
       onDeviceActivityDetectedHandle = AuthorizationCenter.shared.$authorizationStatus.sink {
         status in
         self.sendEvent(
@@ -341,6 +346,8 @@ public class ReactNativeDeviceActivityModule: Module {
     }
 
     OnStopObserving {
+      observer?.unregister()
+      observer = nil
       watchActivitiesHandle?.cancel()
       onDeviceActivityDetectedHandle?.cancel()
     }
@@ -694,7 +701,7 @@ public class ReactNativeDeviceActivityModule: Module {
 
       let activitySelection = parseActivitySelectionInput(input: familyActivitySelection)
 
-      try blockSelectedApps(
+      blockSelectedApps(
         blockSelection: activitySelection,
         triggeredBy: triggeredBy
       )
@@ -816,15 +823,11 @@ public class ReactNativeDeviceActivityModule: Module {
       }
 
       Prop("footerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
-
         view.model.footerText = prop
-
       }
 
       Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
-
         view.model.headerText = prop
-
       }
     }
   }
