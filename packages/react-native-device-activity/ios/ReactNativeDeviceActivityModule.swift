@@ -193,10 +193,14 @@ func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJ
 
 class NativeEventObserver {
   let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-  let observer: UnsafeRawPointer
+  private weak var module: BaseModule?
+  private var observer: UnsafeRawPointer?
 
   func registerListener(name: String) {
     let notificationName = name as CFString
+    guard let observer else {
+      return
+    }
     CFNotificationCenterAddObserver(
       notificationCenter,
       observer,
@@ -209,9 +213,11 @@ class NativeEventObserver {
           _: CFDictionary?
         ) in
         if let observer = observer, let name = name {
-          let mySelf = Unmanaged<BaseModule>.fromOpaque(observer).takeUnretainedValue()
-
-          mySelf.sendEvent(
+          let nativeObserver = Unmanaged<NativeEventObserver>.fromOpaque(observer).takeUnretainedValue()
+          guard let module = nativeObserver.module else {
+            return
+          }
+          module.sendEvent(
             "onDeviceActivityMonitorEvent" as String,
             [
               "callbackName": name.rawValue
@@ -224,7 +230,8 @@ class NativeEventObserver {
   }
 
   init(module: BaseModule) {
-    observer = UnsafeRawPointer(Unmanaged.passUnretained(module).toOpaque())
+    self.module = module
+    observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
     registerListener(name: "intervalDidStart")
     registerListener(name: "intervalDidEnd")
     registerListener(name: "eventDidReachThreshold")
@@ -234,7 +241,15 @@ class NativeEventObserver {
   }
 
   func unregister() {
+    guard let observer else {
+      return
+    }
     CFNotificationCenterRemoveEveryObserver(notificationCenter, observer)
+    self.observer = nil
+  }
+
+  deinit {
+    unregister()
   }
 }
 
