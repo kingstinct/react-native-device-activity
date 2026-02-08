@@ -1,4 +1,5 @@
-import { Pressable, Text, View, NativeSyntheticEvent } from "react-native";
+import React from "react";
+import { NativeSyntheticEvent, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   ActivitySelectionMetadata,
   ActivitySelectionWithMetadata,
@@ -10,15 +11,7 @@ import { Modal, Portal } from "react-native-paper";
 const CrashView = ({ onReload }: { onReload: () => void }) => {
   return (
     <Pressable
-      style={{
-        flex: 1,
-        position: "absolute",
-        height: 600,
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "white",
-      }}
+      style={styles.crashView}
       onPress={onReload}
     >
       <Text>Swift view crash - tap to reload</Text>
@@ -32,6 +25,7 @@ export const ActivityPicker = ({
   onSelectionChange,
   familyActivitySelection,
   onReload,
+  showNavigationBar = true,
 }: {
   visible: boolean;
   onDismiss: () => void;
@@ -40,35 +34,37 @@ export const ActivityPicker = ({
   ) => void;
   familyActivitySelection: string | undefined;
   onReload: () => void;
+  showNavigationBar?: boolean;
 }) => {
+  if (showNavigationBar) {
+    // Native presentation: the native side uses the
+    // .familyActivityPicker(isPresented:) modifier which presents its own
+    // sheet.  We just mount a tiny anchor view — no RN Modal needed.
+    if (!visible) return null;
+    return (
+      <DeviceActivitySelectionView
+        style={styles.nativeAnchor}
+        showNavigationBar
+        onDismissRequest={onDismiss}
+        onSelectionChange={onSelectionChange}
+        familyActivitySelection={familyActivitySelection}
+      />
+    );
+  }
+
+  // Custom modal: react-native-paper Portal + Modal with fixed height.
   return (
     <Portal>
       <Modal
         visible={visible}
         onDismiss={onDismiss}
-        contentContainerStyle={{
-          height: 600,
-        }}
+        contentContainerStyle={styles.modalContainer}
       >
-        <View
-          style={{
-            flex: 1,
-            height: 600,
-          }}
-        >
+        <View style={styles.modalContent}>
           <CrashView onReload={onReload} />
-
           {visible && (
             <DeviceActivitySelectionView
-              style={{
-                flex: 1,
-                height: 600,
-                width: "100%",
-                backgroundColor: "transparent",
-                pointerEvents: "none",
-              }}
-              headerText="a header text!"
-              footerText="a footer text!"
+              style={styles.picker}
               onSelectionChange={onSelectionChange}
               familyActivitySelection={familyActivitySelection}
             />
@@ -86,6 +82,7 @@ export const ActivityPickerPersisted = ({
   familyActivitySelectionId,
   onReload,
   includeEntireCategory,
+  showNavigationBar = true,
 }: {
   visible: boolean;
   onDismiss: () => void;
@@ -96,35 +93,34 @@ export const ActivityPickerPersisted = ({
   familyActivitySelectionId: string;
   onReload: () => void;
   includeEntireCategory?: boolean;
+  showNavigationBar?: boolean;
 }) => {
+  if (showNavigationBar) {
+    if (!visible) return null;
+    return (
+      <DeviceActivitySelectionViewPersisted
+        style={styles.nativeAnchor}
+        showNavigationBar
+        onDismissRequest={onDismiss}
+        onSelectionChange={onSelectionChange}
+        familyActivitySelectionId={familyActivitySelectionId}
+        includeEntireCategory={includeEntireCategory}
+      />
+    );
+  }
+
   return (
     <Portal>
       <Modal
         visible={visible}
         onDismiss={onDismiss}
-        contentContainerStyle={{
-          height: 600,
-        }}
+        contentContainerStyle={styles.modalContainer}
       >
-        <View
-          style={{
-            flex: 1,
-            height: 600,
-          }}
-        >
+        <View style={styles.modalContent}>
           <CrashView onReload={onReload} />
-
           {visible && (
             <DeviceActivitySelectionViewPersisted
-              style={{
-                flex: 1,
-                height: 600,
-                width: "100%",
-                backgroundColor: "transparent",
-                pointerEvents: "none",
-              }}
-              headerText="a header text!"
-              footerText="a footer text!"
+              style={styles.picker}
               onSelectionChange={onSelectionChange}
               familyActivitySelectionId={familyActivitySelectionId}
               includeEntireCategory={includeEntireCategory}
@@ -135,3 +131,34 @@ export const ActivityPickerPersisted = ({
     </Portal>
   );
 };
+
+const styles = StyleSheet.create({
+  // Invisible anchor for the native .familyActivityPicker() modifier.
+  nativeAnchor: {
+    width: 1,
+    height: 1,
+    position: "absolute",
+  },
+  modalContainer: {
+    height: 600,
+  },
+  modalContent: {
+    flex: 1,
+    height: 600,
+  },
+  crashView: {
+    flex: 1,
+    position: "absolute",
+    height: 600,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  picker: {
+    flex: 1,
+    height: 600,
+    width: "100%",
+    backgroundColor: "transparent",
+  },
+});

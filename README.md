@@ -201,7 +201,46 @@ ReactNativeDeviceActivity.revokeAuthorization();
 
 ### Select Apps to track
 
-For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native view:
+For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native `DeviceActivitySelectionView`.
+
+#### Presentation modes
+
+The picker supports two presentation modes:
+
+**Native sheet (recommended)** -- When you set `showNavigationBar={true}`, the native side uses Apple's `.familyActivityPicker(isPresented:selection:)` view modifier to present a fully native iOS sheet with Cancel/Done in the navigation bar. The native side handles the entire sheet presentation, so you do **not** need to wrap it in a React Native `<Modal>` -- just conditionally mount the view as a small anchor and it will present the sheet automatically.
+
+```TypeScript
+// The view acts as an invisible anchor — the native side presents its own sheet.
+// When the user taps Cancel or Done, onDismissRequest fires.
+{pickerVisible && (
+  <DeviceActivitySelectionView
+    style={{ width: 1, height: 1, position: "absolute" }}
+    showNavigationBar
+    onDismissRequest={() => setPickerVisible(false)}
+    onSelectionChange={handleSelectionChange}
+    familyActivitySelection={familyActivitySelection}
+  />
+)}
+```
+
+**Custom presentation (default)** -- Without `showNavigationBar`, the picker renders as an inline view with a large "Choose Activities" title. You can embed it directly in your layout or wrap it in a React Native `<Modal>` for a custom sheet. This gives you full control over the presentation but does not include native Cancel/Done buttons.
+
+```TypeScript
+import { Modal, View } from "react-native";
+
+<Modal visible={visible} animationType="slide" presentationStyle="pageSheet"
+  onRequestClose={onDismiss} onDismiss={onDismiss}>
+  <View style={{ flex: 1 }}>
+    <DeviceActivitySelectionView
+      style={{ flex: 1, width: "100%" }}
+      onSelectionChange={handleSelectionChange}
+      familyActivitySelection={familyActivitySelection}
+    />
+  </View>
+</Modal>
+```
+
+#### Full example
 
 ```TypeScript
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
@@ -550,7 +589,7 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 
 | Component                     | Props                                                                                                   | Description                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `DeviceActivitySelectionView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`style`: ViewStyle | Native component that renders the app selection UI |
+| `DeviceActivitySelectionView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`headerText?`: string<br>`footerText?`: string<br>`showNavigationBar?`: boolean<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Native component that renders the app selection UI. Set `showNavigationBar` to use the native `.familyActivityPicker()` sheet with Cancel/Done. |
 
 ### Hooks
 

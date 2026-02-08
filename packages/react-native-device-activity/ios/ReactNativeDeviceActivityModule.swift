@@ -213,7 +213,8 @@ class NativeEventObserver {
           _: CFDictionary?
         ) in
         if let observer = observer, let name = name {
-          let nativeObserver = Unmanaged<NativeEventObserver>.fromOpaque(observer).takeUnretainedValue()
+          let nativeObserver = Unmanaged<NativeEventObserver>.fromOpaque(observer)
+            .takeUnretainedValue()
           guard let module = nativeObserver.module else {
             return
           }
@@ -828,7 +829,8 @@ public class ReactNativeDeviceActivityModule: Module {
     // view definition: Prop, Events.
     View(ReactNativeDeviceActivityView.self) {
       Events(
-        "onSelectionChange"
+        "onSelectionChange",
+        "onDismissRequest"
       )
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelection") { (view: ReactNativeDeviceActivityView, prop: String) in
@@ -844,7 +846,12 @@ public class ReactNativeDeviceActivityModule: Module {
       Prop("headerText") { (view: ReactNativeDeviceActivityView, prop: String?) in
         view.model.headerText = prop
       }
+
+      Prop("showNavigationBar") { (view: ReactNativeDeviceActivityView, prop: Bool?) in
+        view.model.showNavigationBar = prop ?? false
+      }
     }
+
   }
 }
 
@@ -854,7 +861,8 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
     Name("ReactNativeDeviceActivityViewPersistedModule")
     View(ReactNativeDeviceActivityViewPersisted.self) {
       Events(
-        "onSelectionChange"
+        "onSelectionChange",
+        "onDismissRequest"
       )
       // Defines a setter for the `name` prop.
       Prop("familyActivitySelectionId") {
@@ -893,6 +901,10 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
 
       Prop("headerText") { (view: ReactNativeDeviceActivityViewPersisted, prop: String?) in
         view.model.headerText = prop
+      }
+
+      Prop("showNavigationBar") { (view: ReactNativeDeviceActivityViewPersisted, prop: Bool?) in
+        view.model.showNavigationBar = prop ?? false
       }
     }
   }

@@ -44,6 +44,17 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   familyActivitySelection?: string | null;
   headerText?: string | null;
   footerText?: string | null;
+  /**
+   * When true, wraps the picker in a NavigationView with Cancel/Done toolbar
+   * buttons, matching the native `.familyActivityPicker()` presentation style.
+   * Use together with `onDismissRequest` to handle dismissal.
+   */
+  showNavigationBar?: boolean;
+  /**
+   * Called when the user taps Cancel or Done in the navigation bar.
+   * Only fires when `showNavigationBar` is true.
+   */
+  onDismissRequest?: (event: NativeSyntheticEvent<Record<string, never>>) => void;
 }>;
 
 export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
@@ -59,6 +70,17 @@ export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
    * @link https://developer.apple.com/documentation/familycontrols/familyactivityselection/includeentirecategory
    */
   includeEntireCategory?: boolean;
+  /**
+   * When true, wraps the picker in a NavigationView with Cancel/Done toolbar
+   * buttons, matching the native `.familyActivityPicker()` presentation style.
+   * Use together with `onDismissRequest` to handle dismissal.
+   */
+  showNavigationBar?: boolean;
+  /**
+   * Called when the user taps Cancel or Done in the navigation bar.
+   * Only fires when `showNavigationBar` is true.
+   */
+  onDismissRequest?: (event: NativeSyntheticEvent<Record<string, never>>) => void;
 }>;
 
 /**
