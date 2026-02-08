@@ -848,7 +848,13 @@ public class ReactNativeDeviceActivityModule: Module {
       }
 
       Prop("showNavigationBar") { (view: ReactNativeDeviceActivityView, prop: Bool?) in
-        view.model.showNavigationBar = prop ?? false
+        let enabled = prop ?? false
+        view.model.showNavigationBar = enabled
+        // When using the native .familyActivityPicker() modifier, set the
+        // hosting controller background so the presented sheet inherits it
+        // instead of falling through to the window's white default.
+        view.contentView.view.backgroundColor = enabled ? .systemGroupedBackground : .clear
+        view.backgroundColor = enabled ? .systemGroupedBackground : .clear
       }
     }
 
@@ -904,7 +910,10 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
       }
 
       Prop("showNavigationBar") { (view: ReactNativeDeviceActivityViewPersisted, prop: Bool?) in
-        view.model.showNavigationBar = prop ?? false
+        let enabled = prop ?? false
+        view.model.showNavigationBar = enabled
+        view.contentView.view.backgroundColor = enabled ? .systemGroupedBackground : .clear
+        view.backgroundColor = enabled ? .systemGroupedBackground : .clear
       }
     }
   }

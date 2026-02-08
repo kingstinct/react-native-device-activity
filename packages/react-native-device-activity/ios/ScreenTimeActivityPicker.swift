@@ -75,6 +75,7 @@ struct ActivityPicker: View {
         .onChange(of: isPickerPresented) { presented in
           if !presented { model.onDismissRequest?() }
         }
+        .background(PresentedSheetBackgroundFixer())
     } else {
       Color.clear
         .familyActivityPicker(
@@ -85,6 +86,7 @@ struct ActivityPicker: View {
         .onChange(of: isPickerPresented) { presented in
           if !presented { model.onDismissRequest?() }
         }
+        .background(PresentedSheetBackgroundFixer())
     }
   }
 
@@ -102,6 +104,69 @@ struct ActivityPicker: View {
       FamilyActivityPicker(
         selection: $model.activitySelection
       )
+    }
+  }
+}
+
+// MARK: - Sheet background fix
+
+/// Finds the presented picker sheet's view hierarchy and sets the background
+/// to `systemGroupedBackground` so the empty area below the list matches
+/// the rest of the sheet. Uses a VC representable that observes when our
+/// hosting controller presents a child.
+@available(iOS 15.0, *)
+struct PresentedSheetBackgroundFixer: UIViewControllerRepresentable {
+  func makeUIViewController(context: Context) -> SheetBackgroundFixerController {
+    SheetBackgroundFixerController()
+  }
+
+  func updateUIViewController(_ uiViewController: SheetBackgroundFixerController, context: Context) {}
+}
+
+@available(iOS 15.0, *)
+class SheetBackgroundFixerController: UIViewController {
+  private var observation: NSKeyValueObservation?
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    startObserving()
+  }
+
+  private func startObserving() {
+    // Walk up to find the VC that will present the picker sheet.
+    var candidate: UIViewController? = self
+    while let c = candidate {
+      // Observe `presentedViewController` so we catch it the moment the
+      // picker sheet appears.
+      observation = c.observe(
+        \.presentedViewController, options: [.new]
+      ) { [weak self] vc, _ in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+          self?.fixPresentedBackground(from: vc)
+        }
+      }
+      // Also try immediately in case it's already presented.
+      fixPresentedBackground(from: c)
+      if c.presentedViewController != nil || c.parent == nil { break }
+      candidate = c.parent
+    }
+  }
+
+  private func fixPresentedBackground(from vc: UIViewController) {
+    guard let presented = vc.presentedViewController else { return }
+    applySystemBackground(to: presented.view)
+    for child in presented.children {
+      applySystemBackground(to: child.view)
+    }
+  }
+
+  private func applySystemBackground(to view: UIView) {
+    view.backgroundColor = .systemGroupedBackground
+    // The picker nests views; walk a few levels deep.
+    for sub in view.subviews {
+      if sub.backgroundColor == .white || sub.backgroundColor == .systemBackground {
+        sub.backgroundColor = .systemGroupedBackground
+      }
     }
   }
 }
