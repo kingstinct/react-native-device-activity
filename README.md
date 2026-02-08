@@ -590,6 +590,7 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 | Component                     | Props                                                                                                   | Description                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `DeviceActivitySelectionView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`headerText?`: string<br>`footerText?`: string<br>`showNavigationBar?`: boolean<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Native component that renders the app selection UI. Set `showNavigationBar` to use the native `.familyActivityPicker()` sheet with Cancel/Done. |
+| `DeviceActivitySelectionViewPersisted` | `familyActivitySelectionId`: string<br>`onSelectionChange`: (event) => void<br>`includeEntireCategory?`: boolean<br>`headerText?`: string<br>`footerText?`: string<br>`showNavigationBar?`: boolean<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Persisted variant of the selection picker keyed by `familyActivitySelectionId`. Supports the same native sheet presentation with `showNavigationBar`. |
 
 ### Hooks
 
