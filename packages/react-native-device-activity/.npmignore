@@ -6,3 +6,9 @@ src/*.test.ts
 build/*.test.*
 jest.runtime.config.js
 plugin/jest.config.js
+
+# Generated target metadata (not currently shipped in npm package)
+targets/ActivityMonitorExtension/generated.entitlements
+targets/ShieldAction/generated.entitlements
+targets/ShieldConfiguration/generated.entitlements
+targets/ShieldConfiguration/PrivacyInfo.xcprivacy
