@@ -24,8 +24,10 @@ class ReactNativeDeviceActivityView: ExpoView {
 
     clipsToBounds = true
     backgroundColor = .clear
+    isUserInteractionEnabled = false
 
     contentView.view.backgroundColor = .clear
+    contentView.view.isUserInteractionEnabled = false
 
     self.addSubview(contentView.view)
 
