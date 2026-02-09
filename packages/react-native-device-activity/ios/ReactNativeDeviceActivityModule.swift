@@ -213,7 +213,8 @@ class NativeEventObserver {
           _: CFDictionary?
         ) in
         if let observer = observer, let name = name {
-          let nativeObserver = Unmanaged<NativeEventObserver>.fromOpaque(observer).takeUnretainedValue()
+          let nativeObserver = Unmanaged<NativeEventObserver>.fromOpaque(observer)
+            .takeUnretainedValue()
           guard let module = nativeObserver.module else {
             return
           }
