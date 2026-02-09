@@ -604,7 +604,6 @@ For repository-specific details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 - Authorization changes outside app not captured
   When we've asked whether the user has authorized us to use screen time, and the state is changed outside the app, the native API doesn't update until the app restarts, i.e. this flow:
-
   1. Ask for current permission
   2. Change permission outside the app
   3. Ask for current permission again will return same as (1)
