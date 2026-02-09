@@ -4,6 +4,8 @@
   "private": true,
   "description": "Provides access to Apples DeviceActivity API",
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint .",
     "pre-push": "bun run typecheck && bun run lint && apps/example/ios/Pods/SwiftLint/swiftlint lint --strict",
     "typecheck": "cd packages/react-native-device-activity && bun run typecheck && cd ../../apps/example && bun run typecheck",

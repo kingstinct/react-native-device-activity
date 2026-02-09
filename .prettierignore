@@ -1,0 +1,11 @@
+node_modules/
+bun.lock
+
+# Expo / native generated artifacts
+apps/example/.expo/
+apps/example/dist/
+apps/example/ios/Pods/
+apps/example/ios/build/
+
+# Package build output
+packages/react-native-device-activity/build/
