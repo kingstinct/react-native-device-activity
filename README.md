@@ -207,6 +207,9 @@ For most use cases you need to get an activitySelection from the user, which is 
 
 The picker now has dedicated components for each presentation style:
 
+`*SelectionView` components take a raw `familyActivitySelection` token.  
+`*SelectionViewPersisted` components take a `familyActivitySelectionId` and persist/read the token on the native side by ID.
+
 **Native sheet** -- `DeviceActivitySelectionSheetView` (and persisted variant) uses Apple's `.familyActivityPicker(isPresented:selection:)` flow with native Cancel/Done controls.
 
 ```TypeScript
@@ -227,22 +230,28 @@ The picker now has dedicated components for each presentation style:
 ```TypeScript
 import { Modal, View } from "react-native";
 
-  <Modal
-    visible={visible}
-    animationType="slide"
-    presentationStyle="pageSheet"
-    onRequestClose={onDismiss}
-    onDismiss={onDismiss}
-  >
-    <View style={{ flex: 1 }}>
-      <DeviceActivitySelectionView
-        style={{ flex: 1, width: "100%" }}
-        onSelectionChange={handleSelectionChange}
-        familyActivitySelection={familyActivitySelection}
-      />
-    </View>
-  </Modal>
+<Modal
+  visible={visible}
+  animationType="slide"
+  presentationStyle="pageSheet"
+  onRequestClose={onDismiss}
+  onDismiss={onDismiss}
+>
+  <View style={{ flex: 1 }}>
+    <DeviceActivitySelectionView
+      style={{ flex: 1, width: "100%" }}
+      onSelectionChange={handleSelectionChange}
+      familyActivitySelection={familyActivitySelection}
+    />
+  </View>
+</Modal>
 ```
+
+#### Which one should I use?
+
+- Use `DeviceActivitySelectionSheetView` for a native iOS sheet UX (system Cancel/Done).
+- Use `DeviceActivitySelectionView` when you need full control over presentation and a custom crash fallback UI.
+- Use the persisted variants when you want to store/reuse selections across screens/sessions or avoid passing very large selection tokens through JS.
 
 #### Full example
 
