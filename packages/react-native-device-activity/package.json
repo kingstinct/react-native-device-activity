@@ -9,7 +9,7 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "typecheck": "tsc --noEmit",
-    "test": "bun run test:runtime && bun run test:plugin",
+    "test": "CI=1 bun run test:runtime && CI=1 bun run test:plugin",
     "test:runtime": "expo-module test --config ./jest.runtime.config.js",
     "test:plugin": "expo-module test plugin",
     "prepublishOnly": "expo-module prepublishOnly && tsc && cp ../../README.md ./README.md",
