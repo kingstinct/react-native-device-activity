@@ -203,19 +203,18 @@ ReactNativeDeviceActivity.revokeAuthorization();
 
 For most use cases you need to get an activitySelection from the user, which is a token representing the apps the user wants to track, block or whitelist. This can be done by presenting the native `DeviceActivitySelectionView`.
 
-#### Presentation modes
+#### Presentation options
 
-The picker supports two presentation modes:
+The picker now has dedicated components for each presentation style:
 
-**Native sheet (recommended)** -- When you set `showNavigationBar={true}`, the native side uses Apple's `.familyActivityPicker(isPresented:selection:)` view modifier to present a fully native iOS sheet with Cancel/Done in the navigation bar. The native side handles the entire sheet presentation, so you do **not** need to wrap it in a React Native `<Modal>` -- just conditionally mount the view as a small anchor and it will present the sheet automatically.
+**Native sheet** -- `DeviceActivitySelectionSheetView` (and persisted variant) uses Apple's `.familyActivityPicker(isPresented:selection:)` flow with native Cancel/Done controls.
 
 ```TypeScript
-// The view acts as an invisible anchor — the native side presents its own sheet.
-// When the user taps Cancel or Done, onDismissRequest fires.
+// The sheet view acts as an invisible anchor.
+// The native side presents the iOS sheet and fires onDismissRequest on Cancel/Done.
 {pickerVisible && (
-  <DeviceActivitySelectionView
+  <DeviceActivitySelectionSheetView
     style={{ width: 1, height: 1, position: "absolute" }}
-    showNavigationBar
     onDismissRequest={() => setPickerVisible(false)}
     onSelectionChange={handleSelectionChange}
     familyActivitySelection={familyActivitySelection}
@@ -223,21 +222,26 @@ The picker supports two presentation modes:
 )}
 ```
 
-**Custom presentation (default)** -- Without `showNavigationBar`, the picker renders as an inline view with a large "Choose Activities" title. You can embed it directly in your layout or wrap it in a React Native `<Modal>` for a custom sheet. This gives you full control over the presentation but does not include native Cancel/Done buttons.
+**Custom presentation (fallback/customizable)** -- `DeviceActivitySelectionView` (and persisted variant) renders inline. You can embed it directly in your layout or wrap it in a React Native `<Modal>` for a custom sheet.
 
 ```TypeScript
 import { Modal, View } from "react-native";
 
-<Modal visible={visible} animationType="slide" presentationStyle="pageSheet"
-  onRequestClose={onDismiss} onDismiss={onDismiss}>
-  <View style={{ flex: 1 }}>
-    <DeviceActivitySelectionView
-      style={{ flex: 1, width: "100%" }}
-      onSelectionChange={handleSelectionChange}
-      familyActivitySelection={familyActivitySelection}
-    />
-  </View>
-</Modal>
+  <Modal
+    visible={visible}
+    animationType="slide"
+    presentationStyle="pageSheet"
+    onRequestClose={onDismiss}
+    onDismiss={onDismiss}
+  >
+    <View style={{ flex: 1 }}>
+      <DeviceActivitySelectionView
+        style={{ flex: 1, width: "100%" }}
+        onSelectionChange={handleSelectionChange}
+        familyActivitySelection={familyActivitySelection}
+      />
+    </View>
+  </Modal>
 ```
 
 #### Full example
@@ -589,8 +593,10 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 
 | Component                     | Props                                                                                                   | Description                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `DeviceActivitySelectionView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`headerText?`: string<br>`footerText?`: string<br>`showNavigationBar?`: boolean<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Native component that renders the app selection UI. Set `showNavigationBar` to use the native `.familyActivityPicker()` sheet with Cancel/Done. |
-| `DeviceActivitySelectionViewPersisted` | `familyActivitySelectionId`: string<br>`onSelectionChange`: (event) => void<br>`includeEntireCategory?`: boolean<br>`headerText?`: string<br>`footerText?`: string<br>`showNavigationBar?`: boolean<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Persisted variant of the selection picker keyed by `familyActivitySelectionId`. Supports the same native sheet presentation with `showNavigationBar`. |
+| `DeviceActivitySelectionView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`headerText?`: string<br>`footerText?`: string<br>`style`: ViewStyle | Inline/customizable native picker view. Useful when you want to control modal/presentation yourself and provide a fallback UI. |
+| `DeviceActivitySelectionViewPersisted` | `familyActivitySelectionId`: string<br>`onSelectionChange`: (event) => void<br>`includeEntireCategory?`: boolean<br>`headerText?`: string<br>`footerText?`: string<br>`style`: ViewStyle | Persisted inline/customizable picker keyed by `familyActivitySelectionId`. |
+| `DeviceActivitySelectionSheetView` | `familyActivitySelection`: string \| null<br>`onSelectionChange`: (event) => void<br>`headerText?`: string<br>`footerText?`: string<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Dedicated native iOS sheet picker with Cancel/Done controls. |
+| `DeviceActivitySelectionSheetViewPersisted` | `familyActivitySelectionId`: string<br>`onSelectionChange`: (event) => void<br>`includeEntireCategory?`: boolean<br>`headerText?`: string<br>`footerText?`: string<br>`onDismissRequest?`: (event) => void<br>`style`: ViewStyle | Persisted dedicated native iOS sheet picker keyed by `familyActivitySelectionId`. |
 
 ### Hooks
 

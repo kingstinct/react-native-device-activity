@@ -2,6 +2,8 @@ import React from "react";
 import { NativeSyntheticEvent, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   ActivitySelectionMetadata,
+  DeviceActivitySelectionSheetView,
+  DeviceActivitySelectionSheetViewPersisted,
   ActivitySelectionWithMetadata,
   DeviceActivitySelectionView,
   DeviceActivitySelectionViewPersisted,
@@ -42,9 +44,8 @@ export const ActivityPicker = ({
     // sheet.  We just mount a tiny anchor view — no RN Modal needed.
     if (!visible) return null;
     return (
-      <DeviceActivitySelectionView
+      <DeviceActivitySelectionSheetView
         style={styles.nativeAnchor}
-        showNavigationBar
         onDismissRequest={onDismiss}
         onSelectionChange={onSelectionChange}
         familyActivitySelection={familyActivitySelection}
@@ -98,9 +99,8 @@ export const ActivityPickerPersisted = ({
   if (showNavigationBar) {
     if (!visible) return null;
     return (
-      <DeviceActivitySelectionViewPersisted
+      <DeviceActivitySelectionSheetViewPersisted
         style={styles.nativeAnchor}
-        showNavigationBar
         onDismissRequest={onDismiss}
         onSelectionChange={onSelectionChange}
         familyActivitySelectionId={familyActivitySelectionId}
