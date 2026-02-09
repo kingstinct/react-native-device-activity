@@ -1,0 +1,7 @@
+# Package-local dev/test files
+ios/TestHarness/
+ios/Tests/
+plugin/__tests__/
+src/*.test.ts
+jest.runtime.config.js
+plugin/jest.config.js

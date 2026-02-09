@@ -37,6 +37,8 @@ jobs:
 
       - run: bun typecheck
 
+      - run: bun run test
+
   publish-to-npm:
     needs: test
     runs-on: ubuntu-latest

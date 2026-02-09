@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo start",
-    "android": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:android",
-    "ios": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:ios",
+    "android": "COPY_TO_TARGET_FOLDER=true INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:android",
+    "ios": "COPY_TO_TARGET_FOLDER=true INTERNALLY_TEST_EXAMPLE_PROJECT=true expo run:ios",
     "web": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo start --web",
     "bundle": "INTERNALLY_TEST_EXAMPLE_PROJECT=true expo export",
     "typecheck": "tsc --noEmit",

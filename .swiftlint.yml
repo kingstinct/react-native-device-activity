@@ -12,6 +12,10 @@ disabled_rules:
   - inclusive_language
 
 included:
+  - packages/react-native-device-activity/ios/ReactNativeDeviceActivityModule.swift
+  - packages/react-native-device-activity/ios/ReactNativeDeviceActivityView.swift
+  - packages/react-native-device-activity/ios/ReactNativeDeviceActivityViewPersisted.swift
+  - packages/react-native-device-activity/ios/ScreenTimeActivityPicker.swift
   - packages/react-native-device-activity/ios/Tests
   - packages/react-native-device-activity/ios/Shared.swift
   - packages/react-native-device-activity/ios/TestHarness/reactnativedeviceactivityexample

@@ -37,6 +37,21 @@ jobs:
 
       - run: bun typecheck
 
+  test-js:
+    name: JS Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - run: bun run test
+
   typecheck-example:
     name: Typecheck (example project)
     runs-on: ubuntu-latest
@@ -98,7 +113,7 @@ jobs:
 
       - run: bun install
 
-      - run: bunx expo prebuild
+      - run: bun run prebuild
         working-directory: apps/example
 
   swift-lint:
