@@ -102,7 +102,7 @@ jobs:
         working-directory: apps/example
 
   swift-lint:
-    name: SwiftLint (example project)
+    name: SwiftLint (iOS harness)
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
@@ -114,20 +114,20 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: apps/example/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('apps/example/ios/Podfile.lock') }}
+          path: packages/react-native-device-activity/ios/TestHarness/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('packages/react-native-device-activity/ios/TestHarness/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
 
       - run: bun install
 
       - run: pod install
-        working-directory: apps/example/ios
+        working-directory: packages/react-native-device-activity/ios/TestHarness
 
-      - run: apps/example/ios/Pods/SwiftLint/swiftlint lint
+      - run: packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint lint --config .swiftlint.yml
 
   swift-test:
-    name: Swift Test (example project)
+    name: Swift Test (iOS harness)
     runs-on: macos-latest
     timeout-minutes: 25
     steps:
@@ -149,8 +149,8 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: apps/example/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('apps/example/ios/Podfile.lock') }}
+          path: packages/react-native-device-activity/ios/TestHarness/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('packages/react-native-device-activity/ios/TestHarness/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
 
@@ -172,9 +172,7 @@ jobs:
         run: swift --version
 
       - run: pod install
-        working-directory: apps/example/ios
+        working-directory: packages/react-native-device-activity/ios/TestHarness
 
-      - run: cp .swiftlint.yml apps/example/ios
-
-      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -allowProvisioningUpdates -destination "platform=iOS Simulator,OS=latest,name=iPhone 17"
-        working-directory: apps/example/ios
+      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -destination "platform=iOS Simulator,OS=latest,name=iPhone 17" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+        working-directory: packages/react-native-device-activity/ios/TestHarness

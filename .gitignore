@@ -36,6 +36,10 @@ project.xcworkspace
 local.properties
 android.iml
 
+# Example native output (CNG)
+apps/example/ios/
+apps/example/android/
+
 # Cocoapods
 #
 apps/example/ios/Pods

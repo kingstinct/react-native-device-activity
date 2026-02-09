@@ -10,10 +10,11 @@
     "lint": "expo-module lint",
     "typecheck": "tsc --noEmit",
     "test": "expo-module test",
+    "test:plugin": "expo-module test plugin",
     "prepublishOnly": "expo-module prepublishOnly && tsc && cp ../../README.md ./README.md",
     "expo-module": "expo-module",
-    "open:ios": "xed apps/example/ios",
-    "open:android": "open -a \"Android Studio\" apps/example/android"
+    "open:ios": "xed ios/TestHarness",
+    "open:android": "open -a \"Android Studio\" ../../apps/example/android"
   },
   "keywords": [
     "react-native",

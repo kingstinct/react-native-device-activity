@@ -583,6 +583,23 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 
 Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
 
+### Repository development setup
+
+This repository uses an env-driven Expo example config in `apps/example/app.config.ts` to avoid committing local developer values such as team ID and app group.
+
+Use `apps/example/.env.example` as a template for local values:
+
+- `RNDA_APPLE_TEAM_ID`
+- `RNDA_APP_GROUP`
+- `RNDA_IOS_BUNDLE_ID`
+- `RNDA_ANDROID_PACKAGE`
+
+The example app follows CNG workflow (`expo prebuild --clean` / `expo run:*`) and native folders are generated as needed.
+
+Swift test sources are package-owned in `packages/react-native-device-activity/ios/Tests` and run through the iOS harness in `packages/react-native-device-activity/ios/TestHarness`.
+
+For repository-specific details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
 ## Weird behaviors ⚠️
 
 - Authorization changes outside app not captured

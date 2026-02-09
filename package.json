@@ -7,7 +7,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "pre-push": "bun run typecheck && bun run lint && apps/example/ios/Pods/SwiftLint/swiftlint lint --strict",
+    "pre-push": "bun run typecheck && bun run lint && packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint lint --strict --config .swiftlint.yml",
     "typecheck": "cd packages/react-native-device-activity && bun run typecheck && cd ../../apps/example && bun run typecheck",
     "prepare": "husky",
     "nail-workspace-dependency-versions": "bun run scripts/nail-workspace-dependency-versions.ts"
