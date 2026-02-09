@@ -9,3 +9,7 @@ apps/example/ios/build/
 
 # Package build output
 packages/react-native-device-activity/build/
+
+# iOS test harness generated artifacts
+packages/react-native-device-activity/ios/TestHarness/Pods/
+packages/react-native-device-activity/ios/TestHarness/build/
