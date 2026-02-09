@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Linking,
@@ -18,9 +19,11 @@ import {
   useAuthorizationStatus,
   AuthorizationStatusType,
   requestAuthorization,
+  ActivitySelectionMetadata,
 } from "react-native-device-activity";
 import { Button, Modal, Text, Title } from "react-native-paper";
 
+import { ActivityPickerPersisted } from "../components/ActivityPicker";
 import { CreateActivity } from "../components/CreateActivity";
 
 const authorizationStatusMap: Record<AuthorizationStatusType, string> = {
@@ -58,6 +61,9 @@ export function SimpleTab() {
   }, [authorizationStatus]);
 
   const [showCreateActivityPopup, setShowCreateActivityPopup] = useState(false);
+
+  const [pickerNative, setPickerNative] = useState(false);
+  const [pickerCustomModal, setPickerCustomModal] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -140,6 +146,22 @@ export function SimpleTab() {
         >
           Create Activity
         </Button>
+
+        <Title style={{ marginTop: 20 }}>Picker Views</Title>
+        <Button
+          mode="outlined"
+          onPress={() => setPickerNative(true)}
+          style={{ marginVertical: 4 }}
+        >
+          Sheet View (native iOS)
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => setPickerCustomModal(true)}
+          style={{ marginVertical: 4 }}
+        >
+          Selection View (custom wrapper)
+        </Button>
       </ScrollView>
       <Modal
         visible={showCreateActivityPopup}
@@ -153,6 +175,36 @@ export function SimpleTab() {
           }}
         />
       </Modal>
+      <ActivityPickerPersisted
+        visible={pickerNative}
+        onDismiss={() => setPickerNative(false)}
+        showNavigationBar
+        onSelectionChange={(
+          event: NativeSyntheticEvent<ActivitySelectionMetadata>,
+        ) => {
+          console.log("sheet view selection changed", event.nativeEvent);
+        }}
+        familyActivitySelectionId="picker-native"
+        onReload={() => {
+          setPickerNative(false);
+          setTimeout(() => setPickerNative(true), 100);
+        }}
+      />
+      <ActivityPickerPersisted
+        visible={pickerCustomModal}
+        onDismiss={() => setPickerCustomModal(false)}
+        showNavigationBar={false}
+        onSelectionChange={(
+          event: NativeSyntheticEvent<ActivitySelectionMetadata>,
+        ) => {
+          console.log("selection view changed", event.nativeEvent);
+        }}
+        familyActivitySelectionId="picker-custom-modal"
+        onReload={() => {
+          setPickerCustomModal(false);
+          setTimeout(() => setPickerCustomModal(true), 100);
+        }}
+      />
     </SafeAreaView>
   );
 }

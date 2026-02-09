@@ -31,6 +31,10 @@ class ReactNativeDeviceActivityViewPersisted: ExpoView {
 
     self.addSubview(contentView.view)
 
+    model.onDismissRequest = { [weak self] in
+      self?.onDismissRequest([:])
+    }
+
     model.$activitySelection.debounce(for: .seconds(0.1), scheduler: RunLoop.main).sink {
       selection in
       if selection != self.previousSelection {
@@ -45,7 +49,34 @@ class ReactNativeDeviceActivityViewPersisted: ExpoView {
     contentView.view.frame = bounds
   }
 
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    if window != nil {
+      if contentView.parent == nil, let parentVC = parentViewController {
+        parentVC.addChild(contentView)
+        contentView.didMove(toParent: parentVC)
+      }
+    } else {
+      if contentView.parent != nil {
+        contentView.willMove(toParent: nil)
+        contentView.removeFromParent()
+      }
+    }
+  }
+
+  private var parentViewController: UIViewController? {
+    var responder: UIResponder? = self
+    while let next = responder?.next {
+      if let vc = next as? UIViewController {
+        return vc
+      }
+      responder = next
+    }
+    return nil
+  }
+
   let onSelectionChange = EventDispatcher()
+  let onDismissRequest = EventDispatcher()
 
   var previousSelection: FamilyActivitySelection?
 

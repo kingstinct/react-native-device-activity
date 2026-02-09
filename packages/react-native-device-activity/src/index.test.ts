@@ -1,16 +1,3 @@
-const mockNativeModule = {
-  stopMonitoring: jest.fn(),
-  startMonitoring: jest.fn(),
-};
-
-jest.mock("react-native", () => ({
-  Platform: {
-    OS: "ios",
-    select: (options: Record<string, unknown>) =>
-      options.ios ?? options.default,
-  },
-}));
-
 jest.mock("expo-modules-core", () => {
   class MockEventEmitter {
     addListener() {
@@ -23,13 +10,9 @@ jest.mock("expo-modules-core", () => {
   return {
     EventEmitter: MockEventEmitter,
     EventSubscription: class {},
+    requireNativeViewManager: jest.fn(() => () => null),
   };
 });
-
-jest.mock("./ReactNativeDeviceActivityModule", () => ({
-  __esModule: true,
-  default: mockNativeModule,
-}));
 
 describe("index runtime wrapper", () => {
   beforeEach(() => {
@@ -38,27 +21,50 @@ describe("index runtime wrapper", () => {
   });
 
   test("delegates stopMonitoring to native module", () => {
-    const { stopMonitoring } = require("./index");
-    const activities = ["activity-a"];
+    jest.isolateModules(() => {
+      const mockNativeModule = {
+        stopMonitoring: jest.fn(),
+        startMonitoring: jest.fn(),
+      };
 
-    stopMonitoring(activities);
+      jest.doMock("./ReactNativeDeviceActivityModule", () => ({
+        __esModule: true,
+        default: mockNativeModule,
+      }));
 
-    expect(mockNativeModule.stopMonitoring).toHaveBeenCalledWith(activities);
+      const { stopMonitoring } = require("./index");
+      const activities = ["activity-a"];
+
+      stopMonitoring(activities);
+
+      expect(mockNativeModule.stopMonitoring).toHaveBeenCalledWith(activities);
+    });
   });
 
   test("delegates startMonitoring to native module", async () => {
-    mockNativeModule.startMonitoring.mockResolvedValueOnce(undefined);
-    const { startMonitoring } = require("./index");
+    await jest.isolateModulesAsync(async () => {
+      const mockNativeModule = {
+        stopMonitoring: jest.fn(),
+        startMonitoring: jest.fn().mockResolvedValue(undefined),
+      };
 
-    await startMonitoring(
-      "activity-a",
-      {
-        intervalStart: { hour: 0, minute: 0 },
-        intervalEnd: { hour: 23, minute: 59 },
-      },
-      [],
-    );
+      jest.doMock("./ReactNativeDeviceActivityModule", () => ({
+        __esModule: true,
+        default: mockNativeModule,
+      }));
 
-    expect(mockNativeModule.startMonitoring).toHaveBeenCalled();
+      const { startMonitoring } = require("./index");
+
+      await startMonitoring(
+        "activity-a",
+        {
+          intervalStart: { hour: 0, minute: 0 },
+          intervalEnd: { hour: 23, minute: 59 },
+        },
+        [],
+      );
+
+      expect(mockNativeModule.startMonitoring).toHaveBeenCalled();
+    });
   });
 });

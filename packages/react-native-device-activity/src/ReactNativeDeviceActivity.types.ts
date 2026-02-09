@@ -46,6 +46,13 @@ export type DeviceActivitySelectionViewProps = PropsWithChildren<{
   footerText?: string | null;
 }>;
 
+export type DeviceActivitySelectionSheetViewProps = DeviceActivitySelectionViewProps & {
+  /**
+   * Called when the user taps Cancel or Done in the native sheet navigation bar.
+   */
+  onDismissRequest?: (event: NativeSyntheticEvent<Record<string, never>>) => void;
+};
+
 export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
   onSelectionChange?: (
@@ -60,6 +67,14 @@ export type DeviceActivitySelectionViewPersistedProps = PropsWithChildren<{
    */
   includeEntireCategory?: boolean;
 }>;
+
+export type DeviceActivitySelectionSheetViewPersistedProps =
+  DeviceActivitySelectionViewPersistedProps & {
+    /**
+     * Called when the user taps Cancel or Done in the native sheet navigation bar.
+     */
+    onDismissRequest?: (event: NativeSyntheticEvent<Record<string, never>>) => void;
+  };
 
 /**
  * @link https://developer.apple.com/documentation/foundation/datecomponents
