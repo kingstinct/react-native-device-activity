@@ -1,24 +1,64 @@
-// todo: skipping for now
+const mockNativeModule = {
+  stopMonitoring: jest.fn(),
+  startMonitoring: jest.fn(),
+};
 
-describe("test", () => {
-  test("Should call stopMonitoring", () => {
-    const mockStopMonitoring = jest.fn();
-    jest.mock("./ReactNativeDeviceActivityModule", () => ({
-      stopMonitoring: mockStopMonitoring,
-    }));
-    const { stopMonitoring } = require("./");
-    stopMonitoring();
-    expect(mockStopMonitoring).toHaveBeenCalled();
+jest.mock("react-native", () => ({
+  Platform: {
+    OS: "ios",
+    select: (options: Record<string, unknown>) =>
+      options.ios ?? options.default,
+  },
+}));
+
+jest.mock("expo-modules-core", () => {
+  class MockEventEmitter {
+    addListener() {
+      return { remove: jest.fn() };
+    }
+
+    removeAllListeners() {}
+  }
+
+  return {
+    EventEmitter: MockEventEmitter,
+    EventSubscription: class {},
+  };
+});
+
+jest.mock("./ReactNativeDeviceActivityModule", () => ({
+  __esModule: true,
+  default: mockNativeModule,
+}));
+
+describe("index runtime wrapper", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
   });
 
-  test("Should call startMonitoring", () => {
-    jest.resetAllMocks();
-    const mockStartMonitoring = jest.fn();
-    jest.mock("./ReactNativeDeviceActivityModule", () => ({
-      startMonitoring: mockStartMonitoring,
-    }));
-    const { startMonitoring } = require("./");
-    startMonitoring("test", {}, []);
-    expect(mockStartMonitoring).toHaveBeenCalled();
+  test("delegates stopMonitoring to native module", () => {
+    const { stopMonitoring } = require("./index");
+    const activities = ["activity-a"];
+
+    stopMonitoring(activities);
+
+    expect(mockNativeModule.stopMonitoring).toHaveBeenCalledWith(activities);
+  });
+
+  test("delegates startMonitoring to native module", async () => {
+    mockNativeModule.startMonitoring.mockResolvedValueOnce(undefined);
+    const { startMonitoring } = require("./index");
+
+    await startMonitoring(
+      "activity-a",
+      {
+        intervalStart: { hour: 0, minute: 0 },
+        intervalEnd: { hour: 23, minute: 59 },
+      },
+      [],
+    );
+
+    expect(mockNativeModule.startMonitoring).toHaveBeenCalled();
   });
 });

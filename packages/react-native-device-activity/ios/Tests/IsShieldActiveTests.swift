@@ -8,6 +8,8 @@ import FamilyControls
 import ManagedSettings
 import Testing
 
+// NOTE: These assertions fail on simulator when xcodebuild is run with
+// CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO.
 @Suite(.serialized) struct IsShieldActiveTests {
 
   @Test func shieldIsNotActive() async throws {

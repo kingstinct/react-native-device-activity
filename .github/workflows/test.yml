@@ -143,10 +143,6 @@ jobs:
 
       - run: bun install
 
-      - name: Start bundler
-        run: bun start &
-        working-directory: apps/example
-
       - uses: actions/cache@v4
         with:
           path: packages/react-native-device-activity/ios/TestHarness/Pods
@@ -174,5 +170,5 @@ jobs:
       - run: pod install
         working-directory: packages/react-native-device-activity/ios/TestHarness
 
-      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -destination "platform=iOS Simulator,OS=latest,name=iPhone 17" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+      - run: xcodebuild test -workspace reactnativedeviceactivityexample.xcworkspace -scheme Tests -destination "platform=iOS Simulator,OS=latest,name=iPhone 17"
         working-directory: packages/react-native-device-activity/ios/TestHarness

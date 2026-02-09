@@ -8,8 +8,9 @@
     "format:check": "node ./node_modules/prettier/bin/prettier.cjs --check .",
     "format:version": "node ./node_modules/prettier/bin/prettier.cjs --version && node -e \"console.log(require('./node_modules/prettier/package.json').version)\"",
     "lint": "eslint .",
+    "test": "cd packages/react-native-device-activity && bun run test",
     "swiftlint": "[ -x packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint ] || (echo 'SwiftLint pod binary missing. Run: cd packages/react-native-device-activity/ios/TestHarness && pod install' && exit 1); packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint lint --strict --config .swiftlint.yml",
-    "pre-push": "bun run typecheck && bun run lint && bun run swiftlint",
+    "pre-push": "bun run typecheck && bun run lint && bun run test && bun run swiftlint",
     "typecheck": "cd packages/react-native-device-activity && bun run typecheck && cd ../../apps/example && bun run typecheck",
     "prepare": "husky",
     "nail-workspace-dependency-versions": "bun run scripts/nail-workspace-dependency-versions.ts"
