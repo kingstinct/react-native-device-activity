@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -21,6 +21,6 @@ jobs:
           cd packages/react-native-device-activity
           bun run build
           bun run prepublishOnly
-      
+
       - name: Publish preview
         run: bunx pkg-pr-new@latest publish './packages/*'

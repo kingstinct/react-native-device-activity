@@ -196,7 +196,6 @@ Here's another example that focuses on tracking app usage with time thresholds:
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 ReactNativeDeviceActivity.revokeAuthorization();
-
 ```
 
 ### Select Apps to track
@@ -381,9 +380,9 @@ ReactNativeDeviceActivity.updateShield(
 This example shows how to implement a complete app blocking system on a given interval. The main principle is that you're configuring these apps to be blocked with FamilyControl API and then schedule when the shield should be shown with ActivityMonitor API. You're customizing the shield UI and actions with ShieldConfiguration and ShieldAction APIs.
 
 ```typescript
-import { useEffect, useState } from 'react';
-import { Alert, View, Button } from 'react-native';
-import * as ReactNativeDeviceActivity from 'react-native-device-activity';
+import { useEffect, useState } from "react";
+import { Alert, View, Button } from "react-native";
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
 
 // Constants for identifying your selections, shields and scheduled activities
 const SELECTION_ID = "evening_block_selection";
@@ -407,7 +406,9 @@ const AppBlocker = () => {
   // Step 3: Handle selection changes from the native selection UI
   const handleSelectionChange = (event) => {
     // The selection is a serialized string containing the user's app selections
-    setCurrentFamilyActivitySelection(event.nativeEvent.familyActivitySelection);
+    setCurrentFamilyActivitySelection(
+      event.nativeEvent.familyActivitySelection,
+    );
   };
 
   // Step 4: Save the selection for use by the extension
@@ -420,7 +421,7 @@ const AppBlocker = () => {
     // Store the selection with a consistent ID so the extension can access it
     ReactNativeDeviceActivity.setFamilyActivitySelectionId({
       id: SELECTION_ID,
-      familyActivitySelection: currentFamilyActivitySelection
+      familyActivitySelection: currentFamilyActivitySelection,
     });
 
     // Now configure the blocking schedule
@@ -434,14 +435,14 @@ const AppBlocker = () => {
       title: "App Blocked",
       subtitle: "This app is currently unavailable",
       primaryButtonLabel: "OK",
-      iconSystemName: "moon.stars.fill" // SF Symbols icon name
+      iconSystemName: "moon.stars.fill", // SF Symbols icon name
     };
 
     // Define what happens when users interact with the shield
     const shieldActions = {
       primary: {
-        behavior: "close" // Just close the shield when OK is tapped
-      }
+        behavior: "close", // Just close the shield when OK is tapped
+      },
     };
 
     // Apply the shield configuration
@@ -451,21 +452,25 @@ const AppBlocker = () => {
     ReactNativeDeviceActivity.configureActions({
       activityName: ACTIVITY_NAME,
       callbackName: "intervalDidStart", // Called when the scheduled time begins
-      actions: [{
-        type: "blockSelection",
-        familyActivitySelectionId: SELECTION_ID, // The stored selection ID
-        shieldId: SHIELD_CONFIG_ID // The shield to show when blocked
-      }]
+      actions: [
+        {
+          type: "blockSelection",
+          familyActivitySelectionId: SELECTION_ID, // The stored selection ID
+          shieldId: SHIELD_CONFIG_ID, // The shield to show when blocked
+        },
+      ],
     });
 
     // Configure what happens when the scheduled interval ends
     ReactNativeDeviceActivity.configureActions({
       activityName: ACTIVITY_NAME,
       callbackName: "intervalDidEnd", // Called when the scheduled time ends
-      actions: [{
-        type: "unblockSelection",
-        familyActivitySelectionId: SELECTION_ID // Unblock the same selection
-      }]
+      actions: [
+        {
+          type: "unblockSelection",
+          familyActivitySelectionId: SELECTION_ID, // Unblock the same selection
+        },
+      ],
     });
 
     // Start the monitoring schedule
@@ -479,7 +484,7 @@ const AppBlocker = () => {
       const schedule = {
         intervalStart: { hour: 19, minute: 0 }, // 7:00 PM
         intervalEnd: { hour: 23, minute: 59 }, // 11:59 PM
-        repeats: true // Repeat this schedule daily
+        repeats: true, // Repeat this schedule daily
         // Optional: warningTime: { minutes: 5 } // Warn user 5 minutes before blocking starts
       };
 
@@ -491,7 +496,9 @@ const AppBlocker = () => {
           second: (new Date().getSeconds() + 10) % 60, // +10 seconds from now
         },
         intervalEnd: {
-          hour: new Date().getHours() + Math.floor((new Date().getMinutes() + 5) / 60),
+          hour:
+            new Date().getHours() +
+            Math.floor((new Date().getMinutes() + 5) / 60),
           minute: (new Date().getMinutes() + 5) % 60, // +5 minutes from start
         },
         repeats: false, // One-time test
@@ -502,7 +509,7 @@ const AppBlocker = () => {
       await ReactNativeDeviceActivity.startMonitoring(
         ACTIVITY_NAME,
         schedule, // Use testSchedule for testing
-        []
+        [],
       );
 
       Alert.alert("Success", "Blocking schedule has been set up!");
@@ -520,7 +527,7 @@ const AppBlocker = () => {
         familyActivitySelection={currentFamilyActivitySelection}
         style={{
           width: "100%",
-          flex: 1
+          flex: 1,
         }}
       />
 

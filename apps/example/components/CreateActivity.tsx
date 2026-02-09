@@ -219,8 +219,8 @@ export const CreateActivity = ({ onDismiss }: { onDismiss: () => void }) => {
           familyActivitySelectionResult?.categoryCount < 13
             ? `${familyActivitySelectionResult?.applicationCount} apps, ${familyActivitySelectionResult?.categoryCount} categories, ${familyActivitySelectionResult?.webDomainCount} domains`
             : familyActivitySelectionResult?.categoryCount
-              ? "All categories selected"
-              : "Nothing selected"}
+            ? "All categories selected"
+            : "Nothing selected"}
         </Text>
       </View>
       <TextInput

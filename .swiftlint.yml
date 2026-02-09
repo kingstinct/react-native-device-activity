@@ -12,6 +12,6 @@ disabled_rules:
   - inclusive_language
 
 included:
-- packages/react-native-device-activity/ios
-- apps/example/ios
-- packages/react-native-device-activity/targets
+  - packages/react-native-device-activity/ios
+  - apps/example/ios
+  - packages/react-native-device-activity/targets

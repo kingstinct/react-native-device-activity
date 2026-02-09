@@ -4,8 +4,12 @@
     "strict": true,
     "allowJs": true,
     "paths": {
-      "react-native-device-activity": ["../../packages/react-native-device-activity/src/index"],
-      "react-native-device-activity/*": ["../../packages/react-native-device-activity/*"]
+      "react-native-device-activity": [
+        "../../packages/react-native-device-activity/src/index"
+      ],
+      "react-native-device-activity/*": [
+        "../../packages/react-native-device-activity/*"
+      ]
     }
   }
 }

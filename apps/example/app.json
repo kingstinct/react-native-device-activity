@@ -18,15 +18,13 @@
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.deviceactivity.example"
     },
-    "assetBundlePatterns": [
-      "assets/*"
-    ],
+    "assetBundlePatterns": ["assets/*"],
     "android": {
-      "package": "expo.modules.deviceactivity.example",
+      "package": "expo.modules.deviceactivity.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }, 
+    },
     "plugins": [
       [
         "expo-build-properties",
@@ -36,7 +34,7 @@
           }
         }
       ],
-      
+
       [
         "expo-asset",
         {
@@ -62,7 +60,9 @@
                   "bundleIdentifier": "expo.modules.deviceactivity.example.ActivityMonitorExtension",
                   "entitlements": {
                     "com.apple.developer.family-controls": true,
-                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                    "com.apple.security.application-groups": [
+                      "group.ActivityMonitor"
+                    ]
                   }
                 },
                 {
@@ -70,7 +70,9 @@
                   "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldConfiguration",
                   "entitlements": {
                     "com.apple.developer.family-controls": true,
-                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                    "com.apple.security.application-groups": [
+                      "group.ActivityMonitor"
+                    ]
                   }
                 },
                 {
@@ -78,7 +80,9 @@
                   "bundleIdentifier": "expo.modules.deviceactivity.example.ShieldAction",
                   "entitlements": {
                     "com.apple.developer.family-controls": true,
-                    "com.apple.security.application-groups": ["group.ActivityMonitor"]
+                    "com.apple.security.application-groups": [
+                      "group.ActivityMonitor"
+                    ]
                   }
                 }
               ]

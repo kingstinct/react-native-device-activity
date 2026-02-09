@@ -328,7 +328,7 @@ export function AllTheThings() {
                 {
                   type: "stopMonitoring",
                   activityNames: ["sneekpeak"],
-                }
+                },
               ],
             });
             ReactNativeDeviceActivity.updateShield(
@@ -358,7 +358,7 @@ export function AllTheThings() {
               },
             );
             console.log("done!");
-            console.log(ReactNativeDeviceActivity.getEvents())
+            console.log(ReactNativeDeviceActivity.getEvents());
           }}
         />
 
