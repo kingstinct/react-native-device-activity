@@ -542,7 +542,7 @@ const AppBlocker = () => {
 4. **Action Configuration**: Defines what happens when the scheduled interval starts/ends.
 5. **Scheduling**: Sets up when blocking should occur (e.g., evenings from 7 PM to midnight).
 
-For a complete implementation, see the [example app](https://github.com/Kingstinct/react-native-device-activity/tree/main/example).
+For a complete implementation, see the [example app](https://github.com/Kingstinct/react-native-device-activity/tree/main/apps/example).
 
 ## API Reference (the list is not exhaustive yet please refer to the TypeScript types for the full list)
 

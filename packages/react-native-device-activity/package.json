@@ -12,8 +12,8 @@
     "test": "expo-module test",
     "prepublishOnly": "expo-module prepublishOnly && tsc && cp ../../README.md ./README.md",
     "expo-module": "expo-module",
-    "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "open:ios": "xed apps/example/ios",
+    "open:android": "open -a \"Android Studio\" apps/example/android"
   },
   "keywords": [
     "react-native",
