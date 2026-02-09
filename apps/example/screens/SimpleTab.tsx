@@ -96,8 +96,8 @@ export function SimpleTab() {
             {authorizationStatus === AuthorizationStatus.approved
               ? "✅ "
               : authorizationStatus === AuthorizationStatus.denied
-              ? "❌ "
-              : "❓ "}
+                ? "❌ "
+                : "❓ "}
           </Text>
           <Text style={{ flex: 1 }}>
             {authorizationStatusMap[authorizationStatus]}

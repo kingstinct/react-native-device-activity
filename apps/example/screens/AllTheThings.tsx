@@ -24,8 +24,6 @@ import { ActivityPickerPersisted } from "../components/ActivityPicker";
 
 // const initialMinutes = 1;
 // const postponeMinutes = 60;
-const trackEveryXMinutes = 1;
-
 const selectionId = "some-id-3";
 
 export function requestPermissionsAsync() {

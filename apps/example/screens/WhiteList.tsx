@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   NativeSyntheticEvent,
   ScrollView,
@@ -12,7 +12,6 @@ import {
   activitySelectionMetadata,
   disableBlockAllMode,
   enableBlockAllMode,
-  clearWhitelistAndUpdateBlock,
   addSelectionToWhitelistAndUpdateBlock,
   ActivitySelectionMetadata,
   resetBlocks,
