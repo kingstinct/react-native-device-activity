@@ -63,6 +63,10 @@ Then run repository checks from the root:
 bun run pre-push
 ```
 
+## Formatting setup
+
+The formatting scripts intentionally call `node ./node_modules/prettier/bin/prettier.cjs` to avoid PATH/bin shadowing from transitive tooling (see [expo/expo#42994](https://github.com/expo/expo/issues/42994)).
+
 ## Plugin testing
 
 In addition to app/prebuild validation, config plugin regression tests are defined under:

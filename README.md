@@ -581,7 +581,7 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 
 ## Contributing
 
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
+Contributions are very welcome! Please refer to guidelines described in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ### Repository development setup
 
