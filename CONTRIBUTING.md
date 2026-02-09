@@ -22,6 +22,7 @@ If these variables are missing, `app.config.ts` falls back to stable defaults fo
 ## Example app follows CNG
 
 The example app no longer tracks `apps/example/ios` and `apps/example/android`.
+The example target folder `apps/example/targets` is also generated during prebuild and should not be committed.
 
 Regenerate native folders when needed:
 
@@ -42,6 +43,25 @@ Swift test sources are package-owned and live in:
 The iOS test runner lives in:
 
 - `packages/react-native-device-activity/ios/TestHarness`
+
+## SwiftLint setup
+
+The repository runs SwiftLint from the iOS test harness CocoaPods installation:
+
+- `packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint`
+
+Run this once after cloning (and again if Pod dependencies are cleaned):
+
+```bash
+cd packages/react-native-device-activity/ios/TestHarness
+pod install
+```
+
+Then run repository checks from the root:
+
+```bash
+bun run pre-push
+```
 
 ## Plugin testing
 

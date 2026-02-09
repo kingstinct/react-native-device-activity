@@ -39,6 +39,7 @@ android.iml
 # Example native output (CNG)
 apps/example/ios/
 apps/example/android/
+apps/example/targets/
 
 # Cocoapods
 #
