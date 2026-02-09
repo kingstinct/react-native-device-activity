@@ -147,20 +147,20 @@ export function SimpleTab() {
           Create Activity
         </Button>
 
-        <Title style={{ marginTop: 20 }}>Picker Variants</Title>
+        <Title style={{ marginTop: 20 }}>Picker Views</Title>
         <Button
           mode="outlined"
           onPress={() => setPickerNative(true)}
           style={{ marginVertical: 4 }}
         >
-          Native Sheet
+          Sheet View (native iOS)
         </Button>
         <Button
           mode="outlined"
           onPress={() => setPickerCustomModal(true)}
           style={{ marginVertical: 4 }}
         >
-          Custom Modal (old default)
+          Selection View (custom wrapper)
         </Button>
       </ScrollView>
       <Modal
@@ -182,7 +182,7 @@ export function SimpleTab() {
         onSelectionChange={(
           event: NativeSyntheticEvent<ActivitySelectionMetadata>,
         ) => {
-          console.log("native sheet selection changed", event.nativeEvent);
+          console.log("sheet view selection changed", event.nativeEvent);
         }}
         familyActivitySelectionId="picker-native"
         onReload={() => {
@@ -197,7 +197,7 @@ export function SimpleTab() {
         onSelectionChange={(
           event: NativeSyntheticEvent<ActivitySelectionMetadata>,
         ) => {
-          console.log("custom modal selection changed", event.nativeEvent);
+          console.log("selection view changed", event.nativeEvent);
         }}
         familyActivitySelectionId="picker-custom-modal"
         onReload={() => {
