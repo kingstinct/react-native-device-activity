@@ -1,12 +1,14 @@
 import { requestPermissionsAsync } from "expo-notifications";
 import { useCallback, useState } from "react";
-import { NativeSyntheticEvent, View } from "react-native";
+import { NativeSyntheticEvent, Pressable, View } from "react-native";
 import * as ReactNativeDeviceActivity from "react-native-device-activity";
 import {
   DeviceActivityEvent,
   DeviceActivitySelectionEvent,
 } from "react-native-device-activity/src/ReactNativeDeviceActivity.types";
 import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
+
+import { ActivityPicker } from "./ActivityPicker";
 
 const trackEveryXMinutes = 10;
 
@@ -175,6 +177,7 @@ export const CreateActivity = ({ onDismiss }: { onDismiss: () => void }) => {
   );
 
   const [activityName, setActivityName] = useState("");
+  const [showSelectionView, setShowSelectionView] = useState(false);
 
   return (
     <View style={{ margin: 20 }}>
@@ -187,33 +190,19 @@ export const CreateActivity = ({ onDismiss }: { onDismiss: () => void }) => {
           marginVertical: 10,
         }}
       >
-        <ReactNativeDeviceActivity.DeviceActivitySelectionView
+        <Pressable
           style={{
+            backgroundColor: theme.colors.primary,
             width: 100,
             height: 40,
             borderRadius: 20,
-            borderWidth: 10,
-            borderColor: theme.colors.primary,
+            alignItems: "center",
+            justifyContent: "center",
           }}
-          headerText="a header text!"
-          footerText="a footer text!"
-          onSelectionChange={onSelectionChange}
-          familyActivitySelection={
-            familyActivitySelectionResult?.familyActivitySelection
-          }
+          onPress={() => setShowSelectionView(true)}
         >
-          <View
-            pointerEvents="none"
-            style={{
-              backgroundColor: theme.colors.primary,
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={{ color: "white" }}>Select apps</Text>
-          </View>
-        </ReactNativeDeviceActivity.DeviceActivitySelectionView>
+          <Text style={{ color: "white" }}>Select apps</Text>
+        </Pressable>
         <Text>
           {familyActivitySelectionResult &&
           familyActivitySelectionResult?.categoryCount < 13
@@ -223,6 +212,20 @@ export const CreateActivity = ({ onDismiss }: { onDismiss: () => void }) => {
               : "Nothing selected"}
         </Text>
       </View>
+      <ActivityPicker
+        visible={showSelectionView}
+        onDismiss={() => setShowSelectionView(false)}
+        onSelectionChange={onSelectionChange}
+        familyActivitySelection={
+          familyActivitySelectionResult?.familyActivitySelection ?? undefined
+        }
+        onReload={() => {
+          setShowSelectionView(false);
+          setTimeout(() => {
+            setShowSelectionView(true);
+          }, 100);
+        }}
+      />
       <TextInput
         placeholder="Enter activity name"
         onChangeText={(text) => setActivityName(text)}

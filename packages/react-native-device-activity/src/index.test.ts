@@ -1,6 +1,14 @@
 // todo: skipping for now
 
 describe("test", () => {
+  test("Should export sheet picker views", () => {
+    jest.isolateModules(() => {
+      const module = require("./");
+      expect(module.DeviceActivitySelectionSheetView).toBeDefined();
+      expect(module.DeviceActivitySelectionSheetViewPersisted).toBeDefined();
+    });
+  });
+
   test("Should call stopMonitoring", () => {
     const mockStopMonitoring = jest.fn();
     jest.mock("./ReactNativeDeviceActivityModule", () => ({

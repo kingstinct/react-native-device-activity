@@ -2,6 +2,8 @@ import { EventEmitter, EventSubscription } from "expo-modules-core";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
+import DeviceActivitySelectionSheetView from "./DeviceActivitySelectionSheetView";
+import DeviceActivitySelectionSheetViewPersisted from "./DeviceActivitySelectionSheetViewPersisted";
 import DeviceActivitySelectionView from "./DeviceActivitySelectionView";
 import DeviceActivitySelectionViewPersisted from "./DeviceActivitySelectionViewPersisted";
 import {
@@ -18,6 +20,8 @@ import {
   DeviceActivityEventRaw,
   DeviceActivityMonitorEventPayload,
   DeviceActivitySchedule,
+  DeviceActivitySelectionSheetViewPersistedProps,
+  DeviceActivitySelectionSheetViewProps,
   DeviceActivitySelectionViewPersistedProps,
   DeviceActivitySelectionViewProps,
   EventListenerMap,
@@ -649,9 +653,16 @@ export function isAvailable(): boolean {
   );
 }
 
-export { DeviceActivitySelectionView, DeviceActivitySelectionViewPersisted };
+export {
+  DeviceActivitySelectionSheetView,
+  DeviceActivitySelectionSheetViewPersisted,
+  DeviceActivitySelectionView,
+  DeviceActivitySelectionViewPersisted,
+};
 
 export type {
+  DeviceActivitySelectionSheetViewProps as ReactNativeDeviceActivitySheetViewProps,
+  DeviceActivitySelectionSheetViewPersistedProps as ReactNativeDeviceActivitySheetViewPersistedProps,
   DeviceActivitySelectionViewProps as ReactNativeDeviceActivityViewProps,
   DeviceActivitySelectionViewPersistedProps as ReactNativeDeviceActivityViewPersistedProps,
 };
