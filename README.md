@@ -25,6 +25,7 @@ React Native wrapper for Apple's Screen Time, Device Activity, and Family Contro
 - [Select Apps to track](#select-apps-to-track)
 - [Time tracking](#time-tracking)
 - [Block the shield](#block-the-shield)
+- [Web Content Filter Policy](#web-content-filter-policy)
 - [Alternative Example: Blocking Apps for a Time Slot](#alternative-example-blocking-apps-for-a-time-slot)
   - [Key Concepts Explained](#key-concepts-explained)
 - [API Reference](#api-reference-the-list-is-not-exhaustive-yet-please-refer-to-the-typescript-types-for-the-full-list)
@@ -428,6 +429,78 @@ ReactNativeDeviceActivity.updateShield(
 )
 ```
 
+### Web Content Filter Policy
+
+Use this when you want to block web content without changing your app/category shield behavior, for example enabling adult/explicit site filtering during school/work hours while keeping existing app rules untouched. Under the hood this maps to Apple's [`WebContentSettings`](https://developer.apple.com/documentation/managedsettings/webcontentsettings) on [`ManagedSettingsStore.webContent`](https://developer.apple.com/documentation/managedsettings/managedsettingsstore/webcontent), including filter modes for [`auto(_:except:)`](https://developer.apple.com/documentation/managedsettings/webcontentsettings/filterpolicy/auto%28_%3Aexcept%3A%29), [`specific(_:)`](https://developer.apple.com/documentation/managedsettings/webcontentsettings/filterpolicy/specific%28_%3A%29), and [`all(except:)`](https://developer.apple.com/documentation/managedsettings/webcontentsettings/filterpolicy/all%28except%3A%29).
+
+```typescript
+import * as ReactNativeDeviceActivity from "react-native-device-activity";
+
+// Block adult/explicit websites using Apple's automatic filter.
+ReactNativeDeviceActivity.setWebContentFilterPolicy({
+  type: "auto",
+});
+```
+
+You can also provide explicit blocked and exception domains:
+
+```typescript
+ReactNativeDeviceActivity.setWebContentFilterPolicy({
+  type: "auto",
+  domains: ["example-adult-site.com"],
+  exceptDomains: ["example.com"],
+});
+```
+
+`specific` and `all` are also supported:
+
+```typescript
+// Block only the listed domains
+ReactNativeDeviceActivity.setWebContentFilterPolicy({
+  type: "specific",
+  domains: ["example.com", "another-example.com"],
+});
+
+// Block all websites except the listed domains
+ReactNativeDeviceActivity.setWebContentFilterPolicy({
+  type: "all",
+  exceptDomains: ["example.com"],
+});
+```
+
+To clear web-content filtering:
+
+```typescript
+ReactNativeDeviceActivity.clearWebContentFilterPolicy();
+```
+
+To check whether a filter policy is currently active:
+
+```typescript
+const isActive = ReactNativeDeviceActivity.isWebContentFilterPolicyActive();
+```
+
+You can configure this from background actions as well:
+
+```typescript
+ReactNativeDeviceActivity.configureActions({
+  activityName: "school-hours",
+  callbackName: "intervalDidStart",
+  actions: [
+    {
+      type: "setWebContentFilterPolicy",
+      policy: {
+        type: "auto",
+      },
+    },
+  ],
+});
+```
+
+Notes:
+- Apple currently limits `domains` and `exceptDomains` to 50 entries each (depending on selected filter policy).
+- Invalid or malformed policy input throws (for example: unknown `type`, missing required arrays, empty domains, or lists over the limit).
+
 ## Alternative Example: Blocking Apps for a Time Slot
 
 This example shows how to implement a complete app blocking system on a given interval. The main principle is that you're configuring these apps to be blocked with FamilyControl API and then schedule when the shield should be shown with ActivityMonitor API. You're customizing the shield UI and actions with ShieldConfiguration and ShieldAction APIs.
@@ -623,6 +696,9 @@ For a complete implementation, see the [example app](https://github.com/Kingstin
 | `setFamilyActivitySelectionId` | `{ id: string, familyActivitySelection: string }`                                               | void                  | Store a family activity selection with given ID |
 | `updateShield`                 | `config`: ShieldConfiguration<br>`actions`: ShieldActions                                       | void                  | Update the shield UI and actions                |
 | `configureActions`             | `{ activityName: string, callbackName: string, actions: Action[] }`                             | void                  | Configure actions for monitor events            |
+| `setWebContentFilterPolicy`    | `policy`: WebContentFilterPolicyInput<br>`triggeredBy?`: string                                 | void                  | Apply web filtering policy (`auto`, `specific`, `all`, `none`) |
+| `clearWebContentFilterPolicy`  | `triggeredBy?`: string                                                                           | void                  | Clear only the web content filter policy        |
+| `isWebContentFilterPolicyActive` | None                                                                                           | boolean               | Return whether web content filter policy is active |
 | `getEvents`                    | None                                                                                            | DeviceActivityEvent[] | Get history of triggered events                 |
 | `userDefaultsSet`              | `key`: string<br>`value`: any                                                                   | void                  | Store value in shared UserDefaults              |
 | `userDefaultsGet`              | `key`: string                                                                                   | any                   | Retrieve value from shared UserDefaults         |

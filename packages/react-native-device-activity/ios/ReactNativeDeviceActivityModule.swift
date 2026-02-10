@@ -711,6 +711,10 @@ public class ReactNativeDeviceActivityModule: Module {
       return isShieldActive()
     }
 
+    Function("isWebContentFilterPolicyActive") {
+      return isWebContentFilterPolicyActive()
+    }
+
     Function("blockSelection") {
       (familyActivitySelection: [String: Any], triggeredBy: String?) in
       let triggeredBy = triggeredBy ?? "blockSelection called manually"
@@ -798,6 +802,22 @@ public class ReactNativeDeviceActivityModule: Module {
 
     Function("clearWhitelist") {
       clearWhitelist()
+    }
+
+    Function("setWebContentFilterPolicy") {
+      (policy: [String: Any], triggeredBy: String?) throws in
+      let triggeredBy = triggeredBy ?? "setWebContentFilterPolicy called manually"
+      try setWebContentFilterPolicy(
+        policyInput: policy,
+        triggeredBy: triggeredBy
+      )
+    }
+
+    Function("clearWebContentFilterPolicy") {
+      (triggeredBy: String?) in
+      clearWebContentFilterPolicy(
+        triggeredBy: triggeredBy ?? "clearWebContentFilterPolicy called manually"
+      )
     }
 
     AsyncFunction("revokeAuthorization") { () async throws in

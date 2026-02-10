@@ -21,6 +21,9 @@ let CURRENT_BLOCKLIST_KEY = "currentBlockedSelection"
 let CURRENT_WHITELIST_KEY = "currentUnblockedSelection"
 let IS_BLOCKING_ALL = "isBlockingAll"
 let FAMILY_ACTIVITY_SELECTION_ID_KEY = "familyActivitySelectionIds"
+let WEB_CONTENT_FILTER_POLICY_LAST_UPDATE_KEY = "lastWebContentFilterPolicyUpdate"
+let WEB_CONTENT_FILTER_POLICY_LAST_ERROR_KEY = "lastWebContentFilterPolicyError"
+let WEB_CONTENT_FILTER_POLICY_MAX_DOMAINS = 50
 
 let appGroup =
   Bundle.main.object(forInfoDictionaryKey: "REACT_NATIVE_DEVICE_ACTIVITY_APP_GROUP") as? String
@@ -190,6 +193,33 @@ func executeGenericAction(
     resetBlocks(triggeredBy: triggeredBy)
   } else if type == "clearWhitelist" {
     clearWhitelist()
+  } else if type == "setWebContentFilterPolicy" {
+    if let policyInput = action["policy"] as? [String: Any] {
+      do {
+        try setWebContentFilterPolicy(
+          policyInput: policyInput,
+          triggeredBy: triggeredBy
+        )
+      } catch {
+        setWebContentFilterPolicyErrorMetadata(
+          triggeredBy: triggeredBy,
+          error: error,
+          action: action
+        )
+        logger.error(
+          "Failed to set web content filter policy in action pipeline: \(error.localizedDescription, privacy: .public)"
+        )
+      }
+    } else {
+      setWebContentFilterPolicyErrorMetadata(
+        triggeredBy: triggeredBy,
+        error: WebContentFilterPolicyError.missingPolicyPayload,
+        action: action
+      )
+      logger.error("setWebContentFilterPolicy action is missing policy payload")
+    }
+  } else if type == "clearWebContentFilterPolicy" {
+    clearWebContentFilterPolicy(triggeredBy: triggeredBy)
   } else if type == "disableBlockAllMode" {
     disableBlockAllMode(triggeredBy: triggeredBy)
   } else if type == "openApp" {
@@ -519,6 +549,312 @@ func refreshManagedSettingsStore() {
 @available(iOS 16.0, *)
 func clearAllManagedSettingsStoreSettings() {
   store.clearAllSettings()
+}
+
+enum WebContentFilterPolicyError: Error, LocalizedError {
+  case missingPolicyPayload
+  case missingPolicyType
+  case invalidPolicyType(String)
+  case invalidStringArray(fieldName: String)
+  case missingRequiredDomains(fieldName: String)
+  case tooManyDomains(fieldName: String, maxCount: Int)
+  case emptyDomain(fieldName: String)
+  case invalidDomain(fieldName: String, value: String)
+
+  var errorDescription: String? {
+    switch self {
+    case .missingPolicyPayload:
+      return "WebContentFilterPolicyError: missing required field `policy`."
+    case .missingPolicyType:
+      return "WebContentFilterPolicyError: missing required field `type`."
+    case .invalidPolicyType(let value):
+      return "WebContentFilterPolicyError: invalid policy type `\(value)`."
+    case .invalidStringArray(let fieldName):
+      return
+        "WebContentFilterPolicyError: field `\(fieldName)` must be an array of strings when provided."
+    case .missingRequiredDomains(let fieldName):
+      return
+        "WebContentFilterPolicyError: field `\(fieldName)` is required and must contain at least one domain."
+    case .tooManyDomains(let fieldName, let maxCount):
+      return
+        "WebContentFilterPolicyError: field `\(fieldName)` can contain at most \(maxCount) domains."
+    case .emptyDomain(let fieldName):
+      return
+        "WebContentFilterPolicyError: field `\(fieldName)` contains an empty domain after normalization."
+    case .invalidDomain(let fieldName, let value):
+      return
+        "WebContentFilterPolicyError: field `\(fieldName)` contains invalid domain `\(value)`."
+    }
+  }
+}
+
+@available(iOS 15.0, *)
+struct ParsedWebContentFilterPolicy {
+  let type: String
+  let policy: WebContentSettings.FilterPolicy
+  let domains: [String]
+  let exceptDomains: [String]
+}
+
+func clearWebContentFilterPolicyErrorMetadata() {
+  userDefaults?.removeObject(forKey: WEB_CONTENT_FILTER_POLICY_LAST_ERROR_KEY)
+}
+
+func setWebContentFilterPolicyErrorMetadata(
+  triggeredBy: String,
+  error: Error,
+  action: [String: Any]? = nil
+) {
+  let policy = action?["policy"] as? [String: Any]
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "updatedAt": Date.now.ISO8601Format(),
+      "error": error.localizedDescription,
+      "actionType": action?["type"] as? String ?? "unknown",
+      "policyType": policy?["type"] as? String ?? "unknown"
+    ],
+    forKey: WEB_CONTENT_FILTER_POLICY_LAST_ERROR_KEY
+  )
+}
+
+func stringArrayFromPolicyInput(
+  policyInput: [String: Any],
+  key: String
+) throws -> [String]? {
+  guard let value = policyInput[key] else {
+    return nil
+  }
+
+  guard let strings = value as? [String] else {
+    throw WebContentFilterPolicyError.invalidStringArray(fieldName: key)
+  }
+
+  return strings
+}
+
+func normalizedWebDomain(
+  from rawDomain: String,
+  fieldName: String
+) throws -> String {
+  let trimmed = rawDomain.trimmingCharacters(in: .whitespacesAndNewlines)
+  if trimmed.isEmpty {
+    throw WebContentFilterPolicyError.emptyDomain(fieldName: fieldName)
+  }
+
+  let lowercased = trimmed.lowercased()
+  let candidate = lowercased.contains("://") ? lowercased : "https://\(lowercased)"
+
+  guard var normalizedDomain = URLComponents(string: candidate)?.host else {
+    throw WebContentFilterPolicyError.invalidDomain(
+      fieldName: fieldName,
+      value: rawDomain
+    )
+  }
+
+  normalizedDomain = normalizedDomain.trimmingCharacters(in: CharacterSet(charactersIn: "."))
+
+  if normalizedDomain.isEmpty {
+    throw WebContentFilterPolicyError.emptyDomain(fieldName: fieldName)
+  }
+
+  if normalizedDomain.contains(" ") {
+    throw WebContentFilterPolicyError.invalidDomain(
+      fieldName: fieldName,
+      value: rawDomain
+    )
+  }
+
+  if normalizedDomain.contains("/") || normalizedDomain.contains("?")
+    || normalizedDomain.contains("#")
+  {
+    throw WebContentFilterPolicyError.invalidDomain(
+      fieldName: fieldName,
+      value: rawDomain
+    )
+  }
+
+  // We intentionally don't enforce a TLD requirement here. Apple accepts domains
+  // as strings, and callers may choose internal/single-label hostnames.
+  return normalizedDomain
+}
+
+@available(iOS 15.0, *)
+func parseWebDomains(
+  rawDomains: [String],
+  fieldName: String
+) throws -> Set<WebDomain> {
+  var normalizedDomains = Set<String>()
+
+  for domain in rawDomains {
+    normalizedDomains.insert(
+      try normalizedWebDomain(from: domain, fieldName: fieldName)
+    )
+  }
+
+  // Apply limits after normalization/deduplication so repeated values don't
+  // count against Apple's 50-domain cap.
+  if normalizedDomains.count > WEB_CONTENT_FILTER_POLICY_MAX_DOMAINS {
+    throw WebContentFilterPolicyError.tooManyDomains(
+      fieldName: fieldName,
+      maxCount: WEB_CONTENT_FILTER_POLICY_MAX_DOMAINS
+    )
+  }
+
+  var parsedDomains = Set<WebDomain>()
+  for normalizedDomain in normalizedDomains {
+    parsedDomains.insert(WebDomain(domain: normalizedDomain))
+  }
+
+  return parsedDomains
+}
+
+@available(iOS 15.0, *)
+func parseRequiredWebDomains(
+  policyInput: [String: Any],
+  key: String
+) throws -> Set<WebDomain> {
+  guard let rawDomains = try stringArrayFromPolicyInput(policyInput: policyInput, key: key),
+    !rawDomains.isEmpty
+  else {
+    throw WebContentFilterPolicyError.missingRequiredDomains(fieldName: key)
+  }
+
+  return try parseWebDomains(
+    rawDomains: rawDomains,
+    fieldName: key
+  )
+}
+
+@available(iOS 15.0, *)
+func sortedDomainStrings(domains: Set<WebDomain>) -> [String] {
+  return domains.compactMap(\.domain).sorted()
+}
+
+@available(iOS 15.0, *)
+func parseWebContentFilterPolicyInput(
+  policyInput: [String: Any]
+) throws -> ParsedWebContentFilterPolicy {
+  guard let type = policyInput["type"] as? String else {
+    throw WebContentFilterPolicyError.missingPolicyType
+  }
+
+  if type == "none" {
+    return ParsedWebContentFilterPolicy(
+      type: type,
+      policy: .none,
+      domains: [],
+      exceptDomains: []
+    )
+  }
+
+  if type == "auto" {
+    let rawDomains = try stringArrayFromPolicyInput(policyInput: policyInput, key: "domains") ?? []
+    let rawExceptDomains =
+      try stringArrayFromPolicyInput(policyInput: policyInput, key: "exceptDomains") ?? []
+
+    let domains = try parseWebDomains(
+      rawDomains: rawDomains,
+      fieldName: "domains"
+    )
+    let exceptDomains = try parseWebDomains(
+      rawDomains: rawExceptDomains,
+      fieldName: "exceptDomains"
+    )
+
+    return ParsedWebContentFilterPolicy(
+      type: type,
+      policy: .auto(domains, except: exceptDomains),
+      domains: sortedDomainStrings(domains: domains),
+      exceptDomains: sortedDomainStrings(domains: exceptDomains)
+    )
+  }
+
+  if type == "specific" {
+    let domains = try parseRequiredWebDomains(
+      policyInput: policyInput,
+      key: "domains"
+    )
+    return ParsedWebContentFilterPolicy(
+      type: type,
+      policy: .specific(domains),
+      domains: sortedDomainStrings(domains: domains),
+      exceptDomains: []
+    )
+  }
+
+  if type == "all" {
+    let rawExceptDomains =
+      try stringArrayFromPolicyInput(policyInput: policyInput, key: "exceptDomains") ?? []
+    let exceptDomains = try parseWebDomains(
+      rawDomains: rawExceptDomains,
+      fieldName: "exceptDomains"
+    )
+    return ParsedWebContentFilterPolicy(
+      type: type,
+      policy: .all(except: exceptDomains),
+      domains: [],
+      exceptDomains: sortedDomainStrings(domains: exceptDomains)
+    )
+  }
+
+  throw WebContentFilterPolicyError.invalidPolicyType(type)
+}
+
+@available(iOS 15.0, *)
+func setWebContentFilterPolicy(
+  policyInput: [String: Any],
+  triggeredBy: String
+) throws {
+  let parsedPolicy = try parseWebContentFilterPolicyInput(policyInput: policyInput)
+  store.webContent.blockedByFilter = parsedPolicy.policy
+  clearWebContentFilterPolicyErrorMetadata()
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "updatedAt": Date.now.ISO8601Format(),
+      "type": parsedPolicy.type,
+      "domains": parsedPolicy.domains,
+      "exceptDomains": parsedPolicy.exceptDomains
+    ],
+    forKey: WEB_CONTENT_FILTER_POLICY_LAST_UPDATE_KEY
+  )
+}
+
+@available(iOS 15.0, *)
+func clearWebContentFilterPolicy(
+  triggeredBy: String
+) {
+  store.webContent.blockedByFilter = nil
+  clearWebContentFilterPolicyErrorMetadata()
+
+  userDefaults?.set(
+    [
+      "triggeredBy": triggeredBy,
+      "updatedAt": Date.now.ISO8601Format(),
+      "type": "none",
+      "domains": [],
+      "exceptDomains": []
+    ],
+    forKey: WEB_CONTENT_FILTER_POLICY_LAST_UPDATE_KEY
+  )
+}
+
+@available(iOS 15.0, *)
+func isWebContentFilterPolicyActive() -> Bool {
+  // Intentionally read from the active ManagedSettingsStore instead of UserDefaults
+  // metadata. This reflects the currently applied policy in the running process.
+  guard let policy = store.webContent.blockedByFilter else {
+    return false
+  }
+
+  if case .none = policy {
+    return false
+  }
+
+  return true
 }
 
 @available(iOS 15.0, *)
