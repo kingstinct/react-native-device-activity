@@ -667,8 +667,7 @@ func normalizedWebDomain(
   }
 
   if normalizedDomain.contains("/") || normalizedDomain.contains("?")
-    || normalizedDomain.contains("#")
-  {
+    || normalizedDomain.contains("#") {
     throw WebContentFilterPolicyError.invalidDomain(
       fieldName: fieldName,
       value: rawDomain

@@ -179,6 +179,8 @@ export function AllTheThings() {
   const [isShieldActive, setIsShieldActive] = useState(false);
   const [isShieldActiveWithSelection, setIsShieldActiveWithSelection] =
     useState(false);
+  const [isWebContentFilterPolicyActive, setIsWebContentFilterPolicyActive] =
+    useState(false);
 
   const refreshIsShieldActive = useCallback(() => {
     setIsShieldActive(ReactNativeDeviceActivity.isShieldActive());
@@ -200,6 +202,17 @@ export function AllTheThings() {
     }
   }, []);
 
+  const refreshWebContentFilterPolicyActive = useCallback(() => {
+    setIsWebContentFilterPolicyActive(
+      ReactNativeDeviceActivity.isWebContentFilterPolicyActive(),
+    );
+  }, []);
+
+  useEffect(() => {
+    refreshIsShieldActive();
+    refreshWebContentFilterPolicyActive();
+  }, [refreshIsShieldActive, refreshWebContentFilterPolicyActive]);
+
   const [pickerVisible, setPickerVisible] = useState(false);
 
   return (
@@ -220,6 +233,10 @@ export function AllTheThings() {
         <Text>
           Shielding current selection:
           {isShieldActiveWithSelection ? "✅" : "❌"}
+        </Text>
+        <Text>
+          Web content filter active:
+          {isWebContentFilterPolicyActive ? "✅" : "❌"}
         </Text>
 
         <Button
@@ -249,6 +266,67 @@ export function AllTheThings() {
         />
 
         <Button title="Get events" onPress={refreshEvents} />
+        <Button
+          title="Refresh web filter status"
+          onPress={refreshWebContentFilterPolicyActive}
+        />
+        <Button
+          title="Web filter: auto (adult + explicit)"
+          onPress={() => {
+            try {
+              ReactNativeDeviceActivity.setWebContentFilterPolicy({
+                type: "auto",
+              });
+              refreshWebContentFilterPolicyActive();
+            } catch (error) {
+              Alert.alert(
+                "Failed to set web filter",
+                error instanceof Error ? error.message : "Unknown error",
+              );
+            }
+          }}
+        />
+        <Button
+          title="Web filter: specific domains only"
+          onPress={() => {
+            try {
+              ReactNativeDeviceActivity.setWebContentFilterPolicy({
+                type: "specific",
+                domains: ["example.com", "example.org"],
+              });
+              refreshWebContentFilterPolicyActive();
+            } catch (error) {
+              Alert.alert(
+                "Failed to set web filter",
+                error instanceof Error ? error.message : "Unknown error",
+              );
+            }
+          }}
+        />
+        <Button
+          title="Web filter: all except example.com"
+          onPress={() => {
+            try {
+              ReactNativeDeviceActivity.setWebContentFilterPolicy({
+                type: "all",
+                exceptDomains: ["example.com"],
+              });
+              refreshWebContentFilterPolicyActive();
+            } catch (error) {
+              Alert.alert(
+                "Failed to set web filter",
+                error instanceof Error ? error.message : "Unknown error",
+              );
+            }
+          }}
+        />
+        <Button
+          title="Clear web filter policy"
+          onPress={() => {
+            ReactNativeDeviceActivity.clearWebContentFilterPolicy();
+            refreshWebContentFilterPolicyActive();
+          }}
+        />
 
         <Button
           title="Block all apps"
