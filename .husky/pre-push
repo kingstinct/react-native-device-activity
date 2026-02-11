@@ -1,1 +1,1 @@
-npm run pre-push
+bun run pre-push

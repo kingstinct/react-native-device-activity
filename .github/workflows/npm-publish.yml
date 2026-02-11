@@ -8,41 +8,43 @@ on:
   workflow_dispatch:
     inputs:
       description:
-        description: 'Description'
+        description: "Description"
         required: false
         type: string
       release_type:
-        description: 'Release Type'
+        description: "Release Type"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
-          - 'patch'
-          - 'minor'
-          - 'major'
+          - "patch"
+          - "minor"
+          - "major"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
       - run: bun install
-      
+
       - run: bun lint
-      
+
       - run: bun typecheck
+
+      - run: bun run test
 
   publish-to-npm:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
 
       - uses: oven-sh/setup-bun@v2

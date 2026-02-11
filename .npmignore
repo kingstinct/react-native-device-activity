@@ -8,7 +8,7 @@ __tests__
 /android/src/androidTest/
 /android/src/test/
 /android/build/
-/example/
+/apps/example/
 
 # Test files
 *.test.ts
@@ -18,4 +18,4 @@ __tests__
 __tests__/
 
 # seems like something is causing example to get installed recursively (bun bug?)
-example
+apps/example

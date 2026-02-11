@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "vknabel.vscode-swiftlint",
-    "swiftlang.swift-vscode"
-  ],
+  "recommendations": ["vknabel.vscode-swiftlint", "swiftlang.swift-vscode"]
 }

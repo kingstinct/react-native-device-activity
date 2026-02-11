@@ -1,7 +1,5 @@
 {
-  "cSpell.words": [
-    "Triggerable"
-  ],
-  "swiftlint.path": "apps/example/ios/Pods/SwiftLint/swiftlint",
+  "cSpell.words": ["Triggerable"],
+  "swiftlint.path": "packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint",
   "swift.SDK": "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.2.sdk"
 }

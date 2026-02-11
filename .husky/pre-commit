@@ -1,2 +1,3 @@
-swift format -i -p -r ./packages/react-native-device-activity/ios ./packages/react-native-device-activity/targets ./apps/example/ios
-apps/example/ios/Pods/SwiftLint/swiftlint lint --fix
+swift format -i -p -r ./packages/react-native-device-activity/ios/Tests ./packages/react-native-device-activity/targets ./packages/react-native-device-activity/ios/TestHarness/reactnativedeviceactivityexample
+swift format -i -p ./packages/react-native-device-activity/ios/Shared.swift ./packages/react-native-device-activity/ios/ReactNativeDeviceActivityModule.swift ./packages/react-native-device-activity/ios/ReactNativeDeviceActivityView.swift ./packages/react-native-device-activity/ios/ReactNativeDeviceActivityViewPersisted.swift ./packages/react-native-device-activity/ios/ScreenTimeActivityPicker.swift
+packages/react-native-device-activity/ios/TestHarness/Pods/SwiftLint/swiftlint lint --fix --config .swiftlint.yml

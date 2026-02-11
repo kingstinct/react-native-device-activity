@@ -24,8 +24,6 @@ import { ActivityPickerPersisted } from "../components/ActivityPicker";
 
 // const initialMinutes = 1;
 // const postponeMinutes = 60;
-const trackEveryXMinutes = 1;
-
 const selectionId = "some-id-3";
 
 export function requestPermissionsAsync() {
@@ -328,7 +326,7 @@ export function AllTheThings() {
                 {
                   type: "stopMonitoring",
                   activityNames: ["sneekpeak"],
-                }
+                },
               ],
             });
             ReactNativeDeviceActivity.updateShield(
@@ -358,7 +356,7 @@ export function AllTheThings() {
               },
             );
             console.log("done!");
-            console.log(ReactNativeDeviceActivity.getEvents())
+            console.log(ReactNativeDeviceActivity.getEvents());
           }}
         />
 

@@ -236,7 +236,7 @@ export const CreateActivity = ({ onDismiss }: { onDismiss: () => void }) => {
         mode="contained"
         disabled={!familyActivitySelectionResult || !activityName}
         onPress={() => {
-          void startMonitoring(
+          startMonitoring(
             familyActivitySelectionResult?.familyActivitySelection ?? "",
             activityName,
           );

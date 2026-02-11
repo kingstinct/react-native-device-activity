@@ -1,0 +1,15 @@
+node_modules/
+bun.lock
+
+# Expo / native generated artifacts
+apps/example/.expo/
+apps/example/dist/
+apps/example/ios/Pods/
+apps/example/ios/build/
+
+# Package build output
+packages/react-native-device-activity/build/
+
+# iOS test harness generated artifacts
+packages/react-native-device-activity/ios/TestHarness/Pods/
+packages/react-native-device-activity/ios/TestHarness/build/

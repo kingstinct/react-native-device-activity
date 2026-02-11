@@ -9,11 +9,13 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "typecheck": "tsc --noEmit",
-    "test": "expo-module test",
+    "test": "CI=1 bun run test:runtime && CI=1 bun run test:plugin",
+    "test:runtime": "expo-module test --config ./jest.runtime.config.js",
+    "test:plugin": "expo-module test plugin",
     "prepublishOnly": "expo-module prepublishOnly && tsc && cp ../../README.md ./README.md",
     "expo-module": "expo-module",
-    "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "open:ios": "xed ios/TestHarness",
+    "open:android": "open -a \"Android Studio\" ../../apps/example/android"
   },
   "keywords": [
     "react-native",
