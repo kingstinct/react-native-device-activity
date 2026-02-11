@@ -3,7 +3,7 @@
 [![Test Status](https://github.com/Kingstinct/react-native-device-activity/actions/workflows/test.yml/badge.svg)](https://github.com/Kingstinct/react-native-device-activity/actions/workflows/test.yml)
 [![Latest version on NPM](https://img.shields.io/npm/v/react-native-device-activity)](https://www.npmjs.com/package/react-native-device-activity)
 [![Downloads on NPM](https://img.shields.io/npm/dt/react-native-device-activity)](https://www.npmjs.com/package/react-native-device-activity)
-[![Discord](https://dcbadge.vercel.app/api/server/hrgnETpsJA?style=flat)](https://discord.gg/hrgnETpsJA)
+[![Discord](https://dcbadge.limes.pink/api/server/hrgnETpsJA?style=flat)](https://discord.gg/hrgnETpsJA)
 
 React Native wrapper for Apple's Screen Time, Device Activity, and Family Controls APIs.
 
