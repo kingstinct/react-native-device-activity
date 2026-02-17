@@ -234,6 +234,28 @@ type CommonTypeParams = {
   neverTriggerBefore?: Date;
 };
 
+export type WebContentFilterPolicyInput =
+  | {
+      type: "none";
+      domains?: undefined;
+      exceptDomains?: undefined;
+    }
+  | {
+      type: "auto";
+      domains?: string[];
+      exceptDomains?: string[];
+    }
+  | {
+      type: "specific";
+      domains: string[];
+      exceptDomains?: undefined;
+    }
+  | {
+      type: "all";
+      domains?: undefined;
+      exceptDomains?: string[];
+    };
+
 export type Action =
   | ({
       type: "blockSelection";
@@ -302,6 +324,13 @@ export type Action =
     } & CommonTypeParams)
   | ({
       type: "removeAllDeliveredNotifications";
+    } & CommonTypeParams)
+  | ({
+      type: "setWebContentFilterPolicy";
+      policy: WebContentFilterPolicyInput;
+    } & CommonTypeParams)
+  | ({
+      type: "clearWebContentFilterPolicy";
     } & CommonTypeParams)
   | ({
       type: "startMonitoring";
@@ -483,6 +512,12 @@ export type ReactNativeDeviceActivityNativeModule = {
   ) => void;
   clearWhitelistAndUpdateBlock: (triggeredBy?: string) => void;
   clearWhitelist: () => void;
+  setWebContentFilterPolicy: (
+    policy: WebContentFilterPolicyInput,
+    triggeredBy?: string,
+  ) => void;
+  clearWebContentFilterPolicy: (triggeredBy?: string) => void;
+  isWebContentFilterPolicyActive: () => boolean;
 
   // reset, reload things
   reloadDeviceActivityCenter: () => void;

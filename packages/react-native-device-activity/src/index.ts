@@ -32,6 +32,7 @@ import {
   ShieldActions,
   ShieldConfiguration,
   OnAuthorizationStatusChange,
+  WebContentFilterPolicyInput,
 } from "./ReactNativeDeviceActivity.types";
 import ReactNativeDeviceActivityModule from "./ReactNativeDeviceActivityModule";
 
@@ -401,6 +402,12 @@ export function isShieldActive(): boolean {
   return ReactNativeDeviceActivityModule?.isShieldActive() ?? false;
 }
 
+export function isWebContentFilterPolicyActive(): boolean {
+  return (
+    ReactNativeDeviceActivityModule?.isWebContentFilterPolicyActive() ?? false
+  );
+}
+
 export function moveFile(
   sourceUri: string,
   destinationUri: string,
@@ -449,6 +456,26 @@ export function disableBlockAllMode(triggeredBy?: string): void {
 
 export function resetBlocks(triggeredBy?: string): void {
   return ReactNativeDeviceActivityModule?.resetBlocks(triggeredBy);
+}
+
+export function setWebContentFilterPolicy(
+  policy: WebContentFilterPolicyInput,
+  triggeredBy?: string,
+): void {
+  try {
+    return ReactNativeDeviceActivityModule?.setWebContentFilterPolicy(
+      policy,
+      triggeredBy,
+    );
+  } catch (error) {
+    handleScreenTimeError(error);
+  }
+}
+
+export function clearWebContentFilterPolicy(triggeredBy?: string): void {
+  return ReactNativeDeviceActivityModule?.clearWebContentFilterPolicy(
+    triggeredBy,
+  );
 }
 
 export function unblockSelection(
