@@ -37,28 +37,36 @@ export function SimpleTab() {
 
   const [activities, refreshActivities] = useActivities();
 
-  const onPressRequestCallback = useCallback(async () => {
-    if (authorizationStatus === AuthorizationStatus.notDetermined) {
-      await requestAuthorization();
-    } else if (authorizationStatus === AuthorizationStatus.denied) {
-      Alert.alert(
-        "You didn't grant access",
-        "Please go to settings and enable it",
-        [
-          {
-            text: "Open settings",
-            onPress: () => Linking.openSettings(),
-          },
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-        ],
-      );
-    } else {
-      await revokeAuthorization();
-    }
-  }, [authorizationStatus]);
+  const onPressRequestCallback = useCallback(
+    async (forIndividualOrChild: "individual" | "child" = "individual") => {
+      if (authorizationStatus === AuthorizationStatus.notDetermined) {
+        try {
+          await requestAuthorization(forIndividualOrChild);
+        } catch (e) {
+          Alert.alert("Error requesting authorization", (e as Error).message);
+          console.log("Error requesting authorization", e);
+        }
+      } else if (authorizationStatus === AuthorizationStatus.denied) {
+        Alert.alert(
+          "You didn't grant access",
+          "Please go to settings and enable it",
+          [
+            {
+              text: "Open settings",
+              onPress: () => Linking.openSettings(),
+            },
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+          ],
+        );
+      } else {
+        await revokeAuthorization();
+      }
+    },
+    [authorizationStatus],
+  );
 
   const [showCreateActivityPopup, setShowCreateActivityPopup] = useState(false);
 
@@ -108,12 +116,21 @@ export function SimpleTab() {
           <Text style={{ flex: 1 }}>
             {authorizationStatusMap[authorizationStatus]}
           </Text>
-
-          <Button onPress={onPressRequestCallback} mode="contained">
-            {authorizationStatus === AuthorizationStatus.approved
-              ? "Revoke authorization"
-              : "Request authorization"}
-          </Button>
+          <View style={{ gap: 10 }}>
+            <Button onPress={() => onPressRequestCallback()} mode="contained">
+              {authorizationStatus === AuthorizationStatus.approved
+                ? "Revoke authorization"
+                : "Request authorization"}
+            </Button>
+            <Button
+              onPress={() => onPressRequestCallback("child")}
+              mode="contained"
+            >
+              {authorizationStatus === AuthorizationStatus.approved
+                ? "Revoke child authorization"
+                : "Request child authorization"}
+            </Button>
+          </View>
         </View>
         <Title>Activities</Title>
         {activities.map((activity) => (
