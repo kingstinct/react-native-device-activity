@@ -570,13 +570,18 @@ public class ReactNativeDeviceActivityModule: Module {
         try await ac.requestAuthorization(
           for: forIndividualOrChild == "child" ? .child : .individual)
       } else {
-        let errorMessage = "iOS 16.0 or later is required to request authorization."
-        logger.log("⚠️ \(errorMessage)")
-        throw NSError(
-          domain: "FamilyControls",
-          code: 9999,
-          userInfo: [NSLocalizedDescriptionKey: errorMessage]
-        )
+        // Deprecated iOS 15 API - uses completion handler
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+          ac.requestAuthorization { result in
+            switch result {
+            case .success:
+              continuation.resume()
+            case .failure(let error):
+              logger.log("❌ Failed to request authorization: \(error.localizedDescription, privacy: .public)")
+              continuation.resume(throwing: error)
+            }
+          }
+        }
       }
     }
 
