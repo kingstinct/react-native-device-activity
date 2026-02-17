@@ -40,12 +40,7 @@ export function SimpleTab() {
   const onPressRequestCallback = useCallback(
     async (forIndividualOrChild: "individual" | "child" = "individual") => {
       if (authorizationStatus === AuthorizationStatus.notDetermined) {
-        try {
-          await requestAuthorization(forIndividualOrChild);
-        } catch (e) {
-          Alert.alert("Error requesting authorization", (e as Error).message);
-          console.log("Error requesting authorization", e);
-        }
+        await requestAuthorization(forIndividualOrChild);
       } else if (authorizationStatus === AuthorizationStatus.denied) {
         Alert.alert(
           "You didn't grant access",
