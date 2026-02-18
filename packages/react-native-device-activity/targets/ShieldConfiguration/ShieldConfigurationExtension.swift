@@ -61,7 +61,7 @@ func resolveIcon(dict: [String: Any]) -> UIImage? {
   }
 
   if let iconTint = getColor(color: dict["iconTint"] as? [String: Double]) {
-    image?.withTintColor(iconTint)
+    image = image?.withTintColor(iconTint, renderingMode: .alwaysOriginal)
   }
 
   return image
