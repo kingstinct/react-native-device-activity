@@ -164,48 +164,6 @@ func handleShieldAction(
   return .close
 }
 
-// MARK: - App name persistence
-// Writes app/category/domain display names to shared UserDefaults so the main
-// app can read them. Names are only available in extension contexts.
-
-func stableTokenKey<T: Encodable>(for token: T) -> String? {
-  guard let data = try? JSONEncoder().encode(token) else { return nil }
-  return data.base64EncodedString()
-}
-
-func persistAppName(_ name: String?, forToken token: ApplicationToken?) {
-  guard let name = name, let token = token,
-    let key = stableTokenKey(for: token)
-  else { return }
-  var dict = userDefaults?.dictionary(forKey: "guardedAppNames") as? [String: String] ?? [:]
-  dict[key] = name
-  userDefaults?.set(dict, forKey: "guardedAppNames")
-  userDefaults?.synchronize()
-  logger.log("Persisted app name '\(name, privacy: .public)'")
-}
-
-func persistCategoryName(_ name: String?, forToken token: ActivityCategoryToken?) {
-  guard let name = name, let token = token,
-    let key = stableTokenKey(for: token)
-  else { return }
-  var dict = userDefaults?.dictionary(forKey: "guardedCategoryNames") as? [String: String] ?? [:]
-  dict[key] = name
-  userDefaults?.set(dict, forKey: "guardedCategoryNames")
-  userDefaults?.synchronize()
-  logger.log("Persisted category name '\(name, privacy: .public)'")
-}
-
-func persistWebDomainName(_ domain: String?, forToken token: WebDomainToken?) {
-  guard let domain = domain, let token = token,
-    let key = stableTokenKey(for: token)
-  else { return }
-  var dict = userDefaults?.dictionary(forKey: "guardedWebDomainNames") as? [String: String] ?? [:]
-  dict[key] = domain
-  userDefaults?.set(dict, forKey: "guardedWebDomainNames")
-  userDefaults?.synchronize()
-  logger.log("Persisted web domain '\(domain, privacy: .public)'")
-}
-
 func handleAction(
   action: ShieldAction,
   completionHandler: @escaping (ShieldActionResponse) -> Void,
@@ -214,19 +172,6 @@ func handleAction(
   categoryToken: ActivityCategoryToken?
 ) {
   CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
-
-  // Persist display names to shared UserDefaults for the main app
-  if let applicationToken = applicationToken {
-    persistAppName(
-      Application(token: applicationToken).localizedDisplayName, forToken: applicationToken)
-  }
-  if let webdomainToken = webdomainToken {
-    persistWebDomainName(WebDomain(token: webdomainToken).domain, forToken: webdomainToken)
-  }
-  if let categoryToken = categoryToken {
-    persistCategoryName(
-      ActivityCategory(token: categoryToken).localizedDisplayName, forToken: categoryToken)
-  }
 
   if let shieldActionConfig = getActivitySelectionPrefixedConfigFromUserDefaults(
     keyPrefix: SHIELD_ACTIONS_FOR_SELECTION_PREFIX,
@@ -252,7 +197,7 @@ func handleAction(
           ? WebDomain(
             token: webdomainToken!
           ).domain : nil,
-        "familyActivitySelectionId": familyActivitySelectionId?.id,
+        "familyActivitySelectionId": familyActivitySelectionId?.id
       ]
 
       let response = handleShieldAction(
