@@ -947,7 +947,7 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
   }
 }
 
-@available(iOS 15.2, *)
+@available(iOS 15.0, *)
 public class ReactNativeDeviceActivityLabelListModule: Module {
   public func definition() -> ExpoModulesCore.ModuleDefinition {
     Name("ReactNativeDeviceActivityLabelListModule")

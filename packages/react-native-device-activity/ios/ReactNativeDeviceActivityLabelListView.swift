@@ -3,7 +3,7 @@ import FamilyControls
 import SwiftUI
 import UIKit
 
-@available(iOS 15.2, *)
+@available(iOS 15.0, *)
 class ReactNativeDeviceActivityLabelListView: ExpoView {
 
   let model = ActivityLabelListModel()
