@@ -680,6 +680,8 @@ export function isAvailable(): boolean {
   );
 }
 
+export { default as DeviceActivityLabelListView } from "./DeviceActivityLabelListView";
+
 export {
   DeviceActivitySelectionSheetView,
   DeviceActivitySelectionSheetViewPersisted,

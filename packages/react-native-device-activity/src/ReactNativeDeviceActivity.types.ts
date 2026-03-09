@@ -76,6 +76,11 @@ export type DeviceActivitySelectionSheetViewPersistedProps =
     onDismissRequest?: (event: NativeSyntheticEvent<Record<string, never>>) => void;
   };
 
+export type DeviceActivityLabelListViewProps = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+  familyActivitySelectionId: string;
+}>;
+
 /**
  * @link https://developer.apple.com/documentation/foundation/datecomponents
  */
