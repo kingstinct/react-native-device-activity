@@ -14,7 +14,7 @@ class ActivityLabelListModel: ObservableObject {
   @Published var activitySelection = FamilyActivitySelection()
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.2, *)
 struct ActivityLabelList: View {
   @ObservedObject var model: ActivityLabelListModel
 

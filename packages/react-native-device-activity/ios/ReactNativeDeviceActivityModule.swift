@@ -133,8 +133,7 @@ struct DeviceActivityEventFromJS: ExpoModulesCore.Record {
   var includesPastActivity: Bool?
 }
 
-func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJS) -> DateComponents
-{
+func convertToSwiftDateComponents(from dateComponentsFromJS: DateComponentsFromJS) -> DateComponents {
   var swiftDateComponents = DateComponents()
 
   if let era = dateComponentsFromJS.era {
@@ -948,7 +947,7 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
   }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.2, *)
 public class ReactNativeDeviceActivityLabelListModule: Module {
   public func definition() -> ExpoModulesCore.ModuleDefinition {
     Name("ReactNativeDeviceActivityLabelListModule")
