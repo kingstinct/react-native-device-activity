@@ -185,6 +185,8 @@ For every base bundleIdentifier you need approval for 4 bundleIdentifiers (when 
 - `com.your-bundleIdentifier.ShieldAction`
 - `com.your-bundleIdentifier.ShieldConfiguration`
 
+⚠️ **You need to fill out the Apple request form once for each of these bundle identifiers** — that means filling out the form 4 separate times (one per bundle identifier listed above) if you are using all native extensions.
+
 Once you've gotten approval you need to manually add the "Family Controls (Distribution)" under Additional Capabilities for each of the bundleIdentifiers on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) mentioned above. If you use Expo/EAS this has to be done only once, and after that provisioning will be handled automatically.
 
 ⚠️ If you don't do all the above, you will run into a lot of strange provisioning errors.
