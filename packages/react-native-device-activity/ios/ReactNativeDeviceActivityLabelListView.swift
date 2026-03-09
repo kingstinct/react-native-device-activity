@@ -10,6 +10,10 @@ class ReactNativeDeviceActivityLabelListView: ExpoView {
 
   let contentView: UIHostingController<ActivityLabelList>
 
+  let onContentSizeChange = EventDispatcher()
+
+  private var lastReportedHeight: CGFloat = 0
+
   required init(appContext: AppContext? = nil) {
     contentView = UIHostingController(
       rootView: ActivityLabelList(model: model)
@@ -17,7 +21,7 @@ class ReactNativeDeviceActivityLabelListView: ExpoView {
 
     super.init(appContext: appContext)
 
-    clipsToBounds = true
+    clipsToBounds = false
     backgroundColor = .clear
 
     contentView.view.backgroundColor = .clear
@@ -27,27 +31,20 @@ class ReactNativeDeviceActivityLabelListView: ExpoView {
 
   override func layoutSubviews() {
     super.layoutSubviews()
-    contentView.view.frame = bounds
 
-    // Report intrinsic size so RN can size this view to fit content
-    let fittingSize = contentView.view.systemLayoutSizeFitting(
-      CGSize(width: bounds.width, height: UIView.layoutFittingCompressedSize.height),
-      withHorizontalFittingPriority: .required,
-      verticalFittingPriority: .fittingSizeLevel
+    let targetWidth = bounds.width > 0 ? bounds.width : UIView.layoutFittingExpandedSize.width
+    let fittingSize = contentView.view.sizeThatFits(
+      CGSize(width: targetWidth, height: .greatestFiniteMagnitude)
     )
-    if abs(fittingSize.height - bounds.height) > 1.0 && fittingSize.height > 0 {
-      invalidateIntrinsicContentSize()
+
+    contentView.view.frame = CGRect(
+      origin: .zero,
+      size: CGSize(width: bounds.width, height: fittingSize.height)
+    )
+
+    if fittingSize.height > 0 && abs(fittingSize.height - lastReportedHeight) > 0.5 {
+      lastReportedHeight = fittingSize.height
+      onContentSizeChange(["height": fittingSize.height])
     }
-  }
-
-  override var intrinsicContentSize: CGSize {
-    let fittingSize = contentView.view.systemLayoutSizeFitting(
-      CGSize(
-        width: bounds.width > 0 ? bounds.width : UIView.layoutFittingExpandedSize.width,
-        height: UIView.layoutFittingCompressedSize.height),
-      withHorizontalFittingPriority: .required,
-      verticalFittingPriority: .fittingSizeLevel
-    )
-    return fittingSize
   }
 }

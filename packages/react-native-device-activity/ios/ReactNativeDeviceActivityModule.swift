@@ -952,6 +952,8 @@ public class ReactNativeDeviceActivityLabelListModule: Module {
   public func definition() -> ExpoModulesCore.ModuleDefinition {
     Name("ReactNativeDeviceActivityLabelListModule")
     View(ReactNativeDeviceActivityLabelListView.self) {
+      Events("onContentSizeChange")
+
       Prop("familyActivitySelectionId") {
         (view: ReactNativeDeviceActivityLabelListView, prop: String) in
         view.model.familyActivitySelectionId = prop
