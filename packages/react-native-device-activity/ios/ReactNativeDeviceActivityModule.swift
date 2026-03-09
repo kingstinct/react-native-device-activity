@@ -954,11 +954,9 @@ public class ReactNativeDeviceActivityLabelListModule: Module {
     View(ReactNativeDeviceActivityLabelListView.self) {
       Prop("familyActivitySelectionId") {
         (view: ReactNativeDeviceActivityLabelListView, prop: String) in
-        if let selection = getFamilyActivitySelectionById(id: prop) {
-          view.model.activitySelection = selection
-        } else {
-          view.model.activitySelection = FamilyActivitySelection()
-        }
+        view.model.familyActivitySelectionId = prop
+        view.model.refreshSelection()
+        view.model.startObserving()
       }
     }
   }
