@@ -571,13 +571,16 @@ public class ReactNativeDeviceActivityModule: Module {
           for: forIndividualOrChild == "child" ? .child : .individual)
       } else {
         // Deprecated iOS 15 API - uses completion handler
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation {
+          (continuation: CheckedContinuation<Void, Error>) in
           ac.requestAuthorization { result in
             switch result {
             case .success:
               continuation.resume()
             case .failure(let error):
-              logger.log("❌ Failed to request authorization: \(error.localizedDescription, privacy: .public)")
+              logger.log(
+                "❌ Failed to request authorization: \(error.localizedDescription, privacy: .public)"
+              )
               continuation.resume(throwing: error)
             }
           }
@@ -939,6 +942,23 @@ public class ReactNativeDeviceActivityViewPersistedModule: Module {
         view.model.showNavigationBar = enabled
         view.contentView.view.backgroundColor = enabled ? .systemGroupedBackground : .clear
         view.backgroundColor = enabled ? .systemGroupedBackground : .clear
+      }
+    }
+  }
+}
+
+@available(iOS 15.0, *)
+public class ReactNativeDeviceActivityLabelListModule: Module {
+  public func definition() -> ExpoModulesCore.ModuleDefinition {
+    Name("ReactNativeDeviceActivityLabelListModule")
+    View(ReactNativeDeviceActivityLabelListView.self) {
+      Events("onContentSizeChange")
+
+      Prop("familyActivitySelectionId") {
+        (view: ReactNativeDeviceActivityLabelListView, prop: String) in
+        view.model.familyActivitySelectionId = prop
+        view.model.refreshSelection()
+        view.model.startObserving()
       }
     }
   }
