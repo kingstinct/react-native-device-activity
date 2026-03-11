@@ -48,18 +48,16 @@ struct PerAppUsageReport: DeviceActivityReportScene {
   func makeConfiguration(
     representing data: DeviceActivityResults<DeviceActivityData>
   ) async -> [AppUsageInfo] {
-    var appDurations: [String: (name: String, duration: TimeInterval, token: ApplicationToken?)] =
-      [:]
+    var appDurations: [String: AppUsageInfo] = [:]
 
     for await activityData in data {
       for await segment in activityData.activitySegments {
         for await category in segment.categories {
           for await app in category.applications {
             let name = app.application.localizedDisplayName ?? "Unknown"
-            let key = name
-            let existing = appDurations[key]
-            appDurations[key] = (
-              name: name,
+            let existing = appDurations[name]
+            appDurations[name] = AppUsageInfo(
+              displayName: name,
               duration: (existing?.duration ?? 0) + app.totalActivityDuration,
               token: app.application.token
             )
@@ -69,7 +67,6 @@ struct PerAppUsageReport: DeviceActivityReportScene {
     }
 
     return appDurations.values
-      .map { AppUsageInfo(displayName: $0.name, duration: $0.duration, token: $0.token) }
       .filter { $0.duration > 0 }
       .sorted { $0.duration > $1.duration }
   }
