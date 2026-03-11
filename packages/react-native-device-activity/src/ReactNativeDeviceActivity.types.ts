@@ -81,6 +81,22 @@ export type DeviceActivityLabelListViewProps = PropsWithChildren<{
   familyActivitySelectionId: string;
 }>;
 
+export type DeviceActivityReportViewProps = {
+  style?: StyleProp<ViewStyle>;
+  /** The report context string — must match a DeviceActivityReportScene context in the extension */
+  context: string;
+  /** Start of date range as Unix timestamp in milliseconds */
+  from?: number | null;
+  /** End of date range as Unix timestamp in milliseconds */
+  to?: number | null;
+  /** Segmentation interval for the report data */
+  segmentation?: "hourly" | "daily" | "weekly";
+  /** Filter to apps in a persisted FamilyActivitySelection (by ID from UserDefaults) */
+  familyActivitySelectionId?: string | null;
+  /** Filter to apps in a raw FamilyActivitySelection (base64 encoded) */
+  familyActivitySelection?: string | null;
+};
+
 /**
  * @link https://developer.apple.com/documentation/foundation/datecomponents
  */

@@ -681,6 +681,7 @@ export function isAvailable(): boolean {
 }
 
 export { default as DeviceActivityLabelListView } from "./DeviceActivityLabelListView";
+export { default as DeviceActivityReportView } from "./DeviceActivityReportView";
 
 export {
   DeviceActivitySelectionSheetView,

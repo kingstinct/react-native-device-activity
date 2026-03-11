@@ -1,6 +1,6 @@
 {
   "platforms": ["ios"],
   "ios": {
-    "modules": ["ReactNativeDeviceActivityModule", "ReactNativeDeviceActivityViewPersistedModule", "ReactNativeDeviceActivityLabelListModule"]
+    "modules": ["ReactNativeDeviceActivityModule", "ReactNativeDeviceActivityViewPersistedModule", "ReactNativeDeviceActivityLabelListModule", "ReactNativeDeviceActivityReportModule"]
   }
 }
