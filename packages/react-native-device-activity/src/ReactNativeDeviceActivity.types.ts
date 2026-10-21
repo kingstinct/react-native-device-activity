@@ -193,7 +193,7 @@ export type ShieldAction = {
    * defaults to true
    */
   onlyFamilySelectionIdsContainingMonitoredActivityNames?: boolean;
-  behavior: "close" | "defer";
+  behavior: "close" | "defer" | "openParentalControlsApp";
   actions?: Action[];
 };
 
