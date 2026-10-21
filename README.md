@@ -75,7 +75,10 @@ Defines what happens when users interact with shield buttons.
 ```typescript
 const shieldActions = {
   primary: {
-    behavior: "close", // Just close the shield when OK is tapped
+    behavior: "close", // Close the shielded app when OK is tapped
+  },
+  secondary: {
+    behavior: "openParentalControlsApp", // Open your app from the shield (iOS 26.5+)
   },
 };
 ```

@@ -159,6 +159,9 @@ func handleShieldAction(
     if behavior == "defer" {
       return .defer
     }
+    if behavior == "openParentalControlsApp", #available(iOS 26.5, *) {
+      return .openParentalControlsApp
+    }
   }
 
   return .close
